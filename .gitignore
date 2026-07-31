@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+server/.env
+server/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+data/raw/**
+data/generated/**
+runtime-config.local.js
+src/config/runtime-config.local.js
+exports/stage-5-live/**
+!data/raw/.gitkeep
+!data/generated/.gitkeep

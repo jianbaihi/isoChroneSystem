@@ -1,0 +1,121 @@
+(function initAnalysisClient(global) {
+  const app = global.PanmapApp = global.PanmapApp || {};
+
+  async function parseJson(response) {
+    const text = await response.text();
+    if (!text) return null;
+    try {
+      return JSON.parse(text);
+    } catch (error) {
+      throw Object.assign(new Error('后端返回了无法解析的 JSON。'), { code: 'INVALID_RESPONSE', cause: error });
+    }
+  }
+
+  async function createAnalysis(request, { signal } = {}) {
+    const normalized = app.contracts.normalizeAnalysisRequest(request);
+    const response = await fetch(`${app.config.apiBaseUrl}/analyses`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(normalized),
+      signal,
+    });
+    const payload = await parseJson(response);
+    if (!response.ok) {
+      const errorPayload = payload?.error || {};
+      const error = new Error(errorPayload.message || `分析请求失败（${response.status}）。`);
+      error.code = errorPayload.code || 'HTTP_ERROR';
+      error.details = errorPayload.details || [];
+      error.requestId = errorPayload.requestId || response.headers.get('X-Request-ID') || null;
+      error.status = response.status;
+      throw error;
+    }
+    return app.contracts.normalizeAnalysisResult(payload);
+  }
+
+  async function listPoiDatasets({ signal } = {}) {
+    const response = await fetch(`${app.config.apiBaseUrl}/poi-datasets`, { headers: { Accept: 'application/json' }, signal });
+    const payload = await parseJson(response);
+    if (!response.ok) {
+      const error = new Error(payload?.error?.message || `POI 数据集请求失败（${response.status}）。`);
+      error.code = payload?.error?.code || 'HTTP_ERROR';
+      throw error;
+    }
+    return Array.isArray(payload?.datasets) ? payload.datasets : [];
+  }
+
+  async function createPoiPreview(request, { signal } = {}) {
+    const normalized = {
+      schemaVersion: '1.0',
+      center: request.center,
+      profile: request.profile,
+      rangesMinutes: request.rangesMinutes,
+      categoryIds: request.categoryIds || [],
+      radiusMeters: Number(request.radiusMeters || 1000),
+    };
+    const response = await fetch(`${app.config.apiBaseUrl}/poi-previews`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(normalized),
+      signal,
+    });
+    const payload = await parseJson(response);
+    if (!response.ok) {
+      const error = new Error(payload?.error?.message || `POI 预览请求失败（${response.status}）。`);
+      error.code = payload?.error?.code || 'HTTP_ERROR';
+      error.details = payload?.error?.details || [];
+      error.requestId = payload?.error?.requestId || response.headers.get('X-Request-ID') || null;
+      error.status = response.status;
+      throw error;
+    }
+    return app.contracts.normalizePoiPreview(payload);
+  }
+
+  async function createNameCloud(request, { signal } = {}) {
+    const response = await fetch(`${app.config.apiBaseUrl}/name-clouds`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        schemaVersion: '1.0',
+        center: request.center,
+        profile: request.profile,
+        rangesMinutes: request.rangesMinutes,
+        categoryIds: request.categoryIds || [],
+        cumulativeIsochrones: request.cumulativeIsochrones || [],
+      }),
+      signal,
+    });
+    const payload = await parseJson(response);
+    if (!response.ok) {
+      const error = new Error(payload?.error?.message || `名称云请求失败（${response.status}）。`);
+      error.code = payload?.error?.code || 'HTTP_ERROR';
+      error.details = payload?.error?.details || [];
+      error.requestId = payload?.error?.requestId || response.headers.get('X-Request-ID') || null;
+      error.status = response.status;
+      throw error;
+    }
+    return app.contracts.normalizeAnalysisResult(payload);
+  }
+
+  async function geocode(operation, params, { signal } = {}) {
+    const query = new URLSearchParams();
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') query.set(key, String(value));
+    });
+    const response = await fetch(`${app.config.apiBaseUrl}/geocoding/${operation}?${query.toString()}`, { headers: { Accept: 'application/json' }, signal });
+    const payload = await parseJson(response);
+    if (!response.ok) {
+      const error = new Error(payload?.error?.message || `地点搜索失败（${response.status}）。`);
+      error.code = payload?.error?.code || 'HTTP_ERROR';
+      error.details = payload?.error?.details || [];
+      error.status = response.status;
+      throw error;
+    }
+    return payload;
+  }
+
+  async function reverseGeocode(lon, lat, { signal } = {}) {
+    return geocode('reverse', { lon, lat }, { signal });
+  }
+
+  app.analysisClient = Object.freeze({ createAnalysis, createPoiPreview, createNameCloud, listPoiDatasets, geocode, reverseGeocode });
+})(window);

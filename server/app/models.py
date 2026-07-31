@@ -1,0 +1,202 @@
+from typing import Any, Literal, Optional
+
+from pydantic import BaseModel, Field, validator
+
+
+SCHEMA_VERSION = "1.0"
+Profile = Literal["foot-walking", "cycling-regular", "driving-car"]
+
+
+class Center(BaseModel):
+    lon: float = Field(..., ge=-180, le=180)
+    lat: float = Field(..., ge=-90, le=90)
+    crs: Literal["EPSG:4326"] = "EPSG:4326"
+    label: Optional[str] = None
+    id: Optional[str] = None
+    source: Literal["preset", "geocoder", "geolocation", "map-click"] = "preset"
+    accuracyMeters: Optional[float] = Field(default=None, ge=0)
+
+
+class AnalysisOptions(BaseModel):
+    includePois: bool = True
+    calculateTravelTimes: bool = False
+    poiPreviewRadiusMeters: Optional[Literal[500, 1000, 2000]] = None
+
+
+class AnalysisRequest(BaseModel):
+    schemaVersion: Literal["1.0"] = SCHEMA_VERSION
+    center: Center
+    profile: Profile
+    rangesMinutes: list[int] = Field(..., min_items=1, max_items=10)
+    categoryIds: list[str] = Field(default_factory=list)
+    poiDatasetId: Optional[str] = None
+    options: AnalysisOptions = Field(default_factory=AnalysisOptions)
+
+    @validator("rangesMinutes")
+    def validate_ranges(cls, value: list[int]) -> list[int]:
+        if any(not isinstance(item, int) or isinstance(item, bool) or item <= 0 for item in value):
+            raise ValueError("rangesMinutes 必须是正整数。")
+        if any(value[index] <= value[index - 1] for index in range(1, len(value))):
+            raise ValueError("rangesMinutes 必须严格升序且不能重复。")
+        return value
+
+    @validator("categoryIds")
+    def normalize_category_ids(cls, value: list[str]) -> list[str]:
+        return list(dict.fromkeys(item.strip() for item in value if item and item.strip()))
+
+
+class PoiPreviewRequest(BaseModel):
+    schemaVersion: Literal["1.0"] = SCHEMA_VERSION
+    center: Center
+    profile: Profile
+    rangesMinutes: list[int] = Field(..., min_items=1, max_items=10)
+    categoryIds: list[str] = Field(default_factory=list)
+    radiusMeters: Literal[500, 1000, 2000] = 1000
+
+    @validator("rangesMinutes")
+    def validate_ranges(cls, value: list[int]) -> list[int]:
+        if any(not isinstance(item, int) or isinstance(item, bool) or item <= 0 for item in value):
+            raise ValueError("rangesMinutes 必须是正整数。")
+        if any(value[index] <= value[index - 1] for index in range(1, len(value))):
+            raise ValueError("rangesMinutes 必须严格升序且不能重复。")
+        return value
+
+    @validator("categoryIds")
+    def normalize_category_ids(cls, value: list[str]) -> list[str]:
+        return list(dict.fromkeys(item.strip() for item in value if item and item.strip()))
+
+
+class RingStatistics(BaseModel):
+    poiCount: int = Field(..., ge=0)
+
+
+class Ring(BaseModel):
+    ringId: str
+    innerRangeMinutes: int = Field(..., ge=0)
+    outerRangeMinutes: int = Field(..., gt=0)
+    geometry: Optional[dict] = None
+    statistics: RingStatistics
+
+
+class CumulativeIsochrone(BaseModel):
+    isochroneId: str
+    rangeMinutes: int = Field(..., gt=0)
+    rangeSeconds: int = Field(..., gt=0)
+    geometry: dict[str, Any]
+
+
+class NameCloudRequest(BaseModel):
+    schemaVersion: Literal["1.0"] = SCHEMA_VERSION
+    center: Center
+    profile: Profile
+    rangesMinutes: list[int] = Field(..., min_items=1, max_items=10)
+    categoryIds: list[str] = Field(default_factory=list)
+    cumulativeIsochrones: list[CumulativeIsochrone] = Field(..., min_items=1, max_items=10)
+
+    @validator("rangesMinutes")
+    def validate_ranges(cls, value: list[int]) -> list[int]:
+        if any(not isinstance(item, int) or isinstance(item, bool) or item <= 0 for item in value):
+            raise ValueError("rangesMinutes 必须是正整数。")
+        if any(value[index] <= value[index - 1] for index in range(1, len(value))):
+            raise ValueError("rangesMinutes 必须严格升序且不能重复。")
+        return value
+
+    @validator("categoryIds")
+    def normalize_category_ids(cls, value: list[str]) -> list[str]:
+        return list(dict.fromkeys(item.strip() for item in value if item and item.strip()))
+
+
+class Category(BaseModel):
+    categoryId: str
+    parentCategoryId: Optional[str] = None
+    label: str
+    level: int = Field(..., ge=1)
+    depth: int | None = Field(default=None, ge=0)
+    topLevelId: Optional[str] = None
+    isBasicCategory: bool = False
+    isLeafInResult: bool = False
+    childCategoryIds: list[str] = Field(default_factory=list)
+    matchedPoiCount: int = Field(default=0, ge=0)
+    returnedPoiCount: int = Field(default=0, ge=0)
+    ringCounts: dict[str, int] = Field(default_factory=dict)
+
+
+class Location(BaseModel):
+    lon: float = Field(..., ge=-180, le=180)
+    lat: float = Field(..., ge=-90, le=90)
+    crs: Literal["EPSG:4326"] = "EPSG:4326"
+
+
+class Poi(BaseModel):
+    poiId: str
+    datasetId: Optional[str] = None
+    source: str = "mock"
+    name: str
+    nameLocale: Optional[str] = None
+    location: Location
+    categoryId: Optional[str] = None
+    category: Optional[dict[str, Any]] = None
+    travelTimeSeconds: Optional[int] = None
+    ringId: str
+    confidence: Optional[float] = Field(default=None, ge=0, le=1)
+    address: Optional[str] = None
+    importance: Optional[float] = None
+
+
+class AnalysisSources(BaseModel):
+    isochrones: Literal["mock", "ors", "ors-public-api"]
+    pois: Literal["mock", "local-overture", "none", "ors-openpoiservice"]
+
+
+class AnalysisMetadata(BaseModel):
+    source: Literal["mock", "mixed", "ors"] = "mock"
+    sources: AnalysisSources
+    generatedAt: str
+    requestId: str
+    warnings: list[str] = Field(default_factory=list)
+    poiDataset: Optional[dict[str, Any]] = None
+    poiSelection: Optional[dict[str, Any]] = None
+    taxonomy: Optional[dict[str, Any]] = None
+    poiProvider: Optional[str] = None
+    poiCoverage: Optional[dict[str, Any]] = None
+    rateLimit: Optional[dict[str, Any]] = None
+    attribution: Optional[list[str]] = None
+    isochroneProvider: Optional[str] = None
+    isLive: Optional[bool] = None
+    cacheHit: Optional[bool] = None
+    featureCount: Optional[int] = Field(default=None, ge=0)
+    profile: Optional[str] = None
+    rangesSeconds: Optional[list[int]] = None
+    apiQuota: Optional[dict[str, Any]] = None
+    panmapMode: Optional[str] = None
+
+
+class AnalysisResult(BaseModel):
+    schemaVersion: Literal["1.0"] = SCHEMA_VERSION
+    analysisId: str
+    status: Literal["completed"] = "completed"
+    center: Center
+    profile: Profile
+    rangesMinutes: list[int]
+    cumulativeIsochrones: list[CumulativeIsochrone] = Field(default_factory=list)
+    rings: list[Ring] = Field(default_factory=list)
+    pois: list[Poi] = Field(default_factory=list)
+    categories: list[Category] = Field(default_factory=list)
+    nameCloud: Optional[dict[str, Any]] = None
+    metadata: AnalysisMetadata
+
+
+class ErrorDetail(BaseModel):
+    field: str
+    reason: str
+
+
+class ErrorPayload(BaseModel):
+    code: str
+    message: str
+    details: list[ErrorDetail] = Field(default_factory=list)
+    requestId: str
+
+
+class ErrorResponse(BaseModel):
+    error: ErrorPayload

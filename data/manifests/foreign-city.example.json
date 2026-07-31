@@ -1,0 +1,16 @@
+{
+  "datasetId": "overture-2026-07-22-foreign-city-example",
+  "source": "overture",
+  "sourceRelease": "2026-07-22.0",
+  "regionId": "foreign-city",
+  "displayName": "国外实验城市 Overture 离线 POI（待项目指定）",
+  "countryCode": "XX",
+  "preferredLocales": ["en"],
+  "crs": "EPSG:4326",
+  "bbox": [0.0, 0.0, 0.1, 0.1],
+  "defaultCenter": {"lon": 0.05, "lat": 0.05, "label": "待项目指定国外城市"},
+  "sourceFile": "data/raw/overture/2026-07-22.0/foreign-city/places.geoparquet",
+  "sha256": "待导入前计算",
+  "attribution": "Overture Maps Foundation",
+  "eligibility": {"minConfidence": null, "allowMissingConfidence": true, "excludePermanentlyClosed": true}
+}

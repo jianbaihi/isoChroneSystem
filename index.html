@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f7f9fc" />
     <title>IsoTagMap · 等时圈层标签云泛地图</title>
-    <link rel="stylesheet" href="./styles.css?v=20260726-force-kde5" />
+    <link rel="stylesheet" href="./styles.css?v=20260730-stage5ui4" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
   </head>
   <body>
     <div class="app-shell" id="appShell">
@@ -49,11 +50,11 @@
             <span class="nav-label">周边探索</span>
             <span class="nav-caret">⌄</span>
           </button>
-          <div class="secondary-nav" aria-label="周边探索子导航">
+            <div class="secondary-nav" aria-label="周边探索子导航">
             <div class="secondary-heading">可达域生成</div>
             <p>设定时空参数，生成分层可达域</p>
-            <div class="future-flow-label">后续流程</div>
-            <button class="secondary-item future" type="button" data-flow="poi"><span class="tiny-dot"></span>获取 POI</button>
+            <div class="future-flow-label">当前可用</div>
+            <button class="secondary-item future" type="button" data-flow="poi"><span class="tiny-dot"></span>附近 POI 预览</button>
             <button class="secondary-item future" type="button" data-flow="cluster"><span class="tiny-dot"></span>类别聚簇生成</button>
             <button class="secondary-item future" type="button" data-flow="panmap"><span class="tiny-dot"></span>生成泛地图</button>
           </div>
@@ -68,7 +69,7 @@
         <div class="rail-footer">
           <div class="workspace-user">
             <div class="avatar">刘</div>
-            <div class="workspace-copy"><span>当前项目</span><strong>北京 · 望京中心区</strong></div>
+                <div class="workspace-copy"><span>当前项目</span><strong>武汉 · 黄鹤楼</strong></div>
             <span class="workspace-arrow">⌄</span>
           </div>
         </div>
@@ -84,12 +85,15 @@
           <div class="map-toolbar panmap-toolbar" id="panmapToolbar">
             <div class="toolbar-group">
               <div class="toolbar-location-control">
-                <button type="button" class="toolbar-select toolbar-location-trigger" id="toolbarLocationButton" aria-expanded="false" aria-controls="locationSuggestPanel"><span class="toolbar-select-copy"><small>中心点选择</small><strong>望京广场，北京市朝阳区</strong></span><span class="toolbar-chevron">⌄</span></button>
+                <button type="button" class="toolbar-select toolbar-location-trigger" id="toolbarLocationButton" aria-expanded="false" aria-controls="locationSuggestPanel"><span class="toolbar-select-copy"><small>中心点选择</small><strong>武汉·黄鹤楼，武汉市武昌区</strong></span><span class="toolbar-chevron">⌄</span></button>
                 <div class="location-suggest-panel" id="locationSuggestPanel">
                   <div class="suggest-search"><span>⌕</span><input id="locationSearch" type="search" placeholder="搜索地点或地址" autocomplete="off" /></div>
-                  <button class="suggest-option" type="button" data-place="望京广场"><strong>望京广场</strong><span>北京市 · 朝阳区</span></button>
+                  <button class="suggest-option" type="button" data-place="武汉·黄鹤楼"><strong>武汉·黄鹤楼</strong><span>武汉市 · 武昌区</span></button>
+                  <button class="suggest-option" type="button" data-place="巴黎·埃菲尔铁塔"><strong>巴黎·埃菲尔铁塔</strong><span>法国 · 巴黎第七区</span></button>
+                  <button class="suggest-option" type="button" data-place="望京广场"><strong>望京广场</strong><span>历史样例 · 北京市朝阳区</span></button>
                   <button class="suggest-option" type="button" data-place="望京 SOHO"><strong>望京 SOHO</strong><span>北京市 · 朝阳区 · 阜通东大街</span></button>
                   <button class="suggest-option" type="button" data-place="望京站"><strong>望京站</strong><span>地铁 15 号线 · 14 号线</span></button>
+                  <div id="geocoderResults" class="geocoder-results" role="listbox" aria-label="地点搜索结果"></div>
                   <div class="suggest-actions"><button type="button" id="toolbarMapPick">⌖ 地图选点</button><span>点击地图任意位置设为中心点</span></div>
                 </div>
               </div>
@@ -99,8 +103,6 @@
                   <button type="button" class="toolbar-menu-option is-selected" data-transport="驾车"><span class="menu-option-icon">▰</span><span>驾车</span><i>✓</i></button>
                   <button type="button" class="toolbar-menu-option" data-transport="步行"><span class="menu-option-icon">♟</span><span>步行</span><i>✓</i></button>
                   <button type="button" class="toolbar-menu-option" data-transport="骑行"><span class="menu-option-icon">♧</span><span>骑行</span><i>✓</i></button>
-                  <button type="button" class="toolbar-menu-option" data-transport="公交"><span class="menu-option-icon">▥</span><span>公交</span><i>✓</i></button>
-                  <button type="button" class="toolbar-menu-option" data-transport="地铁"><span class="menu-option-icon">◎</span><span>地铁</span><i>✓</i></button>
                 </div>
               </div>
               <button type="button" class="toolbar-select toolbar-time-control" id="toolbarTimeButton" data-active-time="20" aria-label="切换当前时间圈层"><span class="toolbar-select-copy"><small>时间阈值</small><strong><span data-time-option="10">10</span><em>/</em><span class="is-active" data-time-option="20">20</span><em>/</em><span data-time-option="30">30</span> 分钟</strong></span><span class="toolbar-chevron">⌄</span></button>
@@ -120,9 +122,18 @@
                 </div>
               </div>
             </div>
+            <div class="category-breadcrumb" id="categoryBreadcrumb" aria-label="类别下钻路径"><button type="button" data-breadcrumb-index="0">类别概览</button></div>
             <button type="button" class="toolbar-generate" id="toolbarGenerate"><span class="toolbar-generate-label">重新生成可达域</span><span class="toolbar-generate-arrow">→</span></button>
           </div>
           <div class="topbar-actions">
+            <div class="quota-control">
+              <button class="quota-button" id="quotaButton" type="button" aria-expanded="false" aria-controls="quotaPanel"><span class="quota-dot"></span><span>API 余量</span><strong id="quotaSummary">未知</strong></button>
+              <div class="quota-panel" id="quotaPanel" hidden>
+                <div class="quota-panel-heading"><strong>API 余量</strong><span>每日配额最近观测值</span></div>
+                <div class="quota-table" id="quotaTable" aria-live="polite"></div>
+                <p class="quota-note" id="quotaNote">仅随正常 ORS 请求更新，不发送余额探测请求。</p>
+              </div>
+            </div>
             <button class="ghost-button" id="helpButton" type="button"><span class="help-mark">?</span>使用提示</button>
             <button class="icon-button" aria-label="更多操作" type="button">•••</button>
           </div>
@@ -133,9 +144,16 @@
             <div class="panel-scroll">
               <section class="config-section" id="centerPoint">
                 <div class="section-title-row"><div><span class="section-kicker">定位起点</span><h2>中心点</h2></div><span class="complete-check">✓</span></div>
-                <div class="location-input"><span class="input-icon">⌖</span><strong>望京广场</strong><span class="location-sub">北京市 · 朝阳区</span><button type="button" class="clear-input" aria-label="清除中心点">×</button></div>
-                <div class="coordinate-row"><span>坐标（WGS84）</span><strong>39.9953° N, 116.4768° E</strong><button class="copy-button" aria-label="复制坐标" type="button">▣</button></div>
-                <div class="compact-actions"><button type="button" class="mini-action">◉ 使用当前位置</button><button type="button" class="mini-action">⌖ 地图选点</button></div>
+                <div class="location-input location-search-box" id="centerSearchBox"><span class="input-icon">⌕</span><input id="centerSearchInput" type="search" placeholder="搜索地点或地址" autocomplete="off" aria-label="搜索地点或地址" /><button type="button" class="clear-input" id="centerSearchClear" aria-label="清除地点搜索">×</button></div>
+                <div class="center-location-selection" aria-live="polite"><span class="input-icon">⌖</span><div><strong id="selectedCenterName">武汉·黄鹤楼</strong><span class="location-sub" id="selectedCenterDistrict">武汉市 · 武昌区</span></div></div>
+                <div class="location-suggest-panel center-location-panel" id="centerLocationSuggestPanel">
+                  <div class="suggest-heading">推荐地点</div>
+                  <button class="suggest-option center-suggest-option" type="button" data-place="武汉·黄鹤楼"><strong>武汉·黄鹤楼</strong><span>武汉市 · 武昌区</span></button>
+                  <button class="suggest-option center-suggest-option" type="button" data-place="巴黎·埃菲尔铁塔"><strong>巴黎·埃菲尔铁塔</strong><span>法国 · 巴黎第七区</span></button>
+                  <div id="centerGeocoderResults" class="geocoder-results" role="listbox" aria-label="中心点搜索结果"></div>
+                </div>
+                <div class="coordinate-row"><span>坐标（WGS84）</span><strong>30.5469° N, 114.2969° E</strong><button class="copy-button" aria-label="复制坐标" type="button">▣</button></div>
+                <div class="compact-actions"><button type="button" class="mini-action" id="useCurrentLocationButton">◉ 使用当前位置</button><button type="button" class="mini-action" id="centerMapPickButton">⌖ 地图选点</button></div>
               </section>
 
               <section class="config-section" id="transport">
@@ -144,8 +162,6 @@
                   <button class="mode-chip" type="button" data-mode="walk"><span>♟</span>步行</button>
                   <button class="mode-chip" type="button" data-mode="bike"><span>♧</span>骑行</button>
                   <button class="mode-chip is-selected" type="button" data-mode="car"><span>▰</span>驾车</button>
-                  <button class="mode-chip" type="button" data-mode="bus"><span>▥</span>公交</button>
-                  <button class="mode-chip" type="button" data-mode="metro"><span>◎</span>地铁</button>
                 </div>
               </section>
 
@@ -153,18 +169,19 @@
                 <div class="section-title-row"><div><span class="section-kicker">可达范围</span><h2>时间阈值</h2></div><span class="multi-label">可多选</span></div>
                 <div class="threshold-list" id="thresholdList">
                   <div class="threshold-item" data-threshold="10" data-color="#35A866">
-                    <label class="threshold-select"><input type="checkbox" checked /><span class="custom-checkbox"></span></label><span class="threshold-color"></span><strong>10 分钟</strong><div class="time-input"><input type="number" value="10" min="1" max="180" aria-label="10 分钟阈值" /><em>分钟</em></div><span class="stepper"><button type="button" data-step="down">−</button><button type="button" data-step="up">＋</button></span><button type="button" class="threshold-visibility is-visible" aria-label="隐藏 10 分钟圈层">◉</button><button type="button" class="threshold-delete" aria-label="删除 10 分钟阈值">×</button>
+                    <button type="button" class="threshold-select threshold-visibility is-visible" aria-label="隐藏 10 分钟圈层" aria-pressed="true">◉</button><span class="threshold-color"></span><strong>10 分钟</strong><div class="time-input"><input type="number" value="10" min="1" max="60" aria-label="10 分钟阈值" /><em>分钟</em></div><span class="stepper"><button type="button" data-step="down">−</button><button type="button" data-step="up">＋</button></span><button type="button" class="threshold-delete" aria-label="删除 10 分钟阈值">×</button>
                   </div>
                   <div class="threshold-item" data-threshold="20" data-color="#2878EF">
-                    <label class="threshold-select"><input type="checkbox" checked /><span class="custom-checkbox"></span></label><span class="threshold-color"></span><strong>20 分钟</strong><div class="time-input"><input type="number" value="20" min="1" max="180" aria-label="20 分钟阈值" /><em>分钟</em></div><span class="stepper"><button type="button" data-step="down">−</button><button type="button" data-step="up">＋</button></span><button type="button" class="threshold-visibility is-visible" aria-label="隐藏 20 分钟圈层">◉</button><button type="button" class="threshold-delete" aria-label="删除 20 分钟阈值">×</button>
+                    <button type="button" class="threshold-select threshold-visibility is-visible" aria-label="隐藏 20 分钟圈层" aria-pressed="true">◉</button><span class="threshold-color"></span><strong>20 分钟</strong><div class="time-input"><input type="number" value="20" min="1" max="60" aria-label="20 分钟阈值" /><em>分钟</em></div><span class="stepper"><button type="button" data-step="down">−</button><button type="button" data-step="up">＋</button></span><button type="button" class="threshold-delete" aria-label="删除 20 分钟阈值">×</button>
                   </div>
                   <div class="threshold-item" data-threshold="30" data-color="#F28C22">
-                    <label class="threshold-select"><input type="checkbox" checked /><span class="custom-checkbox"></span></label><span class="threshold-color"></span><strong>30 分钟</strong><div class="time-input"><input type="number" value="30" min="1" max="180" aria-label="30 分钟阈值" /><em>分钟</em></div><span class="stepper"><button type="button" data-step="down">−</button><button type="button" data-step="up">＋</button></span><button type="button" class="threshold-visibility is-visible" aria-label="隐藏 30 分钟圈层">◉</button><button type="button" class="threshold-delete" aria-label="删除 30 分钟阈值">×</button>
+                    <button type="button" class="threshold-select threshold-visibility is-visible" aria-label="隐藏 30 分钟圈层" aria-pressed="true">◉</button><span class="threshold-color"></span><strong>30 分钟</strong><div class="time-input"><input type="number" value="30" min="1" max="60" aria-label="30 分钟阈值" /><em>分钟</em></div><span class="stepper"><button type="button" data-step="down">−</button><button type="button" data-step="up">＋</button></span><button type="button" class="threshold-delete" aria-label="删除 30 分钟阈值">×</button>
                   </div>
                 </div>
+                <div class="time-quick-list" id="timeQuickList" aria-label="常用时间阈值"><span>快捷：</span><button type="button" data-quick-minutes="5">5</button><button type="button" data-quick-minutes="10">10</button><button type="button" data-quick-minutes="15">15</button><button type="button" data-quick-minutes="20">20</button><button type="button" data-quick-minutes="30">30</button><button type="button" data-quick-minutes="45">45</button><button type="button" data-quick-minutes="60">60</button></div>
                 <button class="add-threshold" id="addThresholdButton" type="button">＋ 添加时间阈值</button>
                 <div class="threshold-add-popover" id="thresholdAddPopover">
-                  <label>新增时间阈值<input id="newThresholdInput" type="number" min="1" max="180" value="45" /><span>分钟</span></label><button id="confirmThresholdButton" type="button">添加</button>
+                  <label>新增时间阈值<input id="newThresholdInput" type="number" min="1" max="60" value="45" /><span>分钟</span></label><button id="confirmThresholdButton" type="button">添加</button>
                 </div>
               </section>
 
@@ -183,14 +200,25 @@
                 </div>
               </section>
 
+              <section class="config-section stage5-data-section" id="stage5Data">
+                <div class="section-title-row"><div><span class="section-kicker">统一 Overture Places</span><h2>离线 POI 数据集</h2></div><span class="multi-label" id="poiDatasetStatus">未加载</span></div>
+                <label class="dataset-select-label" for="poiDatasetSelect">研究区域数据集</label>
+                <select id="poiDatasetSelect" class="dataset-select"><option value="">使用当前分析模式</option></select>
+                <p class="dataset-help" id="datasetHelp">应用运行时只读取本地 SQLite；未就绪时不会回退到其他 POI 来源。</p>
+                <div class="basemap-switcher" role="group" aria-label="传统地图底图"><span>底图</span><button type="button" data-basemap="osm-standard" class="is-selected">OSM</button><button type="button" data-basemap="tianditu-vector" disabled>天地图</button></div>
+              </section>
+
               <section class="config-section advanced-section" id="advanced">
                 <button class="advanced-toggle" type="button"><span><span class="advanced-dot"></span>高级可达域选项</span><span>⌄</span></button>
               </section>
             </div>
             <div class="panel-actions">
-              <button class="generate-button" id="generateButton" type="button"><span class="play-icon">▶</span><span>生成可达域</span><span class="button-arrow">→</span></button>
-              <button class="poi-explore-button" id="poiExploreButton" type="button"><span class="sparkle">✦</span><span>探索周边 POIs</span><span class="button-arrow">→</span></button>
-              <div class="progress-note"><span class="progress-line"></span><span>参数就绪 · 可生成 3 层等时圈</span></div>
+              <button class="generate-button" id="generateButton" type="button"><span class="play-icon">▶</span><span class="generate-button-label">生成可达域</span><span class="button-arrow">→</span></button>
+              <div class="poi-preview-row"><label for="poiPreviewRadius">附近 POI 预览</label><select id="poiPreviewRadius"><option value="500">500 m</option><option value="1000" selected>1000 m</option><option value="2000">2000 m</option></select></div>
+              <button class="poi-explore-button" id="poiExploreButton" type="button"><span class="sparkle">✦</span><span class="poi-explore-label">加载附近 POI 预览</span><span class="button-arrow">→</span></button>
+              <button class="name-cloud-button" id="nameCloudButton" type="button" disabled><span class="name-cloud-icon">✦</span><span class="name-cloud-button-label">生成步行名称云</span><span class="button-arrow">→</span></button>
+              <div class="name-cloud-stats" id="nameCloudStats" aria-live="polite">名称云需先生成黄鹤楼步行 10/20/30 分钟真实等时圈</div>
+              <div class="progress-note"><span class="progress-line"></span><span id="analysisStatusCopy">快速等时圈默认不请求 POI · 可单独加载预览</span></div>
             </div>
           </aside>
 
@@ -208,7 +236,11 @@
                   </svg>
                 </button>
               </div>
-              <svg class="map-art" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" aria-label="望京区域等时圈地图">
+              <div class="traditional-map-shell" id="traditionalMapShell">
+                <div id="traditionalMap" class="traditional-map" aria-label="MapLibre 传统地图"></div>
+                <div id="traditionalMapStatus" class="map-status" role="status" aria-live="polite"></div>
+              </div>
+              <svg class="map-art" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" aria-label="武汉·黄鹤楼区域等时圈地图">
                 <defs>
                   <linearGradient id="mapWash" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f3f7f5"/><stop offset="1" stop-color="#eaf0f5"/></linearGradient>
                   <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="7" stdDeviation="10" flood-color="#3d6f81" flood-opacity=".17"/></filter>
@@ -253,14 +285,14 @@
                   <path d="M0 0c-13-29-28-37-28-56a28 28 0 1 1 56 0C28-37 13-29 0 0Z" fill="#f14d57" stroke="white" stroke-width="5"/>
                   <circle cy="-56" r="8.5" fill="white"/>
                   <rect x="-51" y="9" width="102" height="29" rx="14.5" fill="white"/>
-                  <text x="0" y="29" text-anchor="middle" fill="#25364c" font-size="14" font-family="-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif" font-weight="600">望京广场</text>
+                  <text x="0" y="29" text-anchor="middle" fill="#25364c" font-size="14" font-family="-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif" font-weight="600">武汉·黄鹤楼</text>
                 </g>
                 <g transform="translate(778 555)">
-                  <rect x="0" y="0" width="154" height="27" rx="13.5" fill="white" fill-opacity=".92"/><text x="14" y="18" fill="#667685" font-size="12" font-family="sans-serif">望京 SOHO · 1.4 km</text>
+                  <rect x="0" y="0" width="154" height="27" rx="13.5" fill="white" fill-opacity=".92"/><text x="14" y="18" fill="#667685" font-size="12" font-family="sans-serif">武汉长江大桥 · 1.4 km</text>
                 </g>
               </svg>
 
-              <svg class="panmap-art focus-layer-20" viewBox="0 0 1850 980" preserveAspectRatio="xMidYMid meet" aria-label="望京广场三层密度场标签云泛地图">
+              <svg class="panmap-art focus-layer-20" viewBox="0 0 1850 980" preserveAspectRatio="xMidYMid meet" aria-label="武汉·黄鹤楼三层密度场标签云泛地图">
                 <defs>
                   <radialGradient id="panmapCanvas" cx="49%" cy="48%" r="68%"><stop offset="0" stop-color="#fff"/><stop offset=".72" stop-color="#fdfdfc"/><stop offset="1" stop-color="#f8f8f7"/></radialGradient>
                   <linearGradient id="cellShop" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd7dc"/><stop offset="1" stop-color="#fff3f4"/></linearGradient>
@@ -551,11 +583,11 @@
                     <g class="organic-layer-chip" data-layer-target="10" role="button" aria-label="聚焦10分钟圈层" transform="translate(650 416)"><rect width="100" height="40" rx="20"/><text x="50" y="26">10分钟</text></g>
                   </g>
 
-                  <g class="organic-center" aria-label="中心点望京广场">
+                  <g class="organic-center" aria-label="中心点武汉·黄鹤楼">
                     <circle cx="700" cy="550" r="57" fill="#eef5e5" stroke="#fff" stroke-width="4"/>
                     <circle cx="700" cy="550" r="54" fill="url(#centerHex)"/>
                     <g transform="translate(700 543)" filter="url(#pinShadow)"><path d="M0 24c-11-19-22-31-22-46a22 22 0 1 1 44 0C22-7 11 5 0 24Z" fill="#e7474f" stroke="#fff" stroke-width="4"/><circle cy="-22" r="7" fill="#fff"/></g>
-                    <text x="700" y="590">望京广场</text>
+                    <text x="700" y="590">武汉·黄鹤楼</text>
                   </g>
                 </g>
 
@@ -580,7 +612,7 @@
                   <path d="M0 25c-12-20-23-32-23-48a23 23 0 1 1 46 0C23-7 12 5 0 25Z" fill="#e83f47" stroke="#fff" stroke-width="4"/>
                   <circle cy="-23" r="7" fill="#fff"/>
                 </g>
-                <text class="center-label" x="654" y="578">望京广场</text>
+                <text class="center-label" x="654" y="578">武汉·黄鹤楼</text>
               </svg>
 
               <div class="map-controls" aria-label="地图缩放控制">
@@ -596,19 +628,29 @@
                 <span><i class="legend-line orange"></i>30 分钟圈层</span>
               </div>
               <aside class="panmap-overview density-overview" aria-label="当前泛地图概览">
-                <div class="overview-heading"><strong id="overviewHeading">当前概览（20分钟）</strong><div><span>ⓘ</span><button type="button" id="overviewToggle" aria-label="收起详情" aria-expanded="true">⌃</button></div></div>
+                <div class="overview-heading"><strong id="overviewHeading">当前概览（未生成）</strong><div><span>ⓘ</span><button type="button" id="overviewToggle" aria-label="收起详情" aria-expanded="true">⌃</button></div></div>
                 <div class="overview-body" id="overviewBody">
-                  <div class="overview-total"><div><small>POI 总数</small><strong id="overviewPoiTotal">11,842</strong></div><div><small>覆盖面积</small><b id="overviewArea">约 72.6 km²</b></div></div>
+                  <div class="overview-total"><div><small>POI 总数</small><strong id="overviewPoiTotal">0</strong></div><div><small>覆盖面积</small><b id="overviewArea">待生成</b></div></div>
                   <div class="overview-section category-stat"><strong>各类别 POI 数量</strong><div><span><i style="--overview-color:#F2A12C"></i>餐饮美食</span><b>2,689</b></div><div><span><i style="--overview-color:#ED6C8C"></i>购物商场</span><b>2,214</b></div><div><span><i style="--overview-color:#4E9AEA"></i>交通设施</span><b>1,742</b></div><div><span><i style="--overview-color:#49B4A6"></i>生活服务</span><b>1,638</b></div><div><span><i style="--overview-color:#A978DC"></i>酒店住宿</span><b>1,271</b></div><div><span><i style="--overview-color:#9C75D7"></i>教育培训</span><b>972</b></div><div><span><i style="--overview-color:#E5A73D"></i>景点休闲</span><b>761</b></div><div><span><i style="--overview-color:#EB7B9C"></i>医疗健康</span><b>377</b></div><div><span><i style="--overview-color:#EF875E"></i>休闲娱乐</span><b>178</b></div></div>
                   <div class="overview-section overview-share"><strong>比例分布</strong><div class="share-chart"><div class="share-donut" aria-label="类别比例环形图"></div><div class="share-legend"><span><i style="--overview-color:#F2A12C"></i>餐饮 22.7%</span><span><i style="--overview-color:#ED6C8C"></i>购物 18.7%</span><span><i style="--overview-color:#4E9AEA"></i>交通 14.7%</span><span><i style="--overview-color:#49B4A6"></i>服务 13.8%</span><span><i style="--overview-color:#A978DC"></i>酒店 10.7%</span></div></div></div>
+                  <div class="overview-section name-cloud-overview" id="nameCloudOverview" hidden>
+                    <strong>未分类名称云</strong>
+                    <p>颜色表示步行可达时间，不表示 POI 类别。</p>
+                    <p>本版标签字号不表示 POI 重要性。</p>
+                    <dl>
+                      <div><dt>已显示</dt><dd id="overviewNameCloudPlaced">0</dd></div>
+                      <div><dt>未显示</dt><dd id="overviewNameCloudUnplaced">0</dd></div>
+                      <div><dt>具名 POI</dt><dd id="overviewNameCloudNamed">0</dd></div>
+                    </dl>
+                  </div>
                   <button type="button" class="overview-detail">查看详情</button>
                 </div>
               </aside>
               <div class="map-scale"><span>0</span><span>1</span><span>2</span><span>3 km</span><div class="scale-bar"><i></i><i></i><i></i></div></div>
 
               <div class="result-card" id="resultCard">
-                <div class="result-title-row"><span class="result-icon">⌁</span><strong>预计结果</strong><span class="status-pill">已就绪</span></div>
-                <div class="result-stats"><div><strong>3</strong><span>个时间圈层</span></div><div><strong>8,426</strong><span>个 POI</span></div><div><strong>9</strong><span>个一级类别</span></div></div>
+                <div class="result-title-row"><span class="result-icon">⌁</span><strong>分析结果</strong><span class="status-pill" id="resultStatusPill">待生成</span></div>
+                <div class="result-stats"><div><strong id="resultRingCount">0</strong><span>个时间圈层</span></div><div><strong id="resultPoiCount">0</strong><span>个 POI</span></div><div><strong id="resultCategoryCount">0</strong><span>个一级类别</span></div></div>
                 <button type="button" class="enter-panmap" id="enterPanmap">进入泛地图探索 <span>→</span></button>
               </div>
 
@@ -624,7 +666,7 @@
                     <path d="M185 44c42-31 106-27 139 8 28 30 22 74 58 101-15 47-49 67-87 69-31 2-57 28-106 12-37-12-38-52-73-70-29-16-31-64-12-89 16-24 26-17 81-31Z" fill="#4f8cf7" fill-opacity=".14" stroke="#2779ef" stroke-width="2" stroke-dasharray="7 6"/>
                     <path d="M204 78c26-22 70-23 98-4 29 20 18 47 45 68-12 30-34 46-63 45-24-1-34 23-64 6-25-12-20-40-39-57-18-18-1-44 23-58Z" fill="#4bb878" fill-opacity=".18" stroke="#18a354" stroke-width="2" stroke-dasharray="6 5"/>
                     <g transform="translate(263 138)"><path d="M0 0c-7-16-15-20-15-30a15 15 0 1 1 30 0C15-20 7-16 0 0Z" fill="#f14d57" stroke="white" stroke-width="3"/><circle cy="-30" r="4.5" fill="white"/></g>
-                    <rect x="225" y="151" width="76" height="19" rx="9.5" fill="white"/><text x="263" y="164" text-anchor="middle" fill="#54677f" font-size="9" font-family="sans-serif">望京广场</text>
+                    <rect x="225" y="151" width="76" height="19" rx="9.5" fill="white"/><text x="263" y="164" text-anchor="middle" fill="#54677f" font-size="9" font-family="sans-serif">武汉·黄鹤楼</text>
                   </svg>
                   <div class="mini-map-controls" aria-label="传统地图控制"><button type="button" data-mini-map-action="zoom-in">＋</button><button type="button" data-mini-map-action="zoom-out">−</button><button type="button" data-mini-map-action="locate">⌾</button></div>
                   <div class="mini-layer-legend"><span><i class="mini-green"></i>10分钟</span><span><i class="mini-blue"></i>20分钟</span><span><i class="mini-purple"></i>30分钟</span></div>
@@ -644,7 +686,21 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="./panmap-layout.js?v=20260726-force-kde4"></script>
-    <script src="./app.js?v=20260726-force-kde5"></script>
+    <script src="./src/config/center-presets.js?v=20260730-stage5live"></script>
+    <script src="./src/config/app-config.js?v=20260730-stage5ui"></script>
+    <script src="./src/config/category-labels.js?v=20260728-stage5a"></script>
+    <script src="./src/config/map-config.js?v=20260728-stage5a"></script>
+    <script src="./src/contracts/analysis-contracts.js?v=20260730-stage5ui"></script>
+    <script src="./src/taxonomy/category-tree.js?v=20260728-stage5a"></script>
+    <script src="./src/state/analysis-store.js?v=20260730-stage5ui"></script>
+    <script src="./src/api/analysis-client.js?v=20260730-stage5namecloud1"></script>
+    <script src="./src/adapters/panmap-layout-adapter.js?v=20260730-stage5namecloud1"></script>
+    <script src="./src/map/analysis-map-geojson.js?v=20260727-stage4a"></script>
+    <script src="./src/map/analysis-poi-geojson.js?v=20260728-stage5a"></script>
+    <script src="./src/adapters/traditional-map-adapter.js?v=20260727-stage4b"></script>
+    <script src="./panmap-layout.js?v=20260730-stage5namecloud1"></script>
+    <script src="./app.js?v=20260730-stage5namecloud3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+    <script src="./src/map/maplibre-loader.js?v=20260727-stage4b"></script>
   </body>
 </html>

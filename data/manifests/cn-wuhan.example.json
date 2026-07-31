@@ -1,0 +1,16 @@
+{
+  "datasetId": "overture-2026-07-22-cn-wuhan-example",
+  "source": "overture",
+  "sourceRelease": "2026-07-22.0",
+  "regionId": "cn-wuhan",
+  "displayName": "武汉 Overture 离线 POI（待研究范围确认）",
+  "countryCode": "CN",
+  "preferredLocales": ["zh-CN", "zh-Hans", "zh", "en"],
+  "crs": "EPSG:4326",
+  "bbox": [113.7, 30.3, 114.8, 31.1],
+  "defaultCenter": {"lon": 114.342, "lat": 30.584, "label": "武汉研究区（示例中心）"},
+  "sourceFile": "data/raw/overture/2026-07-22.0/cn-wuhan/places.geoparquet",
+  "sha256": "待导入前计算",
+  "attribution": "Overture Maps Foundation",
+  "eligibility": {"minConfidence": null, "allowMissingConfidence": true, "excludePermanentlyClosed": true}
+}

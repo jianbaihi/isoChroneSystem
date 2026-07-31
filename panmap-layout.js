@@ -4,7 +4,7 @@
   const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
   let revision = 0;
 
-  const layers = [
+  const fallbackLayers = [
     {
       time: 10,
       targetRadius: 92,
@@ -159,6 +159,7 @@
         category,
         label: category.parent.label,
         count: category.parent.count,
+        poiIds: category.parent.poiIds || [],
         level: 1,
         r: category.parent.radius,
         x: CENTER.x + Math.cos(categoryAngle) * targetRadius,
@@ -170,14 +171,21 @@
       };
       nodes.push(parent);
 
-      category.children.forEach(([label, radius], childIndex) => {
+      category.children.forEach((childSpec, childIndex) => {
+        const [label, radius, poiIds] = Array.isArray(childSpec)
+          ? [childSpec[0], childSpec[1], childSpec[2] || []]
+          : [childSpec.label, childSpec.radius, childSpec.poiIds || []];
         const fan = categoryAngle + (childIndex - (category.children.length - 1) / 2) * 0.62 + GOLDEN_ANGLE * 0.08;
         const desired = parent.r + radius + 5;
         nodes.push({
-          id: `${layer.time}-${categoryIndex}-${childIndex}`,
+          id: `${layer.time}-${category.categoryId || category.name}-${childIndex}`,
           layer: layer.time,
           category,
+          categoryId: childSpec.categoryId || category.categoryId,
+          categoryPath: childSpec.categoryPath || category.categoryPath || [],
+          hasChildren: Boolean(childSpec.hasChildren),
           label,
+          poiIds,
           level: childIndex < Math.ceil(category.children.length * 0.58) ? 2 : 3,
           r: radius,
           x: parent.x + Math.cos(fan) * desired,
@@ -428,12 +436,20 @@
     const group = svgElement('g', {
       class: 'category-cluster dynamic-category-cluster',
       'data-category': category.name,
+      'data-category-id': category.categoryId || category.name,
+      'data-ring-id': category.ringId || layerGroup.dataset.ringId || '',
       style: `--cluster-fill:${category.color};--cluster-text:${category.text}`,
     });
     nodes.filter((node) => node.category === category).forEach((node) => {
       const bubble = svgElement('g', {
         class: `force-bubble force-bubble-level-${node.level}`,
         'data-bubble-id': node.id,
+        'data-category-id': node.categoryId || category.categoryId || category.name,
+        'data-ring-id': category.ringId || layerGroup.dataset.ringId || '',
+        'data-category-path': (node.categoryPath || category.categoryPath || []).join(','),
+        'data-has-children': node.hasChildren ? 'true' : 'false',
+        'data-poi-id': node.level === 1 || node.hasChildren ? '' : (node.poiIds?.[0] || ''),
+        'data-poi-ids': (node.poiIds || []).join(','),
       });
       const path = svgElement('path', {
         class: `hierarchy-node level-${node.level}`,
@@ -485,6 +501,7 @@
     const layerGroup = svgElement('g', {
       class: `organic-time-layer organic-layer-${layer.time} dynamic-time-layer`,
       'data-time-layer': layer.time,
+      'data-ring-id': layer.ringId || `ring-0-${layer.time}`,
     });
     layerGroup.appendChild(svgElement('path', {
       class: 'kde-layer-fill',
@@ -515,15 +532,131 @@
     organicMap.appendChild(layerGroup);
   }
 
-  function renderCenter(organicMap) {
-    const center = svgElement('g', { class: 'organic-center', 'aria-label': '中心点望京广场' });
+  function nameCloudContour(radius) {
+    const sampleCount = 120;
+    const points = [];
+    for (let index = 0; index < sampleCount; index += 1) {
+      const angle = index / sampleCount * Math.PI * 2;
+      points.push([CENTER.x + Math.cos(angle) * radius, CENTER.y + Math.sin(angle) * radius]);
+    }
+    return { radii: Array(sampleCount).fill(radius), points, path: catmullRomClosed(points) };
+  }
+
+  function measureNameCloudLabel(label) {
+    const canvas = measureNameCloudLabel.canvas || (measureNameCloudLabel.canvas = document.createElement('canvas'));
+    const context = canvas.getContext('2d');
+    if (!context) return { width: Math.max(28, String(label).length * 14), height: 24 };
+    context.font = '600 13px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif';
+    return { width: Math.max(30, Math.ceil(context.measureText(String(label)).width) + 14), height: 24 };
+  }
+
+  function rectanglesOverlap(left, right, gap = 5) {
+    return !(left.right + gap <= right.left || right.right + gap <= left.left || left.bottom + gap <= right.top || right.bottom + gap <= left.top);
+  }
+
+  function layoutNameCloudLayer(layer, previousContour) {
+    const labels = [...(layer.labels || [])].sort((left, right) => {
+      const sizeDelta = measureNameCloudLabel(right.label).width - measureNameCloudLabel(left.label).width;
+      return sizeDelta || left.poiId.localeCompare(right.poiId);
+    });
+    const placed = [];
+    const unplaced = [];
+    const innerFor = (angle) => previousContour ? polarRadius(previousContour, angle) + 18 : 72;
+    labels.forEach((label, labelIndex) => {
+      const size = measureNameCloudLabel(label.label);
+      let found = null;
+      for (let candidateIndex = 0; candidateIndex < 720; candidateIndex += 1) {
+        const angle = (candidateIndex * GOLDEN_ANGLE + labelIndex * 0.19) % (Math.PI * 2);
+        const ratio = ((candidateIndex % 48) + 1) / 49;
+        const distance = Math.sqrt((innerFor(angle) ** 2) * (1 - ratio) + (layer.maxRadius - 14) ** 2 * ratio);
+        const x = CENTER.x + Math.cos(angle) * distance;
+        const y = CENTER.y + Math.sin(angle) * distance;
+        const rect = { left: x - size.width / 2, right: x + size.width / 2, top: y - size.height / 2, bottom: y + size.height / 2 };
+        const radial = Math.hypot(x - CENTER.x, y - CENTER.y);
+        const radius = Math.max(size.width, size.height) / 2;
+        if (radial - radius < innerFor(angle) || radial + radius > layer.maxRadius - 10) continue;
+        if (placed.some((node) => rectanglesOverlap(rect, node.rect))) continue;
+        found = { ...label, x, y, width: size.width, height: size.height, r: radius, rect };
+        break;
+      }
+      if (found) placed.push(found);
+      else unplaced.push(label);
+    });
+    return { placed, unplaced, contour: nameCloudContour(layer.maxRadius) };
+  }
+
+  function renderNameCloudLayer(organicMap, layer, layout) {
+    const layerGroup = svgElement('g', {
+      class: `organic-time-layer organic-layer-${layer.time} dynamic-time-layer name-cloud-time-layer`,
+      'data-time-layer': layer.time,
+      'data-ring-id': layer.ringId || `ring-0-${layer.time}`,
+      'data-name-cloud-band': `${layer.time}`,
+    });
+    layerGroup.appendChild(svgElement('path', {
+      class: 'kde-layer-fill name-cloud-band-fill',
+      d: layout.contour.path,
+      fill: layer.fill,
+      stroke: layer.stroke,
+      'stroke-width': 2,
+    }));
+    layout.placed.forEach((node) => {
+      const bubble = svgElement('g', {
+        class: 'force-bubble name-cloud-label',
+        'data-bubble-id': `name-cloud-${node.poiId}`,
+        'data-poi-id': node.poiId,
+        'data-poi-ids': node.poiId,
+        'data-ring-id': layer.ringId || '',
+        'data-category-id': '',
+        'data-has-children': 'false',
+        transform: `translate(${node.x.toFixed(1)} ${node.y.toFixed(1)})`,
+      });
+      bubble.appendChild(svgElement('rect', {
+        class: 'name-cloud-label-bg',
+        x: (-node.width / 2).toFixed(1),
+        y: (-node.height / 2).toFixed(1),
+        width: node.width,
+        height: node.height,
+        rx: 12,
+      }));
+      const text = svgElement('text', { class: 'name-cloud-label-text', x: 0, y: 4, fill: layer.text });
+      text.textContent = node.label;
+      bubble.appendChild(text);
+      const title = svgElement('title');
+      title.textContent = `${node.label} · ${layer.time} 分钟圈层`;
+      bubble.appendChild(title);
+      layerGroup.appendChild(bubble);
+    });
+    layerGroup.appendChild(svgElement('path', {
+      class: 'density-boundary kde-density-boundary name-cloud-boundary',
+      d: layout.contour.path,
+      'data-density-source': 'deterministic-name-cloud-band',
+    }));
+    const top = contourTopPoint(layout.contour);
+    const chip = svgElement('g', {
+      class: 'organic-layer-chip',
+      'data-layer-target': layer.time,
+      role: 'button',
+      'aria-label': `${layer.time}分钟名称云圈层，已显示${layout.placed.length}个，未显示${layout.unplaced.length}个`,
+      transform: `translate(${(top[0] - 50).toFixed(1)} ${(top[1] - 20).toFixed(1)})`,
+    });
+    chip.appendChild(svgElement('rect', { width: 100, height: 40, rx: 20 }));
+    const chipText = svgElement('text', { x: 50, y: 26 });
+    chipText.textContent = `${layer.time}分钟`;
+    chip.appendChild(chipText);
+    layerGroup.appendChild(chip);
+    organicMap.appendChild(layerGroup);
+  }
+
+  function renderCenter(organicMap, centerLabel = '未生成') {
+    const labelText = String(centerLabel || '未生成');
+    const center = svgElement('g', { class: 'organic-center', 'aria-label': `中心点${labelText}` });
     center.appendChild(svgElement('circle', { cx: CENTER.x, cy: CENTER.y, r: 57, fill: '#eef5e5', stroke: '#fff', 'stroke-width': 4 }));
     center.appendChild(svgElement('circle', { cx: CENTER.x, cy: CENTER.y, r: 54, fill: 'url(#centerHex)' }));
     const pin = svgElement('g', { transform: `translate(${CENTER.x} ${CENTER.y - 7})`, filter: 'url(#pinShadow)' });
     pin.innerHTML = '<path d="M0 24c-11-19-22-31-22-46a22 22 0 1 1 44 0C22-7 11 5 0 24Z" fill="#e7474f" stroke="#fff" stroke-width="4"/><circle cy="-22" r="7" fill="#fff"/>';
     center.appendChild(pin);
     const label = svgElement('text', { x: CENTER.x, y: CENTER.y + 40 });
-    label.textContent = '望京广场';
+    label.textContent = labelText;
     center.appendChild(label);
     organicMap.appendChild(center);
   }
@@ -554,16 +687,73 @@
     return minimum;
   }
 
-  function buildOrganicPanmap(options = {}) {
+  function normalizeLayers(input) {
+    if (!Array.isArray(input) || input.length === 0) return null;
+    const isValid = input.every((layer) => {
+      if (!layer || !Number.isFinite(Number(layer.time)) || Number(layer.time) <= 0) return false;
+      if (layer.mode === 'unclassified-poi-name-cloud') return Array.isArray(layer.labels);
+      return Array.isArray(layer.categories) && layer.categories.every((category) => category && Array.isArray(category.children));
+    });
+    return isValid ? input : null;
+  }
+
+  let lastValidLayers = fallbackLayers;
+
+  function buildOrganicPanmap(input = fallbackLayers) {
     const organicMap = document.querySelector('.organic-map');
     if (!organicMap) return null;
+    const options = Array.isArray(input) ? {} : (input || {});
+    const requestedLayers = Array.isArray(input) ? input : (Array.isArray(options.layers) ? options.layers : lastValidLayers);
+    const nextLayers = normalizeLayers(requestedLayers);
+    if (!nextLayers) {
+      window.panmapLayoutError = { code: 'INVALID_LAYOUT_INPUT', message: '泛地图布局输入无效，已保留当前视图。' };
+      return null;
+    }
+    lastValidLayers = nextLayers;
     revision += 1;
+    if (nextLayers.some((layer) => layer.mode === 'unclassified-poi-name-cloud')) {
+      const nameCloudLayouts = [];
+      let previousNameCloudContour = null;
+      nextLayers.forEach((layer) => {
+        const layout = layoutNameCloudLayer(layer, previousNameCloudContour);
+        nameCloudLayouts.push({ layer, ...layout });
+        previousNameCloudContour = layout.contour;
+      });
+      organicMap.replaceChildren();
+      organicMap.classList.add('dynamic-density-map', 'is-name-cloud-mode');
+      nameCloudLayouts.slice().reverse().forEach(({ layer, ...layout }) => renderNameCloudLayer(organicMap, layer, layout));
+      renderCenter(organicMap, options.centerLabel);
+      const placedCount = nameCloudLayouts.reduce((sum, item) => sum + item.placed.length, 0);
+      const unplacedCount = nameCloudLayouts.reduce((sum, item) => sum + item.unplaced.length, 0);
+      organicMap.dataset.layoutRevision = String(revision);
+      organicMap.dataset.layoutEngine = 'deterministic-name-cloud-candidate-placement';
+      organicMap.dataset.nameCloudPlaced = String(placedCount);
+      organicMap.dataset.nameCloudUnplaced = String(unplacedCount);
+      organicMap.dataset.nameCloudBands = JSON.stringify(nameCloudLayouts.map((item) => ({
+        time: item.layer.time,
+        available: item.layer.labels.length,
+        placed: item.placed.length,
+        unplaced: item.unplaced.length,
+      })));
+      window.panmapLayoutState = {
+        revision,
+        layouts: nameCloudLayouts,
+        minimumBubbleGap: null,
+        inputLayers: nextLayers,
+        nameCloudStats: {
+          placedCount,
+          unplacedCount,
+          bands: nameCloudLayouts.map((item) => ({ time: item.layer.time, available: item.layer.labels.length, placed: item.placed.length, unplaced: item.unplaced.length })),
+        },
+      };
+      return window.panmapLayoutState;
+    }
     const random = seededRandom(20260726 + revision * 7919 + (options.seedOffset || 0));
     const layouts = [];
     let previousContour = null;
     let cumulativeNodes = [];
 
-    layers.forEach((layer) => {
+    nextLayers.forEach((layer) => {
       const nodes = makeLayerNodes(layer, previousContour, random);
       resolveCollisions(nodes, previousContour, layer.maxRadius);
       cumulativeNodes = cumulativeNodes.concat(nodes);
@@ -579,7 +769,7 @@
     organicMap.replaceChildren();
     organicMap.classList.add('dynamic-density-map');
     layouts.slice().reverse().forEach(({ layer, nodes, contour }) => renderLayer(organicMap, layer, nodes, contour, random));
-    renderCenter(organicMap);
+    renderCenter(organicMap, options.centerLabel);
     organicMap.dataset.layoutRevision = String(revision);
     organicMap.dataset.layoutEngine = 'force-collision+kde-polar-level-set';
     organicMap.dataset.minimumBubbleGap = Math.min(...layouts.map(({ nodes }) => minimumGap(nodes))).toFixed(2);
@@ -594,10 +784,12 @@
       revision,
       layouts,
       minimumBubbleGap: Number(organicMap.dataset.minimumBubbleGap),
+      inputLayers: nextLayers,
     };
     return window.panmapLayoutState;
   }
 
-  window.rebuildPanmapLayout = (options = {}) => buildOrganicPanmap(options);
-  buildOrganicPanmap();
+  window.rebuildPanmapLayout = (input = fallbackLayers) => buildOrganicPanmap(input);
+  window.panmapFallbackLayers = fallbackLayers;
+  buildOrganicPanmap(fallbackLayers);
 })();

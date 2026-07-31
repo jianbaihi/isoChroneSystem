@@ -84,6 +84,10 @@ button { border: 0; cursor: pointer; }
 .compact-actions { display: flex; gap: 7px; }
 .mini-action { height: 30px; padding: 0 10px; color: #64748a; background: #f8fafc; border: 1px solid #e5eaf1; border-radius: 6px; font-size: 11px; }
 .mini-action:hover { color: var(--blue); border-color: #bed3fc; background: #f6f9ff; }
+.geocoder-results { display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow: auto; }
+.geocoder-result { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; padding: 7px 9px; color: #41536b; background: #fbfcfe; border: 1px solid #e5ebf2; border-radius: 6px; text-align: left; cursor: pointer; }
+.geocoder-result:hover, .geocoder-result.is-highlighted { color: var(--blue); border-color: #b9d2fa; background: #f2f7ff; }
+.geocoder-result strong { font-size: 11px; font-weight: 600; }.geocoder-result span { color: #8a98a9; font-size: 9px; }
 .mode-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .mode-chip { height: 35px; display: flex; align-items: center; justify-content: center; gap: 4px; color: #718095; background: #fff; border: 1px solid #dfe6ef; border-radius: 7px; font-size: 11px; }
 .mode-chip span { color: #41546f; font-size: 15px; }
@@ -124,6 +128,11 @@ button { border: 0; cursor: pointer; }
 .poi-explore-button { height: 36px; margin-top: 7px; color: var(--blue); background: #f5f8ff; border: 1px solid #cfe0ff; }
 .sparkle { font-size: 15px; }
 .progress-note { display: flex; align-items: center; gap: 7px; margin-top: 9px; color: #a0adbd; font-size: 10px; }
+.poi-preview-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; color: #718198; font-size: 10px; }
+.poi-preview-row select { height: 25px; padding: 0 7px; color: #50637a; background: #fff; border: 1px solid #dbe4ef; border-radius: 5px; font-size: 10px; }
+.time-quick-list { display: flex; align-items: center; gap: 4px; margin-top: 8px; color: #98a5b5; font-size: 9px; }
+.time-quick-list button { min-width: 25px; height: 23px; padding: 0 5px; color: #5478b5; background: #f5f8fd; border: 1px solid #dce7f5; border-radius: 5px; font-size: 9px; cursor: pointer; }
+.time-quick-list button:hover { color: #fff; background: var(--blue); border-color: var(--blue); }
 .progress-line { width: 7px; height: 7px; border-radius: 50%; background: #32b877; box-shadow: 0 0 0 3px #e6f7ee; }
 
 .map-panel { min-width: 0; flex: 1; position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 13px; background: white; }
@@ -280,6 +289,28 @@ button { border: 0; cursor: pointer; }
 .mini-window-head { min-height: 35px; }.mini-window-spacer { flex: 1; }.mini-window-head > div { display: flex; align-items: center; gap: 3px; }.mini-window-head button { width: 24px; height: 24px; display: grid; place-items: center; font-size: 17px; line-height: 1; }.mini-map-controls { position: absolute; right: 10px; top: 10px; z-index: 4; display: flex; flex-direction: column; overflow: hidden; background: rgba(255,255,255,.94); border: 1px solid #dfe7ee; border-radius: 7px; box-shadow: 0 4px 12px rgba(38,65,95,.12); }.mini-map-controls button { width: 29px; height: 29px; color: #344760; background: white; font-size: 16px; }.mini-map-controls button + button { border-top: 1px solid #edf1f4; }.mini-map-controls button:hover { color: var(--blue); background: #f3f7ff; }
 .dock-copy span { display: none; }
 body.is-resizing, body.is-resizing * { cursor: col-resize !important; user-select: none !important; }
+
+/* 第 4 阶段：单一 MapLibre 传统地图实例；泛地图模式只改变同一实例的容器布局。 */
+.traditional-map-shell { position: absolute; inset: 0; z-index: 1; overflow: hidden; background: #eaf1f1; }
+.result-card { z-index: 6; }
+.map-controls, .map-legend, .map-scale { z-index: 6; }
+.traditional-map { position: absolute; inset: 0; width: 100%; height: 100%; }
+.traditional-map .maplibregl-canvas { outline: none; }
+.map-status { position: absolute; left: 50%; bottom: 16px; z-index: 3; max-width: min(460px, calc(100% - 32px)); padding: 8px 12px; color: #43566e; background: rgba(255,255,255,.94); border: 1px solid #dbe4ed; border-radius: 8px; box-shadow: 0 6px 18px rgba(34,62,92,.12); font-size: 11px; line-height: 1.45; text-align: center; transform: translateX(-50%); pointer-events: none; }
+.map-status:empty { display: none; }
+#mapSurface > svg.map-art, #miniTraditional svg.mini-map-art { display: none !important; }
+#miniTraditional { display: none !important; }
+.app-shell.is-panmap .traditional-map-shell { top: auto; right: auto; bottom: 18px; left: 18px; width: 240px; height: 160px; border: 1px solid #d8e1eb; border-radius: 10px; box-shadow: 0 11px 27px rgba(34,62,92,.2); }
+.app-shell.is-panmap .traditional-map-shell .map-status { right: 5px; bottom: 5px; left: 5px; max-width: none; padding: 4px 6px; font-size: 9px; transform: none; }
+.app-shell.is-panmap .traditional-map-shell .maplibregl-ctrl-attrib { max-width: 100%; font-size: 8px; }
+.map-panel.is-split .map-surface { display: grid; position: relative; grid-template-columns: minmax(280px, var(--split-ratio, 34%)) minmax(0, 1fr); gap: 0; }
+.map-panel.is-split .traditional-map-shell { position: relative; inset: auto; grid-column: 1; grid-row: 1; width: auto; height: auto; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+.map-panel.is-split .map-surface > .panmap-art { grid-column: 2; grid-row: 1; min-width: 0; }
+.map-panel.is-split .traditional-map-shell .map-status { bottom: 12px; }
+.app-shell.is-panmap .traditional-map-shell + .map-art { display: none !important; }
+.app-shell.is-map-picking .traditional-map-shell { cursor: crosshair; }
+.organic-time-layer.is-active-ring .density-boundary,
+.organic-time-layer.is-active-ring .kde-density-boundary { stroke: #172b4d; stroke-width: 5; filter: drop-shadow(0 0 4px rgba(23,43,77,.3)); }
 
 /* 泛地图主画布：按参考图将控制、标签云和概览组织在同一张白色画布上。 */
 .app-shell.is-panmap .panmap-toolbar {
@@ -750,3 +781,95 @@ body.is-resizing, body.is-resizing * { cursor: col-resize !important; user-selec
 .app-shell.is-panmap .panmap-art.is-pan-tool-active.is-panning { cursor: grabbing; }
 .app-shell.is-panmap .panmap-art.is-pan-tool-active .category-cluster { pointer-events: none; }
 .app-shell.is-panmap .map-controls { right: 270px; }
+.stage5-data-section { border-top: 1px solid #e7edf4; }
+.dataset-select-label { display: block; margin: 2px 0 6px; color: #718198; font-size: 10px; }
+.dataset-select { width: 100%; height: 34px; padding: 0 9px; color: #43536a; background: #fff; border: 1px solid #dbe4ee; border-radius: 7px; font-size: 11px; outline: 0; }
+.dataset-help { margin: 7px 0 0; color: #8a98a9; font-size: 10px; line-height: 1.45; }
+.basemap-switcher { display: flex; align-items: center; gap: 6px; margin-top: 10px; color: #718198; font-size: 10px; }
+.basemap-switcher button { height: 25px; padding: 0 8px; color: #64758b; background: #f4f7fb; border: 1px solid #dbe4ee; border-radius: 5px; font-size: 10px; }
+.basemap-switcher button.is-selected { color: #1f6ff0; background: #eef5ff; border-color: #a9c9fb; }
+.basemap-switcher button:disabled { opacity: .45; cursor: not-allowed; }
+.category-breadcrumb { min-width: 0; display: flex; align-items: center; gap: 3px; overflow: auto; padding: 0 8px; }
+.category-breadcrumb button { flex: 0 0 auto; padding: 4px 5px; color: #6f8096; background: transparent; border: 0; border-radius: 4px; font-size: 10px; white-space: nowrap; }
+.category-breadcrumb button + button::before { content: '›'; margin-right: 5px; color: #b0bccb; }
+.category-breadcrumb button:hover { color: #1f6ff0; background: #f0f6ff; }
+.panmap-art .force-bubble.is-poi-selected .hierarchy-node { stroke: #e7474f; stroke-width: 5; filter: drop-shadow(0 3px 4px rgba(231,71,79,.28)); }
+.panmap-art .force-bubble.is-poi-hovered .hierarchy-node { stroke: #172b4d; stroke-width: 4; }
+
+/* 第五阶段交互细化：中心搜索、眼睛式圈层开关和请求中反馈。 */
+.location-search-box { position: relative; background: #fff; }
+.location-search-box:focus-within { border-color: #76a5fc; box-shadow: 0 0 0 2px rgba(32,104,238,.08); }
+.location-search-box input { min-width: 0; flex: 1; height: 100%; color: #33445d; background: transparent; border: 0; outline: 0; font-size: 12px; }
+.location-search-box input::placeholder { color: #9aa8b8; }
+.center-location-selection { display: flex; align-items: center; gap: 7px; min-height: 30px; padding: 5px 9px 1px; color: #33445d; }
+.center-location-selection > div { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.center-location-selection strong { color: #33445d; font-size: 11px; font-weight: 650; }
+.center-location-selection .location-sub { color: #9aa5b5; font-size: 10px; }
+#centerPoint { position: relative; }
+.center-location-panel { top: 83px; left: 13px; right: 13px; width: auto; }
+.center-location-panel .suggest-heading { padding: 2px 8px 6px; color: #91a0b1; font-size: 9px; }
+.generate-button.is-loading, .poi-explore-button.is-loading { pointer-events: none; cursor: wait; }
+.generate-button.is-loading { background: linear-gradient(100deg, #5b91e9, #78a9f4); box-shadow: none; }
+.generate-button.is-loading .play-icon, .poi-explore-button.is-loading .sparkle { width: 13px; height: 13px; display: inline-block; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; font-size: 0; animation: buttonSpin .72s linear infinite; }
+.poi-explore-button.is-loading { color: #6c8fc8; background: #edf4ff; box-shadow: none; }
+@keyframes buttonSpin { to { transform: rotate(360deg); } }
+.threshold-select { width: 18px; height: 24px; display: grid; place-items: center; padding: 0; color: #8d9bad; background: transparent; border: 0; border-radius: 5px; font-size: 14px; cursor: pointer; }
+.threshold-select:hover { color: var(--blue); background: #f2f6ff; }
+.threshold-select.is-visible { color: var(--blue); }
+.threshold-select:not(.is-visible) { color: #b8c2cf; }
+.threshold-item.is-hidden { opacity: .52; }
+.threshold-item.is-hidden .threshold-color { filter: grayscale(1); }
+.threshold-delete { border: 0; }
+@media (min-width: 1px) {
+  .threshold-item { grid-template-columns: 18px 7px 52px minmax(78px, 1fr) 48px 18px; }
+}
+/* 第五阶段补充：安全配额观测与未分类名称云 */
+.quota-control { position: relative; }
+.quota-button { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 0 11px; border: 1px solid #d8e2ee; border-radius: 10px; background: #fff; color: #51627a; font-size: 12px; cursor: pointer; }
+.quota-button strong { color: #1c72ee; font-size: 12px; }
+.quota-dot { width: 7px; height: 7px; border-radius: 50%; background: #35b789; box-shadow: 0 0 0 3px #eaf8f1; }
+.quota-panel { position: absolute; z-index: 30; top: 44px; right: 0; width: 360px; padding: 14px; border: 1px solid #dbe5ef; border-radius: 14px; background: rgba(255,255,255,.98); box-shadow: 0 16px 38px rgba(48,75,110,.18); }
+.quota-panel[hidden] { display: none; }
+.quota-panel-heading { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; color: #7a899b; font-size: 11px; }
+.quota-panel-heading strong { color: #25364c; font-size: 14px; }
+.quota-table { display: grid; gap: 7px; }
+.quota-row { display: grid; grid-template-columns: 58px 45px 1fr auto; gap: 7px; align-items: center; padding: 8px 9px; border-radius: 9px; background: #f6f9fc; color: #6d7d91; font-size: 11px; }
+.quota-row strong { color: #35465c; font-size: 11px; }
+.quota-row small { grid-column: 1 / -1; color: #98a4b2; font-size: 10px; }
+.quota-remaining { color: #1c72ee; font-weight: 700; }
+.quota-status { justify-self: end; color: #35a866; white-space: nowrap; }
+.quota-status-unknown, .quota-status-upstream-403 { color: #8b97a6; }
+.quota-status-rate-limited { color: #d77d1f; }
+.quota-note { margin: 10px 2px 0; color: #8795a4; font-size: 10px; line-height: 1.5; }
+.name-cloud-button { display: flex; width: 100%; align-items: center; gap: 9px; min-height: 40px; margin-top: 8px; padding: 0 14px; border: 1px solid #b8d2ff; border-radius: 10px; background: #f3f7ff; color: #1f70e9; font-size: 13px; font-weight: 700; cursor: pointer; }
+.name-cloud-button:disabled { opacity: .52; cursor: not-allowed; }
+.name-cloud-button .button-arrow { margin-left: auto; font-size: 19px; }
+.name-cloud-button.is-loading { background: #eaf2ff; }
+.name-cloud-button.is-loading .name-cloud-icon { animation: stage5-spin .85s linear infinite; }
+.name-cloud-stats { min-height: 18px; margin: 6px 2px 0; color: #7d8b9d; font-size: 10px; line-height: 1.45; }
+.name-cloud-label-bg { fill: #fff; fill-opacity: .93; stroke: currentColor; stroke-width: 1.2; }
+.name-cloud-label-text { font-family: -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; font-size: 13px; font-weight: 600; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+.name-cloud-label { cursor: pointer; }
+.name-cloud-label.is-poi-hovered .name-cloud-label-bg, .name-cloud-label.is-poi-selected .name-cloud-label-bg { stroke: #f04d5a; stroke-width: 3; fill: #fff7f7; }
+.is-name-cloud-mode .name-cloud-band-fill { fill-opacity: .72; }
+.is-name-cloud-mode .name-cloud-boundary { stroke: currentColor; stroke-opacity: .24; stroke-width: 2; fill: none; }
+.is-name-cloud-mode .name-cloud-time-layer { transition: opacity .18s ease; }
+.is-name-cloud-mode .organic-time-layer.is-active-ring { opacity: 1; }
+.is-name-cloud-mode .organic-time-layer:not(.is-active-ring) { opacity: .86; }
+.app-shell.has-name-cloud-result .density-overview .category-stat,
+.app-shell.has-name-cloud-result .density-overview .overview-share,
+.app-shell.has-name-cloud-result .density-overview .overview-detail { display: none; }
+.name-cloud-overview { display: grid; gap: 9px; }
+.name-cloud-overview[hidden] { display: none; }
+.name-cloud-overview > strong { color: #30445e; font-size: 12px; }
+.name-cloud-overview p { margin: 0; color: #75859a; font-size: 10px; line-height: 1.55; }
+.name-cloud-overview dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 2px 0 0; }
+.name-cloud-overview dl div { padding: 8px 6px; border-radius: 8px; background: #f4f7fb; text-align: center; }
+.name-cloud-overview dt { color: #8a98a9; font-size: 9px; }
+.name-cloud-overview dd { margin: 3px 0 0; color: #245fbf; font-size: 12px; font-weight: 750; }
+@keyframes stage5-spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 900px) {
+  .quota-panel { right: -62px; width: min(360px, calc(100vw - 28px)); }
+  .quota-button span:not(.quota-dot) { display: none; }
+}
