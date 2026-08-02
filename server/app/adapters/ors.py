@@ -10,6 +10,7 @@ from app.config import Settings
 from app.errors import (
     ApiError,
     InvalidProviderResponseError,
+    NetworkDisabledError,
     ProviderNotConfiguredError,
     UpstreamAuthError,
     UpstreamRateLimitedError,
@@ -76,6 +77,8 @@ class OrsAdapter:
         }
 
     async def _post(self, endpoint: str, body: dict[str, Any]) -> httpx.Response:
+        if not self.settings.allow_network and self.client is None:
+            raise NetworkDisabledError()
         headers = {
             "Authorization": self.settings.ors_api_key,
             "Content-Type": "application/json",

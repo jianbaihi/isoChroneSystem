@@ -3,10 +3,18 @@ import unittest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.config import Settings
 
 
 class AnalysisApiTest(unittest.TestCase):
     def setUp(self) -> None:
+        self.original_settings = app.state.settings
+        app.state.settings = Settings(
+            app_env="test", app_host="127.0.0.1", app_port=8000,
+            cors_origins=("http://127.0.0.1:5500",), analysis_provider="mock",
+            ors_base_url="https://api.example.test",
+            allow_network=False, allow_mock_fallback=False,
+        )
         self.client = TestClient(app)
         self.request = {
             "schemaVersion": "1.0",
@@ -17,11 +25,16 @@ class AnalysisApiTest(unittest.TestCase):
             "options": {"includePois": True, "calculateTravelTimes": False},
         }
 
+    def tearDown(self) -> None:
+        app.state.settings = self.original_settings
+
     def test_health(self):
         response = self.client.get("/api/v1/health", headers={"X-Request-ID": "test-health-1"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["mode"], "mock")
         self.assertTrue(response.json()["providerReady"])
+        self.assertEqual(response.json()["status"], "ready")
+        self.assertFalse(response.json()["networkProbePerformed"])
         self.assertEqual(response.headers["X-Request-ID"], "test-health-1")
 
     def test_valid_analysis_preserves_request_fields(self):

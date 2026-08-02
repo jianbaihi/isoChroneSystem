@@ -8,6 +8,7 @@ import httpx
 from app.config import Settings
 from app.errors import (
     InvalidPoiProviderResponseError,
+    NetworkDisabledError,
     OrsApiKeyMissingError,
     UpstreamAuthError,
     UpstreamRateLimitedError,
@@ -42,6 +43,8 @@ class OrsPoiClient:
             cached = self.cache.read("poi", self.endpoint, body, self.settings.ors_cache_ttl_seconds)
             if cached is not None:
                 return cached[0], {**cached[1], "cache": "hit", "cacheStale": cached[2]}
+        if not self.settings.allow_network and self.client is None:
+            raise NetworkDisabledError()
         headers = {
             "Authorization": self.settings.ors_api_key,
             "Content-Type": "application/json",

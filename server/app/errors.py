@@ -35,6 +35,16 @@ class ProviderNotConfiguredError(ApiError):
         )
 
 
+class NetworkDisabledError(ApiError):
+    def __init__(self) -> None:
+        super().__init__(
+            "NETWORK_DISABLED",
+            "当前运行环境禁止上游网络请求。",
+            [{"field": "ALLOW_NETWORK", "reason": "disabled"}],
+            status_code=503,
+        )
+
+
 class OrsApiKeyMissingError(ApiError):
     def __init__(self) -> None:
         super().__init__(
@@ -102,6 +112,31 @@ class InvalidProviderResponseError(ApiError):
             "UPSTREAM_INVALID_RESPONSE",
             "ORS 服务返回了无法转换的等时圈数据。",
             details or [{"field": "provider", "reason": "invalid_response"}],
+            status_code=502,
+        )
+
+
+class InvalidMatrixResponseError(ApiError):
+    def __init__(self, reason: str = "invalid_response") -> None:
+        super().__init__(
+            "ORS_MATRIX_RESPONSE_INVALID",
+            "ORS Matrix 返回了无法安全映射的结果。",
+            [{"field": "matrix", "reason": reason}],
+            status_code=502,
+        )
+
+
+class MatrixIncompleteError(ApiError):
+    def __init__(self, null_count: int, invalid_count: int) -> None:
+        super().__init__(
+            "MATRIX_INCOMPLETE",
+            "Matrix 结果不完整，已保留上一次完整分析结果。",
+            [{
+                "field": "matrix",
+                "reason": "partial_result_not_committed",
+                "nullCount": null_count,
+                "invalidCount": invalid_count,
+            }],
             status_code=502,
         )
 

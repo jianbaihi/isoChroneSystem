@@ -32,6 +32,15 @@
     return app.contracts.normalizeAnalysisResult(payload);
   }
 
+  async function getHealth({ signal } = {}) {
+    const response = await fetch(`${app.config.apiBaseUrl}/health`, { headers: { Accept: 'application/json' }, signal });
+    const payload = await parseJson(response);
+    if (!response.ok || !payload || !['ready', 'not-ready'].includes(payload.status)) {
+      throw new Error(`本地服务健康检查失败（${response.status}）。`);
+    }
+    return payload;
+  }
+
   async function listPoiDatasets({ signal } = {}) {
     const response = await fetch(`${app.config.apiBaseUrl}/poi-datasets`, { headers: { Accept: 'application/json' }, signal });
     const payload = await parseJson(response);
@@ -96,6 +105,26 @@
     return app.contracts.normalizeAnalysisResult(payload);
   }
 
+  async function createMatrixAccessibility(baseResult, { signal } = {}) {
+    const response = await fetch(`${app.config.apiBaseUrl}/matrix-accessibility`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ schemaVersion: '1.0', baseResult }),
+      signal,
+    });
+    const payload = await parseJson(response);
+    if (!response.ok) {
+      const errorPayload = payload?.error || {};
+      const error = new Error(errorPayload.message || `Matrix 请求失败（${response.status}）。`);
+      error.code = errorPayload.code || 'HTTP_ERROR';
+      error.details = errorPayload.details || [];
+      error.requestId = errorPayload.requestId || response.headers.get('X-Request-ID') || null;
+      error.status = response.status;
+      throw error;
+    }
+    return app.contracts.normalizeAnalysisResult(payload);
+  }
+
   async function geocode(operation, params, { signal } = {}) {
     const query = new URLSearchParams();
     Object.entries(params || {}).forEach(([key, value]) => {
@@ -117,5 +146,5 @@
     return geocode('reverse', { lon, lat }, { signal });
   }
 
-  app.analysisClient = Object.freeze({ createAnalysis, createPoiPreview, createNameCloud, listPoiDatasets, geocode, reverseGeocode });
+  app.analysisClient = Object.freeze({ getHealth, createAnalysis, createPoiPreview, createNameCloud, createMatrixAccessibility, listPoiDatasets, geocode, reverseGeocode });
 })(window);

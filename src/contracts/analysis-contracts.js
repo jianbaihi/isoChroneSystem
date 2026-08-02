@@ -174,6 +174,40 @@
     };
   }
 
+  function formatMatrixDuration(value) {
+    const seconds = Number(value);
+    if (!Number.isFinite(seconds) || seconds < 0) return '未返回';
+    const rounded = Math.round(seconds);
+    return `${Math.floor(rounded / 60)} 分 ${rounded % 60} 秒`;
+  }
+
+  function formatMatrixDistance(value) {
+    const meters = Number(value);
+    if (!Number.isFinite(meters) || meters < 0) return '未返回';
+    return meters < 1000 ? `${Math.round(meters)} 米` : `${(meters / 1000).toFixed(2)} 千米`;
+  }
+
+  function matrixSummaryText(result) {
+    const summary = result?.metadata?.matrix;
+    if (!summary || typeof summary !== 'object') return '尚未计算 Matrix 路网估算';
+    const requested = Number(summary.requestedPoiCount || 0);
+    const ok = Number(summary.matrixOkCount || 0);
+    const within = Number(summary.matrixWithinRangeCount || 0);
+    const out = Number(summary.matrixOutOfRangeCount || 0);
+    const abnormal = Number(summary.matrixNullCount || 0) + Number(summary.matrixInvalidCount || 0);
+    return `Matrix 已计算 ${ok}/${requested} · 圈内 ${within} · 超出30分 ${out} · 异常 ${abnormal}`;
+  }
+
+  function matrixPoiDetailText(result, poiId) {
+    if (!poiId) return '';
+    const poi = (result?.pois || []).find((item) => item.poiId === poiId);
+    const item = (result?.accessibility || []).find((entry) => entry.poiId === poiId);
+    const name = poi?.name || '当前 POI';
+    if (!item) return `${name} · 尚无 Matrix 路网估算`;
+    if (item.matrixStatus !== 'ok') return `${name} · Matrix 路网估算不可达或无效`;
+    return `${name} · Matrix 路网估算：${formatMatrixDuration(item.travelTimeSeconds)} · 路网距离 ${formatMatrixDistance(item.networkDistanceMeters)}`;
+  }
+
   function normalizeAnalysisResult(result) {
     if (!result || typeof result !== 'object') throw new Error('AnalysisResult 必须是对象。');
     const normalized = {
@@ -184,6 +218,7 @@
       rings: Array.isArray(result.rings) ? result.rings : [],
       pois: Array.isArray(result.pois) ? result.pois : [],
       categories: Array.isArray(result.categories) ? result.categories : [],
+      accessibility: Array.isArray(result.accessibility) ? result.accessibility : [],
     };
     normalized.cumulativeIsochrones = normalizeCumulativeIsochrones(result.cumulativeIsochrones || []);
     normalized.rings = normalized.rings.map((ring, index) => ({
@@ -210,8 +245,32 @@
     });
     const ringIds = new Set(normalized.rings.map((ring) => ring.ringId));
     normalized.pois.forEach((poi, index) => {
-      if (poi.ringId && !ringIds.has(poi.ringId)) throw new Error(`pois[${index}].ringId 不属于本次结果。`);
+      if (poi.ringId && !ringIds.has(poi.ringId) && !['matrix-out-of-range', 'matrix-unreachable-or-invalid'].includes(poi.ringId)) {
+        throw new Error(`pois[${index}].ringId 不属于本次结果。`);
+      }
     });
+    const accessibilityIds = new Set();
+    normalized.accessibility = normalized.accessibility.map((item, index) => {
+      if (!item || !poiIds.has(String(item.poiId)) || accessibilityIds.has(String(item.poiId))) {
+        throw new Error(`accessibility[${index}].poiId 必须映射到唯一 POI。`);
+      }
+      accessibilityIds.add(String(item.poiId));
+      const matrixStatus = String(item.matrixStatus || '');
+      if (!['ok', 'unreachable', 'invalid'].includes(matrixStatus)) throw new Error(`accessibility[${index}].matrixStatus 无效。`);
+      const travelTimeSeconds = item.travelTimeSeconds == null ? null : Number(item.travelTimeSeconds);
+      const networkDistanceMeters = item.networkDistanceMeters == null ? null : Number(item.networkDistanceMeters);
+      if (travelTimeSeconds != null && (!Number.isFinite(travelTimeSeconds) || travelTimeSeconds < 0)) throw new Error(`accessibility[${index}].travelTimeSeconds 无效。`);
+      if (networkDistanceMeters != null && (!Number.isFinite(networkDistanceMeters) || networkDistanceMeters < 0)) throw new Error(`accessibility[${index}].networkDistanceMeters 无效。`);
+      const matrixBandId = item.matrixBandId == null ? null : String(item.matrixBandId);
+      if (matrixBandId && !ringIds.has(matrixBandId) && matrixBandId !== 'matrix-out-of-range') throw new Error(`accessibility[${index}].matrixBandId 无效。`);
+      if (matrixStatus === 'ok' && (travelTimeSeconds == null || networkDistanceMeters == null || !matrixBandId)) {
+        throw new Error(`accessibility[${index}] 缺少合法 Matrix 数值。`);
+      }
+      return { ...item, poiId: String(item.poiId), matrixStatus, matrixBandId, travelTimeSeconds, networkDistanceMeters };
+    });
+    if (normalized.accessibility.length && normalized.accessibility.length !== normalized.pois.length) {
+      throw new Error('accessibility 必须完整覆盖本次 POI。');
+    }
     normalized.metadata = normalizeMetadata(normalized);
     return normalized;
   }
@@ -224,5 +283,9 @@
     normalizeAnalysisResult,
     normalizePoiPreview,
     normalizeGeoJsonGeometry,
+    formatMatrixDuration,
+    formatMatrixDistance,
+    matrixSummaryText,
+    matrixPoiDetailText,
   });
 })(window);

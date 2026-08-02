@@ -1,4 +1,5 @@
 from uuid import uuid4
+from typing import Any
 
 from fastapi import FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
@@ -7,12 +8,14 @@ from fastapi.responses import JSONResponse
 
 from app.config import settings
 from app.errors import ApiError, FeatureNotAvailableError
-from app.models import AnalysisRequest, NameCloudRequest, PoiPreviewRequest
+from app.models import AnalysisRequest, MatrixAccessibilityRequest, NameCloudRequest, PoiPreviewRequest
 from app.providers.geocoder import OrsGeocoder
 from app.providers.poi.ors_remote import OrsRemotePoiProvider
 from app.repositories.local_poi import LocalPoiRepository
 from app.services.analysis import create_analysis as build_analysis
 from app.services.analysis import create_name_cloud
+from app.services.matrix_accessibility import calculate_matrix_accessibility
+from app.services.poi_batch_planner import build_poi_query_plan, public_plan
 from app.services.quota import QuotaObserver
 
 
@@ -98,12 +101,9 @@ async def health(raw_request: Request) -> JSONResponse:
     return JSONResponse(
         status_code=200,
         content={
-            "status": "ok",
+            **runtime_settings.readiness(),
             "service": "panmap-analysis-api",
             "mode": runtime_settings.analysis_provider,
-            "poiProvider": runtime_settings.poi_provider,
-            "orsProfile": runtime_settings.ors_profile,
-            "orsIsochroneRangesSeconds": list(runtime_settings.ors_isochrone_ranges_seconds),
             "providerReady": runtime_settings.provider_ready,
         },
         headers={"X-Request-ID": request_id},
@@ -203,6 +203,35 @@ async def create_name_cloud_endpoint(request: NameCloudRequest, raw_request: Req
         status_code=200,
         content=result.model_dump(mode="json") if hasattr(result, "model_dump") else result.dict(),
         headers={"X-Request-ID": request_id},
+    )
+
+
+@app.post("/api/v1/matrix-accessibility", response_model=None, response_model_exclude_none=False)
+async def create_matrix_accessibility_endpoint(request: MatrixAccessibilityRequest, raw_request: Request):
+    request_id = request_id_for(raw_request)
+    runtime_settings = getattr(raw_request.app.state, "settings", settings)
+    result = await calculate_matrix_accessibility(
+        request,
+        runtime_settings,
+        matrix_adapter=getattr(raw_request.app.state, "matrix_adapter", None),
+        quota_observer=getattr(raw_request.app.state, "quota_observer", None),
+    )
+    return JSONResponse(
+        status_code=200,
+        content=result.model_dump(mode="json") if hasattr(result, "model_dump") else result.dict(),
+        headers={"X-Request-ID": request_id},
+    )
+
+
+@app.post("/api/v1/poi-query-plan", response_model=None, response_model_exclude_none=False)
+async def create_poi_query_plan(payload: dict[str, Any], raw_request: Request):
+    """Create a deterministic dry-run plan; this endpoint never calls an upstream service."""
+    request_id = request_id_for(raw_request)
+    plan = build_poi_query_plan(payload)
+    return JSONResponse(
+        status_code=200,
+        content=public_plan(plan),
+        headers={"X-Request-ID": request_id, "X-Upstream-Request-Count": "0"},
     )
 
 

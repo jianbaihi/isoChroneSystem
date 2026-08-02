@@ -46,3 +46,56 @@ test('map pick mode is explicit and unknown ring IDs are ignored', () => {
   store.setMapPickMode(false);
   assert.equal(store.getState().interaction.isMapPickMode, false);
 });
+
+function profileResult(profile, id, poiIds = []) {
+  return {
+    analysisId: id, status: 'completed', profile,
+    rings: [], categories: [], pois: poiIds.map((poiId) => ({ poiId })),
+  };
+}
+
+test('keeps results and jobs isolated by profile and switching never calls a network client', () => {
+  const store = createStore();
+  let networkCalls = 0;
+  global.fetch = () => { networkCalls += 1; throw new Error('network forbidden'); };
+  store.setActiveProfile('foot-walking');
+  store.setResult(profileResult('foot-walking', 'walk-result', ['walk-poi']));
+  store.setProfileJob('driving-car', { jobId: 'drive-job', profile: 'driving-car', status: 'partial' });
+  store.setActiveProfile('driving-car');
+  let state = store.getState();
+  assert.equal(state.data.lastSuccessfulResult, null);
+  assert.equal(state.data.status, 'partial');
+  store.setActiveProfile('foot-walking');
+  state = store.getState();
+  assert.equal(state.data.lastSuccessfulResult.analysisId, 'walk-result');
+  assert.equal(state.data.resultsByProfile['driving-car'], undefined);
+  assert.equal(networkCalls, 0);
+});
+
+test('stale job response cannot overwrite current job and partial cannot publish', () => {
+  const store = createStore();
+  store.setActiveProfile('cycling-regular');
+  store.setProfileJob('cycling-regular', { jobId: 'new-job', profile: 'cycling-regular', status: 'fetching-matrix' });
+  store.updateProfileJob('cycling-regular', 'old-job', { status: 'layout-ready' });
+  assert.equal(store.getState().data.jobsByProfile['cycling-regular'].status, 'fetching-matrix');
+  store.publishProfileResult('cycling-regular', 'new-job', profileResult('cycling-regular', 'partial'));
+  assert.equal(store.getState().data.resultsByProfile['cycling-regular'], undefined);
+  store.updateProfileJob('cycling-regular', 'new-job', { status: 'layout-ready' });
+  store.publishProfileResult('cycling-regular', 'new-job', profileResult('cycling-regular', 'complete'));
+  assert.equal(store.getState().data.resultsByProfile['cycling-regular'].analysisId, 'complete');
+});
+
+test('prepare all is plan-only and unsupported modes are disabled', () => {
+  const store = createStore();
+  store.prepareAllProfiles({
+    'foot-walking': { status: 'planned' },
+    'cycling-regular': { status: 'N/A', sourceType: 'fixture' },
+    'driving-car': { status: 'awaiting-approval', poiRequestUpperBound: 135 },
+  });
+  const preparation = store.getState().data.multimodePreparation;
+  assert.deepEqual(preparation.profileOrder, ['foot-walking', 'cycling-regular', 'driving-car']);
+  assert.equal(preparation.executed, false);
+  assert.equal(preparation.upstreamRequestCount, 0);
+  assert.deepEqual(store.profileAvailability('subway'), { supported: false, profile: 'subway', reason: '当前数据源不支持' });
+  assert.throws(() => store.setActiveProfile('subway'), /当前数据源不支持/);
+});

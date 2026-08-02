@@ -19,16 +19,17 @@
   const OSM_LAYER_ID = 'osm-standard-raster';
   const TIANDITU_BASE_LAYER_ID = 'tianditu-vector-base';
   const TIANDITU_LABEL_LAYER_ID = 'tianditu-vector-label';
+  const RING_TOKENS = app.ringTokens || {};
 
   const EMPTY_COLLECTION = { type: 'FeatureCollection', features: [] };
 
   function ringColorExpression() {
     return [
       'interpolate', ['linear'], ['get', 'outerRangeMinutes'],
-      0, '#38a866',
-      10, '#35a866',
-      20, '#2878ef',
-      30, '#9b6bd8',
+      0, RING_TOKENS['ring-0-10']?.color || '#1e9152',
+      10, RING_TOKENS['ring-0-10']?.color || '#1e9152',
+      20, RING_TOKENS['ring-10-20']?.color || '#2670e1',
+      30, RING_TOKENS['ring-20-30']?.color || '#8b57be',
       60, '#e86778',
       180, '#d54c85',
     ];
@@ -79,7 +80,7 @@
       source: RING_SOURCE_ID,
       paint: {
         'fill-color': ringColorExpression(),
-        'fill-opacity': 0.26,
+        'fill-opacity': 0.16,
       },
     });
     map.addLayer({
@@ -240,7 +241,17 @@
     }
 
     function applyResult(result, shouldFit) {
-      if (!isReady || !result || !app.analysisMapGeoJson) return;
+      if (!isReady || !app.analysisMapGeoJson) return;
+      if (!result) {
+        container.dataset.analysisId = '';
+        container.dataset.ringFeatureCount = '0';
+        container.dataset.poiFeatureCount = '0';
+        setSourceData(map, RING_SOURCE_ID, EMPTY_COLLECTION);
+        setSourceData(map, CENTER_SOURCE_ID, EMPTY_COLLECTION);
+        setSourceData(map, POI_SOURCE_ID, EMPTY_COLLECTION);
+        status('当前交通方式尚未生成');
+        return;
+      }
       const rings = app.analysisMapGeoJson.buildRingFeatures(result);
       const center = app.analysisMapGeoJson.buildCenterFeatures(result.center);
       const diagnostics = [];
@@ -362,7 +373,6 @@
           attributionControl: false,
           interactive: true,
         });
-        map.addControl(new global.maplibregl.NavigationControl({ showCompass: true }), 'top-left');
         map.addControl(new global.maplibregl.ScaleControl({ maxWidth: 120, unit: 'metric' }), 'bottom-left');
         map.addControl(new global.maplibregl.AttributionControl({
           customAttribution: `<a href="${config.attributionUrl}" target="_blank" rel="noreferrer">${config.attribution}</a>`,

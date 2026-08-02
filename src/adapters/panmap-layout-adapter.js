@@ -1,5 +1,10 @@
 (function initPanmapLayoutAdapter(global) {
   const app = global.PanmapApp = global.PanmapApp || {};
+  const RING_TOKENS = app.ringTokens || {
+    'ring-0-10': { time: 10, color: '#1e9152', text: '#063b20', fill: '#eef8f1', lightAlphaNear: 1, lightAlphaFar: 0.72 },
+    'ring-10-20': { time: 20, color: '#2670e1', text: '#082d6b', fill: '#f0f5ff', lightAlphaNear: 1, lightAlphaFar: 0.72 },
+    'ring-20-30': { time: 30, color: '#8b57be', text: '#3f1767', fill: '#f8f2fc', lightAlphaNear: 1, lightAlphaFar: 0.72 },
+  };
 
   const THEMES = {
     food: { color: '#f6c75f', text: '#c86b00', icon: '♨', angle: -2.36, children: ['火锅', '咖啡', '烧烤', '川菜', '甜品', '串串香'] },
@@ -18,10 +23,10 @@
     { targetRadius: 200, maxRadius: 285, bandwidth: 30, fill: '#f5f9fe', stroke: '#1677f3' },
     { targetRadius: 365, maxRadius: 445, bandwidth: 34, fill: '#faf6fc', stroke: '#9f78dc' },
   ];
-  const NAME_CLOUD_THEME = [
-    { targetRadius: 120, maxRadius: 178, fill: '#edf5e7', stroke: '#35a866', text: '#257b4a' },
-    { targetRadius: 222, maxRadius: 300, fill: '#f2f7ff', stroke: '#2878ef', text: '#1b5fc6' },
-    { targetRadius: 344, maxRadius: 458, fill: '#faf5fc', stroke: '#9f78dc', text: '#754eab' },
+  const NAME_CLOUD_RADII = [
+    { targetRadius: 120, maxRadius: 178 },
+    { targetRadius: 222, maxRadius: 300 },
+    { targetRadius: 344, maxRadius: 458 },
   ];
 
   function themeFor(categoryId, index) {
@@ -94,30 +99,65 @@
     };
   }
 
-  function buildNameCloudLayers(result) {
+  function buildTimeVisualModel(result) {
     const pois = Array.isArray(result?.pois) ? result.pois : [];
+    const poiById = new Map(pois.map((poi) => [String(poi.poiId), poi]));
+    const accessibility = Array.isArray(result?.accessibility) ? result.accessibility : [];
+    const eligible = accessibility
+      .filter((item) => item?.matrixStatus === 'ok'
+        && Number.isFinite(Number(item.travelTimeSeconds))
+        && Number(item.travelTimeSeconds) >= 0
+        && Number(item.travelTimeSeconds) <= 1800
+        && RING_TOKENS[item.matrixBandId]
+        && poiById.get(String(item.poiId))?.name)
+      .map((item) => ({ item, poi: poiById.get(String(item.poiId)) }))
+      .sort((left, right) => Number(left.item.travelTimeSeconds) - Number(right.item.travelTimeSeconds)
+        || String(left.item.poiId).localeCompare(String(right.item.poiId)));
+    const denominator = Math.max(eligible.length - 1, 1);
+    const globalRank = new Map(eligible.map(({ item }, index) => [String(item.poiId), {
+      rank: index,
+      fontSize: Number((12 + 14 * ((1 - index / denominator) ** 0.75)).toFixed(2)),
+    }]));
+    const perBand = new Map();
+    eligible.forEach(({ item }) => {
+      if (!perBand.has(item.matrixBandId)) perBand.set(item.matrixBandId, []);
+      perBand.get(item.matrixBandId).push(item);
+    });
+    const bandRank = new Map();
+    perBand.forEach((items) => items.forEach((item, index) => {
+      bandRank.set(String(item.poiId), { index, denominator: Math.max(items.length - 1, 1) });
+    }));
+    return eligible.map(({ item, poi }) => {
+      const token = RING_TOKENS[item.matrixBandId];
+      const rank = globalRank.get(String(item.poiId));
+      const local = bandRank.get(String(item.poiId));
+      const opacity = token.lightAlphaNear + (token.lightAlphaFar - token.lightAlphaNear) * (local.index / local.denominator);
+      return {
+        label: String(poi.name), poiId: String(item.poiId), ringId: item.matrixBandId, source: poi.source,
+        travelTimeSeconds: Number(item.travelTimeSeconds), networkDistanceMeters: Number(item.networkDistanceMeters),
+        rank: rank.rank, fontSize: rank.fontSize, fontWeight: 600, rotation: 0,
+        opacity: Number(opacity.toFixed(4)), color: token.text,
+      };
+    });
+  }
+
+  function buildNameCloudLayers(result) {
     const rings = Array.isArray(result?.rings) ? result.rings : [];
+    const visualModel = buildTimeVisualModel(result);
     return rings.map((ring, layerIndex) => {
-      const visual = NAME_CLOUD_THEME[Math.min(layerIndex, NAME_CLOUD_THEME.length - 1)];
-      const labels = pois
-        .filter((poi) => poi.ringId === ring.ringId && poi.name)
-        .map((poi) => ({
-          label: String(poi.name),
-          poiId: String(poi.poiId),
-          ringId: ring.ringId,
-          source: poi.source,
-        }))
-        .sort((left, right) => left.label.localeCompare(right.label, 'zh-Hans') || left.poiId.localeCompare(right.poiId));
+      const radius = NAME_CLOUD_RADII[Math.min(layerIndex, NAME_CLOUD_RADII.length - 1)];
+      const token = RING_TOKENS[ring.ringId] || RING_TOKENS['ring-20-30'];
+      const labels = visualModel.filter((item) => item.ringId === ring.ringId);
       return {
         mode: 'unclassified-poi-name-cloud',
         time: ring.outerRangeMinutes,
         ringId: ring.ringId,
-        targetRadius: visual.targetRadius,
-        maxRadius: visual.maxRadius,
+        targetRadius: radius.targetRadius,
+        maxRadius: radius.maxRadius,
         bandwidth: 0,
-        fill: visual.fill,
-        stroke: visual.stroke,
-        text: visual.text,
+        fill: token.fill,
+        stroke: token.color,
+        text: token.text,
         labels,
       };
     });
@@ -170,5 +210,5 @@
     });
   }
 
-  app.panmapLayoutAdapter = Object.freeze({ buildPanmapLayers });
+  app.panmapLayoutAdapter = Object.freeze({ buildPanmapLayers, buildTimeVisualModel });
 })(window);

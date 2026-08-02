@@ -7,6 +7,7 @@ import httpx
 from app.config import Settings
 from app.errors import (
     OrsApiKeyMissingError,
+    NetworkDisabledError,
     UpstreamAuthError,
     UpstreamRateLimitedError,
     UpstreamRequestRejectedError,
@@ -80,6 +81,8 @@ class OrsGeocoder:
             cached = self.cache.read("geocoder", endpoint, params, self.settings.ors_cache_ttl_seconds)
             if cached is not None:
                 return cached[0], {**cached[1], "cache": "hit"}
+        if not self.settings.allow_network and self.client is None:
+            raise NetworkDisabledError()
         headers = {
             "Authorization": self.settings.ors_api_key,
             "Accept": "application/json",

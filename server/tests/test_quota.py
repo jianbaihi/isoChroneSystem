@@ -24,11 +24,15 @@ class QuotaObserverTest(unittest.TestCase):
         observer.observe("isochrones", {"x-ratelimit-remaining": "3"}, 200)
         missing = observer.observe("geocoder", {}, 200)
         limited = observer.observe("pois", {"Retry-After": "15"}, 429)
+        matrix = observer.observe("matrix", {"x-ratelimit-remaining": "3499"}, 200)
         snapshot = observer.snapshot()
         self.assertEqual(missing, empty_quota_service("upstream") | {"observedAt": missing["observedAt"]})
         self.assertEqual(snapshot["services"]["isochrones"]["remaining"], 3)
         self.assertEqual(snapshot["services"]["geocoder"]["status"], "unknown")
         self.assertEqual(limited["status"], "rate-limited")
+        self.assertEqual(matrix["remaining"], 3499)
+        self.assertEqual(snapshot["services"]["matrix"]["remaining"], 3499)
+        self.assertEqual(snapshot["services"]["pois"]["status"], "rate-limited")
         self.assertNotEqual(limited.get("remaining"), 0)
 
     def test_403_is_distinct_and_sensitive_headers_are_never_exposed(self):

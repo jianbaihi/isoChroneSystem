@@ -13,7 +13,7 @@ from app.models import AnalysisMetadata, AnalysisRequest, AnalysisResult, NameCl
 from app.providers.poi.ors_remote import OrsRemotePoiProvider
 from app.repositories.local_poi import LocalPoiRepository
 from app.services.geometry import build_exclusive_rings, geodesic_area_km2
-from app.services.mock_analysis import build_mock_entities, create_mock_analysis
+from app.services.mock_analysis import create_mock_analysis
 from app.services.poi_selection import select_local_overture_pois
 from app.services.quota import QuotaObserver
 
@@ -36,7 +36,7 @@ async def create_analysis(
     provider = ors_adapter or OrsAdapter(settings, quota_observer=quota_observer)
     cumulative_isochrones = await provider.create_isochrones(request)
     ring_geometries = build_exclusive_rings(cumulative_isochrones)
-    categories, mock_rings, mock_pois = build_mock_entities(request)
+    categories = []
     selection: dict = {"pois": [], "categories": [], "ringCounts": {}, "matchedCount": 0, "returnedCount": 0, "truncated": False}
     pois_source = "none"
     dataset_meta = None
@@ -67,14 +67,7 @@ async def create_analysis(
         if selection.get("diagnostics"):
             warnings.append("部分上游 POI 因缺少稳定 OSM 标识、名称或类别而被安全排除。")
     elif request.options.includePois:
-        visible_pois = mock_pois
-        counts_by_ring = {ring.ringId: 0 for ring in mock_rings}
-        for poi in visible_pois:
-            if poi.ringId in counts_by_ring:
-                counts_by_ring[poi.ringId] += 1
-        selection = {"pois": visible_pois, "categories": categories, "ringCounts": counts_by_ring, "matchedCount": len(visible_pois), "returnedCount": len(visible_pois), "truncated": False}
-        pois_source = "mock"
-        warnings.extend(["POI 数据仍为开发用模拟数据。", "POI 圈层归属尚未通过真实路网通行时间验证。"])
+        raise InvalidProviderParameterError("POI_PROVIDER", "online_analysis_does_not_fallback_to_mock")
 
     rings = [
         Ring(

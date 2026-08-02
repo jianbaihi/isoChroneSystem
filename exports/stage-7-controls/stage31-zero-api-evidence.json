@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 31,
+  "status": "completed",
+  "budget": {
+    "isochrones": 0,
+    "poi": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "actual": {
+    "isochrones": 0,
+    "poi": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "dataSource": "local-stage20-cache-only",
+  "profileIsolation": {
+    "footWalking": "cache-only",
+    "cyclingRegular": "frozen-not-read",
+    "drivingCar": "awaiting-approval-not-scheduled"
+  },
+  "browser": {
+    "url": "http://127.0.0.1:5500/?stage21Baseline=1&stage31Controls=1",
+    "loads": 2,
+    "localRoutes": [
+      "GET /api/v1/health",
+      "GET /api/v1/poi-datasets",
+      "GET /exports/stage-6-layout/stage20-cache-baseline.json"
+    ],
+    "businessRoutes": [],
+    "pageDatasetUpstreamRequests": 0,
+    "stage21DatasetUpstreamRequests": 0
+  },
+  "screenshot": {
+    "path": "exports/stage-7-controls/stage31-controls.png",
+    "mime": "image/png",
+    "pixelWidth": 1126,
+    "pixelHeight": 943,
+    "sha256": "7826d2b9aaf37a4c5eb36a8f6dd97317b7ad234a18b94b876f6916a1a8965a5f"
+  },
+  "networkGuard": "test-environment-network-forbidden"
+}

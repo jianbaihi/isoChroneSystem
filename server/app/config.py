@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import Mapping
 
 
-DEFAULT_CORS_ORIGINS = "http://127.0.0.1:5500,http://localhost:5500"
+DEFAULT_CORS_ORIGINS = "http://127.0.0.1:5500"
 MAX_ORS_TIMEOUT_SECONDS = 120.0
 MAX_POI_RESULTS = 5000
 MAX_POI_CANDIDATES = 500000
@@ -89,9 +89,12 @@ class Settings:
     analysis_provider: str
     ors_base_url: str
     ors_api_key: str = field(default="", repr=False)
+    allow_mock_fallback: bool = False
+    allow_network: bool = True
     ors_timeout_seconds: float = 15.0
+    ors_matrix_timeout_seconds: float = 60.0
     poi_provider: str = "none"
-    poi_database_path: str = "../data/generated/poi.sqlite3"
+    poi_database_path: str = "data/generated/poi.sqlite3"
     poi_max_results: int = 600
     poi_max_candidates: int = 50000
     poi_min_confidence: float | None = None
@@ -118,9 +121,18 @@ class Settings:
     @classmethod
     def from_environment(cls, environ: Mapping[str, str] | None = None) -> "Settings":
         env = os.environ if environ is None else environ
-        provider = env.get("ANALYSIS_PROVIDER", "mock").strip().lower()
+        app_env = env.get("APP_ENV", "development").strip().lower() or "development"
+        provider = env.get("ANALYSIS_PROVIDER", "mock" if app_env == "test" else "ors").strip().lower()
         if provider not in {"mock", "ors"}:
             raise ConfigurationError("ANALYSIS_PROVIDER 只支持 mock 或 ors。")
+        allow_mock_fallback = _parse_bool(env.get("ALLOW_MOCK_FALLBACK", "false"), "ALLOW_MOCK_FALLBACK")
+        allow_network = _parse_bool(env.get("ALLOW_NETWORK", "false" if app_env == "test" else "true"), "ALLOW_NETWORK")
+        if app_env != "test" and provider == "mock":
+            raise ConfigurationError("Mock 只允许在 APP_ENV=test 中显式启用。")
+        if app_env == "test" and allow_network:
+            raise ConfigurationError("APP_ENV=test 必须设置 ALLOW_NETWORK=false。")
+        if allow_mock_fallback:
+            raise ConfigurationError("ALLOW_MOCK_FALLBACK 必须为 false。")
 
         base_url = env.get("ORS_BASE_URL", "https://api.heigit.org/openrouteservice").strip().rstrip("/")
         if not base_url or not base_url.startswith(("http://", "https://")):
@@ -135,11 +147,15 @@ class Settings:
             app_port = int(env.get("APP_PORT", "8000"))
         except ValueError as exc:
             raise ConfigurationError("APP_PORT 必须是整数。") from exc
-        poi_provider = env.get("POI_PROVIDER", "none").strip().lower() or "none"
+        poi_provider = env.get("POI_PROVIDER", "none" if app_env == "test" else "ors_remote").strip().lower() or "none"
+        if poi_provider == "openpoiservice":
+            poi_provider = "ors_remote"
         if poi_provider == "local":
             poi_provider = "overture_local"
         if poi_provider not in {"none", "overture_local", "ors_remote"}:
             raise ConfigurationError("POI_PROVIDER 只支持 none、overture_local 或 ors_remote。")
+        if app_env != "test" and (provider != "ors" or poi_provider != "ors_remote"):
+            raise ConfigurationError("development 必须使用 ORS 与 OpenPOIService 在线 Provider。")
 
         poi_base_url = env.get("ORS_POI_BASE_URL", "https://api.openrouteservice.org").strip().rstrip("/")
         if not poi_base_url or not poi_base_url.startswith(("http://", "https://")):
@@ -155,16 +171,19 @@ class Settings:
             raise ConfigurationError("ORS_PROFILE 不是受支持的 ORS profile。")
 
         return cls(
-            app_env=env.get("APP_ENV", "development").strip() or "development",
+            app_env=app_env,
             app_host=env.get("APP_HOST", "127.0.0.1").strip() or "127.0.0.1",
             app_port=app_port,
             cors_origins=cors_origins,
             analysis_provider=provider,
             ors_base_url=base_url,
             ors_api_key=env.get("ORS_API_KEY", "").strip(),
+            allow_mock_fallback=allow_mock_fallback,
+            allow_network=allow_network,
             ors_timeout_seconds=_parse_timeout(env.get("ORS_TIMEOUT_SECONDS", "15")),
+            ors_matrix_timeout_seconds=_parse_timeout(env.get("ORS_MATRIX_TIMEOUT_SECONDS", "60")),
             poi_provider=poi_provider,
-            poi_database_path=env.get("POI_DATABASE_PATH", "../data/generated/poi.sqlite3").strip() or "../data/generated/poi.sqlite3",
+            poi_database_path=env.get("POI_DATABASE_PATH", "data/generated/poi.sqlite3").strip() or "data/generated/poi.sqlite3",
             poi_max_results=_parse_int(env.get("POI_MAX_RESULTS", "600"), "POI_MAX_RESULTS", 1, MAX_POI_RESULTS),
             poi_max_candidates=_parse_int(env.get("POI_MAX_CANDIDATES", "50000"), "POI_MAX_CANDIDATES", 1, MAX_POI_CANDIDATES),
             poi_min_confidence=_parse_optional_confidence(env.get("POI_MIN_CONFIDENCE", "")),
@@ -191,7 +210,38 @@ class Settings:
 
     @property
     def provider_ready(self) -> bool:
-        return self.analysis_provider == "mock" or bool(self.ors_api_key)
+        if self.app_env == "test":
+            return self.analysis_provider == "mock" and not self.allow_network
+        return (
+            self.analysis_provider == "ors"
+            and self.poi_provider == "ors_remote"
+            and bool(self.ors_api_key)
+            and self.allow_network
+            and not self.allow_mock_fallback
+        )
+
+    def readiness(self) -> dict[str, object]:
+        if self.app_env == "test":
+            providers = {name: "fixture" for name in ("isochrones", "matrix", "geocoder", "pois")}
+            missing: list[str] = []
+        else:
+            key_ready = bool(self.ors_api_key)
+            providers = {
+                "isochrones": "configured" if self.analysis_provider == "ors" and key_ready else "missing",
+                "matrix": "configured" if self.analysis_provider == "ors" and key_ready else "missing",
+                "geocoder": "configured" if self.analysis_provider == "ors" and key_ready else "missing",
+                "pois": "configured" if self.poi_provider == "ors_remote" and key_ready else "missing",
+            }
+            missing = [] if key_ready else ["ORS_API_KEY"]
+        return {
+            "status": "ready" if self.provider_ready else "not-ready",
+            "environment": self.app_env,
+            "providers": providers,
+            "missingConfiguration": missing,
+            "mockFallback": self.allow_mock_fallback,
+            "networkAllowed": self.allow_network,
+            "networkProbePerformed": False,
+        }
 
 
 settings = Settings.from_environment()

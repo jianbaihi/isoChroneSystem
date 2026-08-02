@@ -1,5 +1,6 @@
 (function initAnalysisStore(global) {
   const app = global.PanmapApp = global.PanmapApp || {};
+  const supportedProfiles = new Set(['foot-walking', 'cycling-regular', 'driving-car']);
 
   const defaultParameterDraft = () => ({
     center: { lon: 114.296944, lat: 30.546944, crs: 'EPSG:4326', label: '武汉·黄鹤楼', presetId: 'wuhan-huanghelou' },
@@ -21,6 +22,10 @@
       status: 'idle',
       requestStatus: 'idle',
       error: null,
+      activeProfile: 'driving-car',
+      resultsByProfile: {},
+      jobsByProfile: {},
+      multimodePreparation: null,
     },
     interaction: {
       activeRingId: null,
@@ -89,6 +94,9 @@
         }));
       },
       setResult(result) {
+        const profile = result?.profile || state.data.activeProfile;
+        if (!supportedProfiles.has(profile)) throw new Error(`不支持的 profile: ${profile || ''}`);
+        const profileResult = { ...clone(result), profile };
         const poiIds = new Set((result?.pois || []).map((poi) => poi.poiId));
         const categoryIds = new Set((result?.categories || []).map((category) => category.categoryId));
         const previousFocus = currentFocusPath(state.interaction);
@@ -99,8 +107,10 @@
           ...current,
           data: {
             ...current.data,
-            result: clone(result),
-            lastSuccessfulResult: clone(result),
+            result: profileResult,
+            lastSuccessfulResult: profileResult,
+            activeProfile: profile,
+            resultsByProfile: { ...current.data.resultsByProfile, [profile]: profileResult },
             status: 'success',
             requestStatus: 'success',
             error: null,
@@ -143,6 +153,100 @@
           };
           return { ...current, data: { ...current.data, parameterDraft: nextDraft } };
         });
+      },
+      profileAvailability(profile) {
+        return supportedProfiles.has(profile)
+          ? { supported: true, profile }
+          : { supported: false, profile, reason: '当前数据源不支持' };
+      },
+      setActiveProfile(profile) {
+        if (!supportedProfiles.has(profile)) throw new Error('当前数据源不支持');
+        return update((current) => {
+          const result = current.data.resultsByProfile[profile] || null;
+          const job = current.data.jobsByProfile[profile] || null;
+          const poiIds = new Set((result?.pois || []).map((poi) => poi.poiId));
+          return {
+            ...current,
+            data: {
+              ...current.data,
+              activeProfile: profile,
+              parameterDraft: { ...current.data.parameterDraft, profile },
+              result: clone(result),
+              lastSuccessfulResult: clone(result),
+              status: result ? 'success' : (job?.status === 'partial' ? 'partial' : 'idle'),
+              requestStatus: result ? 'success' : 'idle',
+              error: null,
+            },
+            interaction: {
+              ...current.interaction,
+              selectedPoiId: poiIds.has(current.interaction.selectedPoiId) ? current.interaction.selectedPoiId : null,
+              hoveredPoiId: poiIds.has(current.interaction.hoveredPoiId) ? current.interaction.hoveredPoiId : null,
+            },
+          };
+        });
+      },
+      setProfileJob(profile, job) {
+        if (!supportedProfiles.has(profile) || job?.profile !== profile || !job?.jobId) {
+          throw new Error('profile job 契约无效');
+        }
+        return update((current) => ({
+          ...current,
+          data: { ...current.data, jobsByProfile: { ...current.data.jobsByProfile, [profile]: clone(job) } },
+        }));
+      },
+      updateProfileJob(profile, jobId, patch) {
+        if (!supportedProfiles.has(profile)) throw new Error('当前数据源不支持');
+        return update((current) => {
+          const existing = current.data.jobsByProfile[profile];
+          if (!existing || existing.jobId !== jobId) return current;
+          return {
+            ...current,
+            data: {
+              ...current.data,
+              jobsByProfile: {
+                ...current.data.jobsByProfile,
+                [profile]: { ...existing, ...clone(patch), profile, jobId },
+              },
+            },
+          };
+        });
+      },
+      publishProfileResult(profile, jobId, result) {
+        const job = state.data.jobsByProfile[profile];
+        if (!job || job.jobId !== jobId || job.status !== 'layout-ready'
+          || result?.profile !== profile || result?.status !== 'completed') return getState();
+        return update((current) => {
+          const active = current.data.activeProfile === profile;
+          return {
+            ...current,
+            data: {
+              ...current.data,
+              resultsByProfile: { ...current.data.resultsByProfile, [profile]: clone(result) },
+              jobsByProfile: {
+                ...current.data.jobsByProfile,
+                [profile]: { ...current.data.jobsByProfile[profile], status: 'completed', published: true },
+              },
+              ...(active ? {
+                result: clone(result), lastSuccessfulResult: clone(result),
+                status: 'success', requestStatus: 'success', error: null,
+              } : {}),
+            },
+          };
+        });
+      },
+      prepareAllProfiles(plans) {
+        const ordered = ['foot-walking', 'cycling-regular', 'driving-car'];
+        const entries = ordered.map((profile) => ({ profile, ...(clone(plans?.[profile]) || { status: 'N/A' }) }));
+        return update((current) => ({
+          ...current,
+          data: {
+            ...current.data,
+            multimodePreparation: {
+              mode: 'prepare-only', profileOrder: ordered, profiles: entries,
+              approved: false, executed: false, upstreamRequestCount: 0,
+            },
+          },
+        }));
       },
       setDraftCenter(center, source = 'map') {
         const normalizedSource = source === 'map' ? 'map-click' : source;

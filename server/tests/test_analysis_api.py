@@ -66,7 +66,7 @@ class OrsAnalysisApiTest(unittest.TestCase):
             "profile": "foot-walking",
             "rangesMinutes": [10, 20, 30],
             "categoryIds": ["food", "shopping"],
-            "options": {"includePois": True, "calculateTravelTimes": False},
+            "options": {"includePois": False, "calculateTravelTimes": False},
         }
 
     def tearDown(self) -> None:
@@ -79,7 +79,7 @@ class OrsAnalysisApiTest(unittest.TestCase):
         else:
             app.state.ors_adapter = self.original_adapter
 
-    def test_ors_result_is_mixed_and_contains_valid_exclusive_rings(self):
+    def test_ors_result_contains_valid_exclusive_rings_without_mock_fallback(self):
         response = self.client.post(
             "/api/v1/analyses",
             json=self.request,
@@ -89,14 +89,14 @@ class OrsAnalysisApiTest(unittest.TestCase):
         payload = response.json()
         self.assertEqual(response.headers["X-Request-ID"], "ors-fixture-request")
         self.assertEqual(payload["metadata"]["requestId"], "ors-fixture-request")
-        self.assertEqual(payload["metadata"]["source"], "mixed")
-        self.assertEqual(payload["metadata"]["sources"], {"isochrones": "ors", "pois": "mock"})
+        self.assertEqual(payload["metadata"]["source"], "ors")
+        self.assertEqual(payload["metadata"]["sources"], {"isochrones": "ors", "pois": "none"})
         self.assertEqual([item["rangeMinutes"] for item in payload["cumulativeIsochrones"]], [10, 20, 30])
         self.assertEqual([item["rangeSeconds"] for item in payload["cumulativeIsochrones"]], [600, 1200, 1800])
         self.assertEqual(len(payload["rings"]), 3)
         self.assertTrue(all(ring["geometry"]["type"] in {"Polygon", "MultiPolygon"} for ring in payload["rings"]))
-        self.assertTrue(all(poi["travelTimeSeconds"] is None for poi in payload["pois"]))
-        self.assertIn("POI 数据仍为开发用模拟数据。", payload["metadata"]["warnings"])
+        self.assertEqual(payload["pois"], [])
+        self.assertNotIn("POI 数据仍为开发用模拟数据。", payload["metadata"]["warnings"])
 
     def test_ors_without_pois_has_ors_source_and_no_pois(self):
         request = {**self.request, "options": {"includePois": False, "calculateTravelTimes": False}}

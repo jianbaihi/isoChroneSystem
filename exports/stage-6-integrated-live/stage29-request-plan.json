@@ -1,0 +1,237 @@
+{
+  "actualUpstreamRequests": {
+    "geocoder": 0,
+    "isochrones": 1,
+    "isochronesByProfile": {
+      "cycling-regular": 1,
+      "driving-car": 0,
+      "foot-walking": 0
+    },
+    "matrix": 0,
+    "pois": 0
+  },
+  "approvalGranted": false,
+  "approvalTemplate": {
+    "centerId": "wuhan-huanghelou",
+    "createdAt": "<由批准者填写 ISO-8601 时间>",
+    "profiles": {
+      "cycling-regular": {
+        "approvedMatrixRequests": 0,
+        "approvedPoiRequests": 0,
+        "planFingerprint": "8a2f9714ac7469ecf54238c69d06e59f1d210ba8ed16db7c6d9884741e6a6832"
+      },
+      "driving-car": {
+        "approvedMatrixRequests": 0,
+        "approvedPoiRequests": 0,
+        "planFingerprint": "4870cae7fde62285229e22fe35b13af21f794e4d40ed27fdccc7cb8b01030031"
+      },
+      "foot-walking": {
+        "approvedMatrixRequests": 0,
+        "approvedPoiRequests": 0,
+        "planFingerprint": "8e38cc4f5da176d8e55001020b49df2d2ff1a87ec210106e3f013b58b68d2e9c"
+      }
+    },
+    "rangesSeconds": [
+      600,
+      1200,
+      1800
+    ],
+    "stopOnProfileFailure": true
+  },
+  "delivery": "first-real-request-plan",
+  "generatedAt": "2026-08-01T03:47:51Z",
+  "poiDataObtainedForUnknownProfiles": false,
+  "profiles": {
+    "cycling-regular": {
+      "matrixPlan": {
+        "batchSize": 500,
+        "cachedBatches": 0,
+        "destinationCount": null,
+        "estimate": "ceil(N/500), 0 <= N <= 26000; therefore 0..52 batches",
+        "minimumRequests": null,
+        "remainingRequests": null
+      },
+      "outerGeometry": {
+        "areaKm2": 121.109624,
+        "cachePath": "data/generated/ors-cache/stage-6-integrated-planning-20260801/830ebd7096c0833082a9c75b3f7ea96c476f27cde903f084d87b59ce8c66f700.json",
+        "cacheSha256": "1a426a10e969fdf364c8e78f0545aae02476e02da77924750b96b4d9869e1dd5",
+        "geometryType": "Polygon",
+        "retrievedAt": "2026-08-01T03:46:54Z",
+        "source": "live"
+      },
+      "planFingerprint": "8a2f9714ac7469ecf54238c69d06e59f1d210ba8ed16db7c6d9884741e6a6832",
+      "poiPlan": {
+        "adaptiveReserve": 3,
+        "budgetStatus": "within-budget",
+        "cachedPieceSources": [],
+        "cachedPieces": 0,
+        "coverage": {
+          "areaConserved": true,
+          "areaDifferenceKm2": 4.39e-07,
+          "outerGeometryValid": true,
+          "outsideAreaKm2": 2.777e-06,
+          "overlapAreaKm2": 0.0,
+          "plannedAreaKm2": 121.109625,
+          "toleranceKm2": 0.12111,
+          "uncoveredAreaKm2": 2.338e-06
+        },
+        "knownPoiCount": null,
+        "minimumRequests": 10,
+        "pieceCount": 10,
+        "remainingMinimumRequests": 10,
+        "remainingRequestUpperBound": 13,
+        "requestUpperBound": 13
+      },
+      "status": "awaiting-approval"
+    },
+    "driving-car": {
+      "matrixPlan": {
+        "batchSize": 500,
+        "cachedBatches": 0,
+        "destinationCount": null,
+        "estimate": "ceil(N/500), 0 <= N <= 270000; therefore 0..540 batches",
+        "minimumRequests": null,
+        "remainingRequests": null
+      },
+      "outerGeometry": {
+        "areaKm2": 1903.245963,
+        "cachePath": "data/generated/ors-cache/stage-5-name-cloud-resume-20260730/e8bb30111305495cf7ab9e17441cceab2079caa7b071c313b6802f7bafb7d55e.json",
+        "cacheSha256": "6b6b177b78e4435529e51b3a8b556775d034234d3acd5d518e58f5228df574bd",
+        "geometryType": "Polygon",
+        "retrievedAt": "2026-08-01T01:15:48Z",
+        "source": "cache"
+      },
+      "planFingerprint": "4870cae7fde62285229e22fe35b13af21f794e4d40ed27fdccc7cb8b01030031",
+      "poiPlan": {
+        "adaptiveReserve": 27,
+        "budgetStatus": "approval-required",
+        "cachedPieceSources": [],
+        "cachedPieces": 0,
+        "coverage": {
+          "areaConserved": true,
+          "areaDifferenceKm2": 7.209e-06,
+          "outerGeometryValid": true,
+          "outsideAreaKm2": 2.8621e-05,
+          "overlapAreaKm2": 0.0,
+          "plannedAreaKm2": 1903.24597,
+          "toleranceKm2": 1.903246,
+          "uncoveredAreaKm2": 2.1412e-05
+        },
+        "knownPoiCount": null,
+        "minimumRequests": 108,
+        "pieceCount": 108,
+        "remainingMinimumRequests": 108,
+        "remainingRequestUpperBound": 135,
+        "requestUpperBound": 135
+      },
+      "status": "awaiting-approval"
+    },
+    "foot-walking": {
+      "matrixPlan": {
+        "batchSize": 500,
+        "cachedBatches": 1,
+        "destinationCount": 282,
+        "estimate": "ceil(282/500) = 1",
+        "minimumRequests": 1,
+        "remainingRequests": 0
+      },
+      "outerGeometry": {
+        "areaKm2": 9.769486,
+        "cachePath": "data/generated/ors-cache/stage-5-name-cloud-resume-20260730/7ac868e340d37b39840472b3bb0108d63e07ee9794a8116e8239365404126e12.json",
+        "cacheSha256": "3b062476fd772e6902069ab281d1afe7519a56c95b43aa4a63deac5e11e2be00",
+        "geometryType": "Polygon",
+        "retrievedAt": "2026-07-30T14:34:00Z",
+        "source": "cache"
+      },
+      "planFingerprint": "8e38cc4f5da176d8e55001020b49df2d2ff1a87ec210106e3f013b58b68d2e9c",
+      "poiPlan": {
+        "adaptiveReserve": 1,
+        "budgetStatus": "within-budget",
+        "cachedPieceSources": [
+          {
+            "path": "data/generated/ors-cache/stage-5-name-cloud-resume-20260730/1843ed2a271f9216e11d456fdbb062d1d109f537c7e50c91a319fec07631602e.json",
+            "rawFeatureCount": 430,
+            "resultTruncated": false,
+            "retrievedAt": "2026-07-30T14:34:55Z"
+          }
+        ],
+        "cachedPieces": 1,
+        "coverage": {
+          "areaConserved": true,
+          "areaDifferenceKm2": 0.0,
+          "outerGeometryValid": true,
+          "outsideAreaKm2": 0.0,
+          "overlapAreaKm2": 0.0,
+          "plannedAreaKm2": 9.769486,
+          "toleranceKm2": 0.01,
+          "uncoveredAreaKm2": 0.0
+        },
+        "knownPoiCount": 282,
+        "minimumRequests": 1,
+        "pieceCount": 1,
+        "remainingMinimumRequests": 0,
+        "remainingRequestUpperBound": 0,
+        "requestUpperBound": 2
+      },
+      "status": "awaiting-approval"
+    }
+  },
+  "quotaObservations": {
+    "geocoder": {
+      "freshness": "live",
+      "limit": 1000,
+      "observedAt": "2026-07-30T15:14:50Z",
+      "remaining": 994,
+      "requestSource": "upstream",
+      "resetAt": "2026-07-31T02:58:31Z",
+      "status": "known"
+    },
+    "isochrones": {
+      "freshness": "live",
+      "limit": 500,
+      "observedAt": "2026-08-01T03:46:54Z",
+      "remaining": 498,
+      "requestSource": "upstream",
+      "resetAt": "2026-08-02T01:15:46Z",
+      "status": "known"
+    },
+    "matrix": {
+      "freshness": "live",
+      "limit": 500,
+      "observedAt": "2026-07-31T10:50:31Z",
+      "remaining": 499,
+      "requestSource": "upstream",
+      "resetAt": "2026-07-31T10:50:31Z",
+      "status": "known"
+    },
+    "pois": {
+      "freshness": "live",
+      "limit": 500,
+      "observedAt": "2026-08-01T01:15:55Z",
+      "remaining": 499,
+      "requestSource": "upstream",
+      "resetAt": "2026-08-01T01:15:53Z",
+      "status": "known"
+    }
+  },
+  "scenario": {
+    "centerId": "wuhan-huanghelou",
+    "coordinates": [
+      114.296944,
+      30.546944
+    ],
+    "profiles": [
+      "foot-walking",
+      "cycling-regular",
+      "driving-car"
+    ],
+    "rangesSeconds": [
+      600,
+      1200,
+      1800
+    ]
+  },
+  "schemaVersion": "1.0",
+  "stage": 29,
+  "status": "awaiting-approval"
+}

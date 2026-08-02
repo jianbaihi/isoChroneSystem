@@ -24,6 +24,8 @@ const nameCloudOverview = document.getElementById('nameCloudOverview');
 const overviewNameCloudPlaced = document.getElementById('overviewNameCloudPlaced');
 const overviewNameCloudUnplaced = document.getElementById('overviewNameCloudUnplaced');
 const overviewNameCloudNamed = document.getElementById('overviewNameCloudNamed');
+const layoutComparison = document.getElementById('layoutComparison');
+const layoutBandComparison = document.getElementById('layoutBandComparison');
 const poiDatasetSelect = document.getElementById('poiDatasetSelect');
 const poiDatasetStatus = document.getElementById('poiDatasetStatus');
 const datasetHelp = document.getElementById('datasetHelp');
@@ -39,11 +41,20 @@ const poiPreviewLabel = poiPreviewButton?.querySelector('.poi-explore-label');
 const nameCloudButton = document.getElementById('nameCloudButton');
 const nameCloudButtonLabel = nameCloudButton?.querySelector('.name-cloud-button-label');
 const nameCloudStats = document.getElementById('nameCloudStats');
+const matrixButton = document.getElementById('matrixButton');
+const matrixButtonLabel = matrixButton?.querySelector('.matrix-button-label');
+const matrixResultSummary = document.getElementById('matrixResultSummary');
+const matrixPoiDetail = document.getElementById('matrixPoiDetail');
+const prepareAllProfilesButton = document.getElementById('prepareAllProfilesButton');
 const quotaButton = document.getElementById('quotaButton');
 const quotaPanel = document.getElementById('quotaPanel');
 const quotaSummary = document.getElementById('quotaSummary');
 const quotaTable = document.getElementById('quotaTable');
 const quotaNote = document.getElementById('quotaNote');
+const onlineProviderStatus = document.getElementById('onlineProviderStatus');
+const panmapControlPanel = document.getElementById('panmapControlPanel');
+const panmapControlBody = document.getElementById('panmapControlBody');
+const controlApplyStatus = document.getElementById('controlApplyStatus');
 const basemapButtons = [...document.querySelectorAll('[data-basemap]')];
 const analysisStore = window.PanmapApp?.analysisStore;
 let traditionalMapAdapter = null;
@@ -69,6 +80,8 @@ let isPanningPanmap = false;
 let didPanPanmap = false;
 let panPointerStart = null;
 let panmapInteractionMode = 'select';
+let panmapControlStore = null;
+let stage31LocalLayoutCalls = 0;
 const defaultPanmapViewBox = { x: 0, y: 0, width: 1850, height: 980 };
 let panmapViewBox = { ...defaultPanmapViewBox };
 let lastPanmapInteractionKey = '';
@@ -96,14 +109,18 @@ function updateNameCloudPresentation(result, layoutState = window.panmapLayoutSt
   const placed = layoutStats.placedCount ?? stats.placedCount ?? 0;
   const unplaced = layoutStats.unplacedCount ?? stats.unplacedCount ?? 0;
   const named = stats.namedPoiCount ?? result?.pois?.length ?? 0;
+  const eligible = layoutStats.eligibleCount ?? result?.metadata?.matrix?.matrixWithinRangeCount ?? named;
   const area = Number(result?.metadata?.poiCoverage?.areaKm2);
 
-  overviewHeading.textContent = `未分类名称云（${activeLayer}分钟）`;
+  overviewHeading.textContent = `精确时间标签云（${activeLayer}分钟）`;
   overviewPoiTotal.textContent = String(bandAvailable);
   overviewArea.textContent = Number.isFinite(area) ? `${area.toFixed(2)} km² 外圈` : '外圈面积未知';
-  if (overviewNameCloudPlaced) overviewNameCloudPlaced.textContent = `${placed} / ${named}`;
+  if (overviewNameCloudPlaced) overviewNameCloudPlaced.textContent = `${placed} / ${eligible}`;
   if (overviewNameCloudUnplaced) overviewNameCloudUnplaced.textContent = String(unplaced);
   if (overviewNameCloudNamed) overviewNameCloudNamed.textContent = String(named);
+  const comparison = layoutState?.layoutComparison;
+  if (layoutComparison && comparison) layoutComparison.textContent = `A ${comparison.a.placed}/${comparison.eligible} · B ${comparison.b.placed}/${comparison.eligible} · 超出30分 ${comparison.outOfRange}`;
+  if (layoutBandComparison && comparison) layoutBandComparison.textContent = comparison.a.bands.map((band, index) => `${band.time}分 A${band.placed}/B${comparison.b.bands[index]?.placed ?? 0}`).join(' · ');
 }
 
 function sameNumberList(left = [], right = []) {
@@ -122,7 +139,7 @@ function successfulResultMatchesDraft(state) {
     && sameNumberList(result.rangesMinutes, draft.rangesMinutes);
 }
 
-const QUOTA_SERVICE_LABELS = { isochrones: '等时圈', geocoder: '地点搜索', pois: 'POI' };
+const QUOTA_SERVICE_LABELS = { isochrones: '等时圈', geocoder: '地点搜索', pois: 'POI', matrix: 'Matrix' };
 
 function quotaValue(value) {
   return value == null ? '未知' : String(value);
@@ -190,14 +207,17 @@ function updateNameCloudStats(result, layoutState = window.panmapLayoutState) {
   const stats = result?.nameCloud?.stats;
   if (!nameCloudStats) return;
   if (!stats) {
-    nameCloudStats.textContent = '名称云需先生成黄鹤楼步行 10/20/30 分钟真实等时圈';
+    nameCloudStats.textContent = 'POI 标签云需先具备 10/20/30 分钟真实等时圈与 Matrix 缓存';
     return;
   }
   const placed = layoutState?.nameCloudStats?.placedCount ?? stats.placedCount ?? 0;
   const unplaced = layoutState?.nameCloudStats?.unplacedCount ?? stats.unplacedCount ?? 0;
   const bands = layoutState?.nameCloudStats?.bands || [];
   const bandText = bands.map((band) => `${band.time}分 ${band.placed}/${band.available}`).join(' · ');
-  nameCloudStats.textContent = `原始 ${stats.rawPoiCount} · 具名 ${stats.namedPoiCount} · 去重 ${stats.deduplicatedPoiCount} · 已摆放 ${placed} · 未摆放 ${unplaced}${bandText ? ` · ${bandText}` : ''}`;
+  const matrix = result?.metadata?.matrix || {};
+  const eligible = layoutState?.nameCloudStats?.eligibleCount ?? matrix.matrixWithinRangeCount ?? 0;
+  const outOfRange = layoutState?.nameCloudStats?.outOfRangeCount ?? matrix.matrixOutOfRangeCount ?? 0;
+  nameCloudStats.textContent = `Matrix ${matrix.matrixOkCount ?? 0}/${matrix.requestedPoiCount ?? stats.deduplicatedPoiCount} · eligible ${eligible} · 超出30分 ${outOfRange} · B已摆放 ${placed} · 未摆放 ${unplaced}${bandText ? ` · ${bandText}` : ''}`;
 }
 
 function canGenerateNameCloud(state) {
@@ -212,6 +232,31 @@ function canGenerateNameCloud(state) {
     && ['ors', 'ors-public-api'].includes(result.metadata?.sources?.isochrones));
 }
 
+function canCalculateMatrix(state) {
+  const result = state?.data?.lastSuccessfulResult;
+  return Boolean(result && successfulResultMatchesDraft(state)
+    && isNameCloudResult(result)
+    && result.profile === 'foot-walking'
+    && sameNumberList(result.rangesMinutes, [10, 20, 30])
+    && Array.isArray(result.pois)
+    && result.pois.length > 0);
+}
+
+function updateMatrixPresentation(result, interaction = {}) {
+  const contracts = window.PanmapApp?.contracts;
+  const hasNameCloud = isNameCloudResult(result);
+  if (matrixResultSummary) {
+    matrixResultSummary.hidden = !hasNameCloud;
+    matrixResultSummary.textContent = contracts?.matrixSummaryText?.(result) || '尚未计算 Matrix 路网估算';
+  }
+  const poiId = interaction.selectedPoiId || interaction.hoveredPoiId || null;
+  const detail = contracts?.matrixPoiDetailText?.(result, poiId) || '';
+  if (matrixPoiDetail) {
+    matrixPoiDetail.hidden = !detail;
+    matrixPoiDetail.textContent = detail;
+  }
+}
+
 function updateResultCard(result) {
   const rings = Array.isArray(result?.rings) ? result.rings : [];
   const pois = Array.isArray(result?.pois) ? result.pois : [];
@@ -220,8 +265,10 @@ function updateResultCard(result) {
   const status = result
     ? result.metadata?.poiCoverage?.mode === 'preview-radius'
       ? 'POI 预览'
-      : isLive
-        ? (result.metadata?.cacheHit ? '真实·缓存命中' : '真实 ORS')
+        : isLive
+        ? (result.metadata?.matrix
+          ? (result.metadata.matrix.cache === 'hit' ? 'Matrix·缓存命中' : 'Matrix 路网估算')
+          : (result.metadata?.cacheHit ? '真实·缓存命中' : '真实 ORS'))
         : 'Mock'
     : '待生成';
   const values = {
@@ -281,6 +328,7 @@ analysisStore?.subscribe((state) => {
       : state.data.status === 'error' ? `请求失败：${state.data.error?.message || '请检查参数或服务状态'}`
         : staleResult ? '参数已变更 · 请先生成新的 ORS 等时圈'
         : metadata?.poiCoverage?.mode === 'preview-radius' ? `POI 预览：${metadata.poiCoverage.radiusMeters} m · 未代表完整覆盖`
+          : metadata?.matrix ? `Matrix 路网估算已完成 · ${metadata.matrix.cache === 'hit' ? '缓存命中，未消耗上游请求' : '已请求一次上游'}`
           : metadata?.isLive ? `ORS 实时等时圈 · ${metadata.cacheHit ? '缓存命中' : '已请求上游'} · 可单独加载 POI 预览`
             : '快速等时圈默认不请求 POI · 可单独加载预览';
     analysisStatusCopy.textContent = status;
@@ -293,10 +341,12 @@ analysisStore?.subscribe((state) => {
     renderQuota(state.data.lastSuccessfulResult.metadata.apiQuota, state.data.lastSuccessfulResult.metadata.cacheHit ? 'cache' : '');
   }
   if (nameCloudButton) nameCloudButton.disabled = !canGenerateNameCloud(state) || nameCloudButton.classList.contains('is-loading');
+  if (matrixButton) matrixButton.disabled = !canCalculateMatrix(state) || matrixButton.classList.contains('is-loading');
   updateNameCloudStats(state.data.lastSuccessfulResult);
   updateNameCloudPresentation(state.data.lastSuccessfulResult);
   applyPanmapActiveRing(interaction.activeRingId || null);
   applyPanmapPoiState(interaction);
+  updateMatrixPresentation(state.data.lastSuccessfulResult, interaction);
   traditionalMapAdapter?.setActiveRingId(interaction.activeRingId || null);
   traditionalMapAdapter?.setHoveredRingId(interaction.hoveredRingId || null);
   traditionalMapAdapter?.setSelectedPoiId(interaction.selectedPoiId || null);
@@ -317,9 +367,15 @@ analysisStore?.subscribe((state) => {
       categoryFocusPath: interaction.categoryFocusPath || interaction.categoryPath || [],
       visibleTopLevelCategoryIds: interaction.visibleTopLevelCategoryIds,
     });
-    window.rebuildPanmapLayout?.({
+    Promise.resolve(window.rebuildPanmapLayout?.({
       layers,
       centerLabel: state.data.lastSuccessfulResult.center?.label,
+      outOfRangeCount: state.data.lastSuccessfulResult.metadata?.matrix?.matrixOutOfRangeCount || 0,
+    })).then((layout) => {
+      if (!layout) return;
+      updateNameCloudStats(state.data.lastSuccessfulResult, layout);
+      updateNameCloudPresentation(state.data.lastSuccessfulResult, layout);
+      applyPanmapPoiState(analysisStore?.getState().interaction || {});
     });
   }
 });
@@ -480,6 +536,101 @@ function setPanmapMode(active) {
   updateNameCloudPresentation(result);
   document.title = active ? 'IsoTagMap · 泛地图探索' : 'IsoTagMap · 等时圈层标签云泛地图';
   window.setTimeout(() => traditionalMapAdapter?.resize(), 80);
+}
+
+function renderPanmapControlState(state) {
+  if (!state || !panmapControlPanel) return;
+  const draft = state.draft;
+  panmapControlPanel.querySelectorAll('[data-control-enum]').forEach((button) => {
+    button.classList.toggle('is-selected', draft[button.dataset.controlEnum] === button.dataset.value);
+    button.setAttribute('aria-pressed', String(draft[button.dataset.controlEnum] === button.dataset.value));
+  });
+  panmapControlPanel.querySelectorAll('[data-control-number]').forEach((input) => {
+    input.value = String(draft[input.dataset.controlNumber]);
+    const output = document.getElementById(`${input.id.replace('Control', '')}Value`);
+    if (output) output.value = String(draft[input.dataset.controlNumber]);
+  });
+  panmapControlPanel.querySelectorAll('[data-control-boolean]').forEach((input) => {
+    input.checked = Boolean(draft[input.dataset.controlBoolean]);
+  });
+  document.getElementById('naturalEnvelopeControls').hidden = draft.envelopeMode !== 'natural-density';
+  const dirty = state.draftFingerprint !== state.appliedFingerprint;
+  if (controlApplyStatus && !controlApplyStatus.classList.contains('is-warning')) {
+    controlApplyStatus.textContent = dirty ? '草稿尚未应用 · 不会触发数据请求或连续重排' : '草稿与已应用参数一致 · 数据缓存不受影响';
+  }
+  document.documentElement.dataset.controlDraftFingerprint = state.draftFingerprint;
+  document.documentElement.dataset.controlAppliedFingerprint = state.appliedFingerprint;
+  document.documentElement.dataset.controlApplyCount = String(state.applyCount);
+}
+
+function initializePanmapControls() {
+  const controls = window.PanmapApp?.panmapControlState;
+  if (!controls || !panmapControlPanel) return;
+  panmapControlStore = controls.createPanmapControlStore({
+    storage: window.localStorage,
+    onApply: () => {
+      const result = analysisStore?.getState().data.lastSuccessfulResult;
+      if (!result) return;
+      stage31LocalLayoutCalls += 1;
+      document.documentElement.dataset.stage31LocalLayoutCalls = String(stage31LocalLayoutCalls);
+      Promise.resolve(applyAnalysisResultToPanmap(result)).then(() => {
+        if (controlApplyStatus) controlApplyStatus.textContent = '已使用本地缓存完成一次基线重排 · 业务 API 0';
+      });
+    },
+    onWarning: (message) => {
+      if (controlApplyStatus) {
+        controlApplyStatus.textContent = message;
+        controlApplyStatus.classList.add('is-warning');
+      }
+    },
+  });
+  panmapControlStore.subscribe((state) => {
+    controlApplyStatus?.classList.remove('is-warning');
+    renderPanmapControlState(state);
+  });
+  renderPanmapControlState(panmapControlStore.getState());
+
+  panmapControlPanel.querySelectorAll('[data-control-enum]').forEach((button) => {
+    button.addEventListener('click', () => panmapControlStore.setDraft({ [button.dataset.controlEnum]: button.dataset.value }));
+  });
+  panmapControlPanel.querySelectorAll('[data-control-number]').forEach((input) => {
+    input.addEventListener('input', () => panmapControlStore.setDraft({ [input.dataset.controlNumber]: Number(input.value) }));
+  });
+  panmapControlPanel.querySelectorAll('[data-control-boolean]').forEach((input) => {
+    input.addEventListener('change', () => panmapControlStore.setDraft({ [input.dataset.controlBoolean]: input.checked }));
+  });
+  document.getElementById('applyPanmapControls')?.addEventListener('click', () => {
+    const outcome = panmapControlStore.apply();
+    if (!outcome.applied) showToast(outcome.reason);
+    else showToast('仅使用本地缓存重新布局；数据缓存未失效');
+  });
+  document.getElementById('resetPanmapControls')?.addEventListener('click', () => {
+    panmapControlStore.resetDraft();
+    showToast('已恢复默认草稿；尚未应用');
+  });
+  document.getElementById('pinPanmapSeed')?.addEventListener('click', () => {
+    panmapControlStore.pinRandomSeed('stage31-fixed-20260801');
+    showToast('已固定稳定种子草稿；尚未应用');
+  });
+  document.getElementById('exportPanmapMetrics')?.addEventListener('click', () => {
+    const metrics = panmapControlStore.exportMetrics(window.panmapLayoutState || {});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([JSON.stringify(metrics, null, 2)], { type: 'application/json' }));
+    link.download = 'isotagmap-stage31-layout-metrics.json';
+    link.click();
+    URL.revokeObjectURL(link.href);
+    showToast('已导出当前基线指标；未请求网络');
+  });
+  document.getElementById('controlThemeToggle')?.addEventListener('click', () => {
+    appShell.classList.toggle('control-dark');
+    showToast('控制面板主题已切换；未触发重排');
+  });
+  document.getElementById('panmapControlCollapse')?.addEventListener('click', (event) => {
+    const collapsed = appShell.classList.toggle('controls-collapsed');
+    event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
+    event.currentTarget.setAttribute('aria-label', collapsed ? '展开泛地图样式控制' : '收起泛地图样式控制');
+  });
+  document.documentElement.dataset.stage31BusinessApiRequests = '0';
 }
 
 railToggle.addEventListener('click', () => {
@@ -644,6 +795,23 @@ function syncParameterDraftFromUI() {
   return analysisStore?.getState().data.parameterDraft;
 }
 
+async function switchActiveProfile(profile, label) {
+  analysisStore?.setActiveProfile(profile);
+  const state = analysisStore?.getState();
+  const result = state?.data?.lastSuccessfulResult;
+  if (result) {
+    await applyAnalysisResultToPanmap(result);
+    showToast(`已切换为${label}缓存结果，未发起网络请求`);
+    return;
+  }
+  traditionalMapAdapter?.setAnalysisResult(null);
+  const job = state?.data?.jobsByProfile?.[profile];
+  if (analysisStatusCopy) analysisStatusCopy.textContent = job?.status === 'partial'
+    ? `${label}任务已中止 · 可从检查点恢复`
+    : `${label}尚未生成`;
+  showToast(job?.status === 'partial' ? `${label}任务可恢复` : `${label}尚未生成，未发起网络请求`);
+}
+
 function buildAnalysisRequestFromUI() {
   syncParameterDraftFromUI();
   const draft = analysisStore?.getState().data.parameterDraft;
@@ -755,14 +923,14 @@ function setAnalysisLoadingState(isLoading) {
   if (analysisStatusCopy && isLoading) analysisStatusCopy.textContent = '正在请求 ORS 等时圈…';
 }
 
-function applyAnalysisResultToPanmap(result) {
+async function applyAnalysisResultToPanmap(result) {
   updateTimeLayerStatsFromResult(result);
   const interaction = analysisStore?.getState().interaction || {};
   const layers = window.PanmapApp.panmapLayoutAdapter.buildPanmapLayers(result, {
     categoryFocusPath: interaction.categoryFocusPath || interaction.categoryPath || [],
     visibleTopLevelCategoryIds: interaction.visibleTopLevelCategoryIds,
   });
-  const layout = window.rebuildPanmapLayout?.({ layers, centerLabel: result.center?.label });
+  const layout = await window.rebuildPanmapLayout?.({ layers, centerLabel: result.center?.label, outOfRangeCount: result.metadata?.matrix?.matrixOutOfRangeCount || 0 });
   if (!layout) throw new Error('模拟分析结果无法转换为泛地图布局。');
   updateNameCloudStats(result, layout);
   const activeRange = toolbarTimeButton.dataset.activeTime;
@@ -893,7 +1061,7 @@ function mergePoiPreviewIntoResult(result, preview) {
 function setNameCloudLoadingState(isLoading) {
   nameCloudButton?.classList.toggle('is-loading', isLoading);
   nameCloudButton?.setAttribute('aria-busy', String(isLoading));
-  if (nameCloudButtonLabel) nameCloudButtonLabel.textContent = isLoading ? '正在生成名称云…' : '生成步行名称云';
+  if (nameCloudButtonLabel) nameCloudButtonLabel.textContent = isLoading ? '正在生成标签云泛地图…' : '生成POI标签云泛地图';
   if (nameCloudButton) nameCloudButton.disabled = isLoading || !canGenerateNameCloud(analysisStore?.getState());
   if (analysisStatusCopy && isLoading) analysisStatusCopy.textContent = '正在检查 30 分钟步行外圈范围…';
 }
@@ -917,7 +1085,7 @@ async function runNameCloud() {
       cumulativeIsochrones: result.cumulativeIsochrones,
     });
     analysisStore?.setResult(nameCloud);
-    const layout = applyAnalysisResultToPanmap(nameCloud);
+    const layout = await applyAnalysisResultToPanmap(nameCloud);
     updateNameCloudStats(nameCloud, layout);
     renderQuota(nameCloud.metadata?.apiQuota, nameCloud.metadata?.cacheHit ? 'cache' : '');
     showToast(nameCloud.metadata?.cacheHit ? '名称云已命中缓存，未消耗上游请求' : '步行名称标签云已生成');
@@ -926,6 +1094,38 @@ async function runNameCloud() {
     if (analysisStatusCopy) analysisStatusCopy.textContent = '名称云请求失败 · 已保留当前真实等时圈';
   } finally {
     setNameCloudLoadingState(false);
+  }
+}
+
+function setMatrixLoadingState(isLoading) {
+  matrixButton?.classList.toggle('is-loading', isLoading);
+  matrixButton?.setAttribute('aria-busy', String(isLoading));
+  if (matrixButtonLabel) matrixButtonLabel.textContent = isLoading ? '正在计算 Matrix…' : '补齐精确时间';
+  if (matrixButton) matrixButton.disabled = isLoading || !canCalculateMatrix(analysisStore?.getState());
+  if (analysisStatusCopy && isLoading) analysisStatusCopy.textContent = '正在调用 ORS Matrix 单源多目标路网估算…';
+}
+
+async function runMatrixAccessibility() {
+  const state = analysisStore?.getState();
+  if (!canCalculateMatrix(state)) {
+    showToast('请先生成黄鹤楼步行 10/20/30 分钟名称云');
+    return;
+  }
+  const baseResult = state.data.lastSuccessfulResult;
+  setMatrixLoadingState(true);
+  try {
+    const matrixResult = await window.PanmapApp.analysisClient.createMatrixAccessibility(baseResult);
+    analysisStore?.setResult(matrixResult);
+    const layout = await applyAnalysisResultToPanmap(matrixResult);
+    updateNameCloudStats(matrixResult, layout);
+    renderQuota(matrixResult.metadata?.apiQuota, matrixResult.metadata?.matrix?.cache === 'hit' ? 'cache' : '');
+    const summary = window.PanmapApp?.contracts?.matrixSummaryText?.(matrixResult) || 'Matrix 路网估算已完成';
+    showToast(matrixResult.metadata?.matrix?.cache === 'hit' ? `${summary} · 缓存命中，未消耗上游请求` : summary);
+  } catch (error) {
+    showToast(`Matrix 失败：${error.message || '服务不可用'}（已保留上一次完整结果）`);
+    if (analysisStatusCopy) analysisStatusCopy.textContent = 'Matrix 请求失败 · 已保留上一次完整结果';
+  } finally {
+    setMatrixLoadingState(false);
   }
 }
 
@@ -948,7 +1148,7 @@ async function runAnalysis() {
   try {
     const result = await window.PanmapApp.analysisClient.createAnalysis(request, { signal: controller.signal });
     analysisStore?.setResult(result);
-    applyAnalysisResultToPanmap(result);
+    await applyAnalysisResultToPanmap(result);
     showToast(analysisSuccessMessage(result));
   } catch (error) {
     if (error.name === 'AbortError') return;
@@ -1003,7 +1203,7 @@ async function loadPoiPreview() {
     });
     const merged = mergePoiPreviewIntoResult(result, preview);
     analysisStore?.setResult(merged);
-    applyAnalysisResultToPanmap(merged);
+    await applyAnalysisResultToPanmap(merged);
     showToast(`附近 POI 预览已加载：${preview.returnedCount ?? preview.pois.length} 个点`);
   } catch (error) {
     showToast(`POI 预览失败：${error.message || '服务不可用'}`);
@@ -1047,7 +1247,7 @@ document.querySelectorAll('.secondary-item[data-flow]').forEach((button) => {
 });
 
 document.querySelectorAll('.mode-chip').forEach((button) => {
-  button.addEventListener('click', () => {
+  button.addEventListener('click', async () => {
     document.querySelectorAll('.mode-chip').forEach((item) => item.classList.remove('is-selected'));
     button.classList.add('is-selected');
     document.querySelectorAll('.toolbar-menu-option').forEach((option) => {
@@ -1057,8 +1257,7 @@ document.querySelectorAll('.mode-chip').forEach((button) => {
     if (toolbarMode) {
       transportToolbarButton.innerHTML = `<span class="toolbar-select-copy"><small>交通方式选择</small><strong>${toolbarMode}</strong></span><span class="toolbar-chevron">⌄</span>`;
     }
-    analysisStore?.setParameterDraft({ profile: PROFILE_BY_MODE[button.dataset.mode] || null });
-    showToast(`交通方式已切换为${button.textContent.trim()}`);
+    await switchActiveProfile(PROFILE_BY_MODE[button.dataset.mode], button.textContent.trim());
   });
 });
 
@@ -1101,6 +1300,26 @@ toolbarGenerate.addEventListener('click', () => {
 
 poiPreviewButton?.addEventListener('click', loadPoiPreview);
 nameCloudButton?.addEventListener('click', runNameCloud);
+matrixButton?.addEventListener('click', runMatrixAccessibility);
+
+prepareAllProfilesButton?.addEventListener('click', () => {
+  analysisStore?.prepareAllProfiles({
+    'foot-walking': {
+      status: 'planned', sourceType: 'existing-real-cache', outerAreaKm2: 9.769486,
+      pieceCount: 1, minimumPoiRequests: 1, adaptiveReserve: 1,
+    },
+    'cycling-regular': {
+      status: 'N/A', sourceType: 'missing-real-cache', reason: '无匹配真实缓存，不联网补取',
+    },
+    'driving-car': {
+      status: 'awaiting-approval', sourceType: 'existing-real-cache', outerAreaKm2: 1903.245963,
+      pieceCount: 108, minimumPoiRequests: 108, adaptiveReserve: 27,
+      poiRequestUpperBound: 135, budgetStatus: 'approval-required',
+    },
+  });
+  if (analysisStatusCopy) analysisStatusCopy.textContent = '已准备 3 种交通方式计划 · 驾车等待审批 · 未执行请求';
+  showToast('仅生成了计划和预算，真实上游请求 0');
+});
 quotaButton?.addEventListener('click', (event) => {
   event.stopPropagation();
   const nextOpen = quotaPanel?.hasAttribute('hidden');
@@ -1428,7 +1647,7 @@ poiToolbarMenu.addEventListener('click', (event) => event.stopPropagation());
 document.addEventListener('click', closeToolbarMenus);
 
 document.querySelectorAll('.toolbar-menu-option').forEach((option) => {
-  option.addEventListener('click', () => {
+  option.addEventListener('click', async () => {
     const selectedMode = MODE_BY_LABEL[option.dataset.transport];
     if (!selectedMode) {
       closeToolbarMenus();
@@ -1439,9 +1658,8 @@ document.querySelectorAll('.toolbar-menu-option').forEach((option) => {
     option.classList.add('is-selected');
     document.querySelectorAll('.mode-chip').forEach((item) => item.classList.toggle('is-selected', item.dataset.mode === selectedMode));
     transportToolbarButton.innerHTML = `<span class="toolbar-select-copy"><small>交通方式选择</small><strong>${option.dataset.transport}</strong></span><span class="toolbar-chevron">⌄</span>`;
-    analysisStore?.setParameterDraft({ profile: PROFILE_BY_MODE[selectedMode] || null });
+    await switchActiveProfile(PROFILE_BY_MODE[selectedMode], option.dataset.transport);
     closeToolbarMenus();
-    showToast(`交通方式已切换为${option.dataset.transport}`);
   });
 });
 
@@ -1593,4 +1811,95 @@ document.querySelectorAll('[data-mini-map-action]').forEach((button) => {
   });
 });
 
+initializePanmapControls();
 loadPoiDatasets();
+
+async function loadOnlineProviderStatus() {
+  if (!window.PanmapApp?.analysisClient?.getHealth || !onlineProviderStatus) return;
+  try {
+    const health = await window.PanmapApp.analysisClient.getHealth();
+    const ready = health.status === 'ready' && health.networkProbePerformed === false && health.mockFallback === false;
+    onlineProviderStatus.classList.toggle('is-ready', ready);
+    onlineProviderStatus.classList.toggle('is-not-ready', !ready);
+    const missing = Array.isArray(health.missingConfiguration) ? health.missingConfiguration.join('、') : '';
+    onlineProviderStatus.querySelector('strong').textContent = ready
+      ? '在线服务：已配置'
+      : `在线服务未就绪${missing ? `：缺少 ${missing}` : ''}`;
+    document.documentElement.dataset.providerReadiness = health.status;
+    document.documentElement.dataset.providerNetworkProbe = String(health.networkProbePerformed);
+    document.documentElement.dataset.mockFallback = String(health.mockFallback);
+  } catch (error) {
+    onlineProviderStatus.classList.add('is-not-ready');
+    onlineProviderStatus.querySelector('strong').textContent = '本地后端未就绪';
+    document.documentElement.dataset.providerReadiness = 'unavailable';
+  }
+}
+
+loadOnlineProviderStatus();
+
+async function loadStage21CachedBaseline() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('stage21Baseline') !== '1') return;
+  const response = await fetch('./exports/stage-6-layout/stage20-cache-baseline.json', { cache: 'no-store' });
+  if (!response.ok) throw new Error(`第20号缓存夹具读取失败：HTTP ${response.status}`);
+  const result = window.PanmapApp.contracts.normalizeAnalysisResult(await response.json());
+  const request = {
+    schemaVersion: '1.0', center: result.center, profile: result.profile,
+    rangesMinutes: result.rangesMinutes, categoryIds: [], poiDatasetId: null,
+    options: { includePois: true, calculateTravelTimes: true, poiPreviewRadiusMeters: 1000 },
+  };
+  analysisStore?.setParameterDraft({ center: result.center, profile: result.profile, rangesMinutes: result.rangesMinutes, categoryIds: [], options: request.options });
+  analysisStore?.setRequest(request);
+  analysisStore?.setResult(result);
+  document.querySelectorAll('.mode-chip').forEach((item) => item.classList.toggle('is-selected', item.dataset.mode === 'walk'));
+  const transportButton = document.getElementById('transportToolbarButton');
+  if (transportButton) transportButton.innerHTML = '<span class="toolbar-select-copy"><small>交通方式选择</small><strong>步行</strong></span><span class="toolbar-chevron">⌄</span>';
+  const layout = await applyAnalysisResultToPanmap(result);
+  document.documentElement.dataset.stage21Baseline = 'loaded';
+  document.documentElement.dataset.stage21UpstreamRequests = '0';
+  updateNameCloudStats(result, layout);
+  updateNameCloudPresentation(result, layout);
+  if (params.get('stage31Controls') === '1') {
+    setPanmapMode(true);
+    document.documentElement.dataset.stage31Controls = 'loaded';
+    document.documentElement.dataset.stage31FootBaseline = '282-252-39-83-130';
+    document.documentElement.dataset.stage31LayoutBaseline = `${layout?.nameCloudStats?.placedCount || 0}/252`;
+  }
+}
+
+loadStage21CachedBaseline().catch((error) => {
+  document.documentElement.dataset.stage21Baseline = 'error';
+  showToast(error.message || '第20号缓存夹具读取失败');
+});
+
+async function loadStage29CyclingResult() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('stage29Cycling') !== '1') return;
+  const response = await fetch('./exports/stage-6-integrated-live/stage29-cycling-complete.json', { cache: 'no-store' });
+  if (!response.ok) throw new Error(`第29号骑行结果读取失败：HTTP ${response.status}`);
+  const result = window.PanmapApp.contracts.normalizeAnalysisResult(await response.json());
+  if (result.profile !== 'cycling-regular' || result.status !== 'completed') {
+    throw new Error('第29号骑行结果 profile/status 不匹配');
+  }
+  const request = {
+    schemaVersion: '1.0', center: result.center, profile: result.profile,
+    rangesMinutes: result.rangesMinutes, categoryIds: [], poiDatasetId: null,
+    options: { includePois: true, calculateTravelTimes: true, poiPreviewRadiusMeters: 1000 },
+  };
+  analysisStore?.setParameterDraft({ center: result.center, profile: result.profile, rangesMinutes: result.rangesMinutes, categoryIds: [], options: request.options });
+  analysisStore?.setRequest(request);
+  analysisStore?.setResult(result);
+  document.querySelectorAll('.mode-chip').forEach((item) => item.classList.toggle('is-selected', item.dataset.mode === 'bike'));
+  const transportButton = document.getElementById('transportToolbarButton');
+  if (transportButton) transportButton.innerHTML = '<span class="toolbar-select-copy"><small>交通方式选择</small><strong>骑行</strong></span><span class="toolbar-chevron">⌄</span>';
+  const layout = await applyAnalysisResultToPanmap(result);
+  updateNameCloudStats(result, layout);
+  updateNameCloudPresentation(result, layout);
+  document.documentElement.dataset.stage29Cycling = 'loaded';
+  document.documentElement.dataset.stage29UpstreamRequests = '0';
+}
+
+loadStage29CyclingResult().catch((error) => {
+  document.documentElement.dataset.stage29Cycling = 'error';
+  showToast(error.message || '第29号骑行结果读取失败');
+});

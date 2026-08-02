@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f7f9fc" />
     <title>IsoTagMap · 等时圈层标签云泛地图</title>
-    <link rel="stylesheet" href="./styles.css?v=20260730-stage5ui4" />
+    <link rel="stylesheet" href="./styles.css?v=20260731-ui-comments1" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
   </head>
   <body>
@@ -126,6 +126,7 @@
             <button type="button" class="toolbar-generate" id="toolbarGenerate"><span class="toolbar-generate-label">重新生成可达域</span><span class="toolbar-generate-arrow">→</span></button>
           </div>
           <div class="topbar-actions">
+            <div class="provider-status" id="onlineProviderStatus" role="status" aria-live="polite"><span></span><strong>在线服务：检查中</strong></div>
             <div class="quota-control">
               <button class="quota-button" id="quotaButton" type="button" aria-expanded="false" aria-controls="quotaPanel"><span class="quota-dot"></span><span>API 余量</span><strong id="quotaSummary">未知</strong></button>
               <div class="quota-panel" id="quotaPanel" hidden>
@@ -144,14 +145,18 @@
             <div class="panel-scroll">
               <section class="config-section" id="centerPoint">
                 <div class="section-title-row"><div><span class="section-kicker">定位起点</span><h2>中心点</h2></div><span class="complete-check">✓</span></div>
-                <div class="location-input location-search-box" id="centerSearchBox"><span class="input-icon">⌕</span><input id="centerSearchInput" type="search" placeholder="搜索地点或地址" autocomplete="off" aria-label="搜索地点或地址" /><button type="button" class="clear-input" id="centerSearchClear" aria-label="清除地点搜索">×</button></div>
-                <div class="center-location-selection" aria-live="polite"><span class="input-icon">⌖</span><div><strong id="selectedCenterName">武汉·黄鹤楼</strong><span class="location-sub" id="selectedCenterDistrict">武汉市 · 武昌区</span></div></div>
-                <div class="location-suggest-panel center-location-panel" id="centerLocationSuggestPanel">
-                  <div class="suggest-heading">推荐地点</div>
-                  <button class="suggest-option center-suggest-option" type="button" data-place="武汉·黄鹤楼"><strong>武汉·黄鹤楼</strong><span>武汉市 · 武昌区</span></button>
-                  <button class="suggest-option center-suggest-option" type="button" data-place="巴黎·埃菲尔铁塔"><strong>巴黎·埃菲尔铁塔</strong><span>法国 · 巴黎第七区</span></button>
-                  <div id="centerGeocoderResults" class="geocoder-results" role="listbox" aria-label="中心点搜索结果"></div>
+                <div class="location-input location-search-box" id="centerSearchBox">
+                  <span class="input-icon">⌕</span>
+                  <input id="centerSearchInput" type="search" placeholder="搜索地点或地址" autocomplete="off" aria-label="搜索地点或地址" />
+                  <button type="button" class="clear-input" id="centerSearchClear" aria-label="清除地点搜索">×</button>
+                  <div class="location-suggest-panel center-location-panel" id="centerLocationSuggestPanel">
+                    <div class="suggest-heading">推荐地点</div>
+                    <button class="suggest-option center-suggest-option" type="button" data-place="武汉·黄鹤楼"><strong>武汉·黄鹤楼</strong><span>武汉市 · 武昌区</span></button>
+                    <button class="suggest-option center-suggest-option" type="button" data-place="巴黎·埃菲尔铁塔"><strong>巴黎·埃菲尔铁塔</strong><span>法国 · 巴黎第七区</span></button>
+                    <div id="centerGeocoderResults" class="geocoder-results" role="listbox" aria-label="中心点搜索结果"></div>
+                  </div>
                 </div>
+                <div class="center-location-selection" aria-live="polite"><span class="input-icon">⌖</span><div><strong id="selectedCenterName">武汉·黄鹤楼</strong><span class="location-sub" id="selectedCenterDistrict">武汉市 · 武昌区</span></div></div>
                 <div class="coordinate-row"><span>坐标（WGS84）</span><strong>30.5469° N, 114.2969° E</strong><button class="copy-button" aria-label="复制坐标" type="button">▣</button></div>
                 <div class="compact-actions"><button type="button" class="mini-action" id="useCurrentLocationButton">◉ 使用当前位置</button><button type="button" class="mini-action" id="centerMapPickButton">⌖ 地图选点</button></div>
               </section>
@@ -216,8 +221,10 @@
               <button class="generate-button" id="generateButton" type="button"><span class="play-icon">▶</span><span class="generate-button-label">生成可达域</span><span class="button-arrow">→</span></button>
               <div class="poi-preview-row"><label for="poiPreviewRadius">附近 POI 预览</label><select id="poiPreviewRadius"><option value="500">500 m</option><option value="1000" selected>1000 m</option><option value="2000">2000 m</option></select></div>
               <button class="poi-explore-button" id="poiExploreButton" type="button"><span class="sparkle">✦</span><span class="poi-explore-label">加载附近 POI 预览</span><span class="button-arrow">→</span></button>
-              <button class="name-cloud-button" id="nameCloudButton" type="button" disabled><span class="name-cloud-icon">✦</span><span class="name-cloud-button-label">生成步行名称云</span><span class="button-arrow">→</span></button>
+              <button class="name-cloud-button" id="nameCloudButton" type="button" disabled><span class="name-cloud-icon">✦</span><span class="name-cloud-button-label">生成POI标签云泛地图</span><span class="button-arrow">→</span></button>
               <div class="name-cloud-stats" id="nameCloudStats" aria-live="polite">名称云需先生成黄鹤楼步行 10/20/30 分钟真实等时圈</div>
+              <button class="name-cloud-button" id="matrixButton" type="button" disabled><span class="name-cloud-icon">⌁</span><span class="matrix-button-label">补齐精确时间</span><span class="button-arrow">→</span></button>
+              <button class="name-cloud-button" id="prepareAllProfilesButton" type="button"><span class="name-cloud-icon">☰</span><span>准备全部交通方式</span><span class="button-arrow">→</span></button>
               <div class="progress-note"><span class="progress-line"></span><span id="analysisStatusCopy">快速等时圈默认不请求 POI · 可单独加载预览</span></div>
             </div>
           </aside>
@@ -236,6 +243,67 @@
                   </svg>
                 </button>
               </div>
+              <aside class="panmap-control-panel" id="panmapControlPanel" aria-label="泛地图样式控制">
+                <div class="control-panel-head">
+                  <div><small>本地布局设置</small><strong>泛地图样式</strong></div>
+                  <button type="button" id="panmapControlCollapse" aria-label="收起泛地图样式控制" aria-expanded="true">‹</button>
+                </div>
+                <div class="control-panel-body" id="panmapControlBody">
+                  <section class="control-panel-section">
+                    <div class="control-section-title"><strong>标签方位</strong><span>第33号可用</span></div>
+                    <p class="baseline-mode-note">当前：第22号稳定基线</p>
+                    <div class="segmented-control" role="group" aria-label="标签方位">
+                      <button type="button" data-control-enum="labelOrientation" data-value="geographic-radial">地理方位</button>
+                      <button type="button" data-control-enum="labelOrientation" data-value="random-radial">随机方位</button>
+                    </div>
+                    <div class="control-section-title"><strong>包络线形态</strong><span>自然包络未实现</span></div>
+                    <div class="segmented-control" role="group" aria-label="包络线形态">
+                      <button type="button" data-control-enum="envelopeMode" data-value="circular">圆形</button>
+                      <button type="button" data-control-enum="envelopeMode" data-value="natural-density">自然包络</button>
+                    </div>
+                  </section>
+
+                  <section class="control-panel-section">
+                    <div class="control-section-title"><strong>标签布局</strong><span>将在下一布局版本应用</span></div>
+                    <label class="range-control" for="compactnessControl"><span>紧凑度 <output id="compactnessValue">50</output></span><input id="compactnessControl" data-control-number="compactness" type="range" min="0" max="100" value="50" /><small>疏松　　标准　　紧凑</small></label>
+                    <label class="range-control" for="fontHierarchyControl"><span>字号层次 <output id="fontHierarchyValue">50</output></span><input id="fontHierarchyControl" data-control-number="fontHierarchy" type="range" min="0" max="100" value="50" /><small>均匀　　适中　　强调</small></label>
+                  </section>
+
+                  <section class="control-panel-section control-checks" aria-label="圈层与画布">
+                    <strong>圈层与画布</strong>
+                    <label><input type="checkbox" data-control-boolean="autoExpandRings" checked />自动扩大显示圈层</label>
+                    <label><input type="checkbox" data-control-boolean="allEligibleRequired" checked disabled />全部 eligible POI 参与布局</label>
+                    <label><input type="checkbox" data-control-boolean="adaptiveCanvas" checked />自适应画布</label>
+                    <label><input type="checkbox" data-control-boolean="autoFitView" checked />完成后自动适配视图</label>
+                  </section>
+
+                  <section class="control-panel-section natural-envelope-controls" id="naturalEnvelopeControls" hidden>
+                    <div class="control-section-title"><strong>自然包络参数</strong><span>仅草稿</span></div>
+                    <label class="range-control" for="envelopeTightnessControl"><span>包络贴合度 <output id="envelopeTightnessValue">50</output></span><input id="envelopeTightnessControl" data-control-number="envelopeTightness" type="range" min="0" max="100" value="50" /></label>
+                    <label class="range-control" for="envelopeSmoothnessControl"><span>平滑程度 <output id="envelopeSmoothnessValue">60</output></span><input id="envelopeSmoothnessControl" data-control-number="envelopeSmoothness" type="range" min="0" max="100" value="60" /></label>
+                    <label class="compact-number" for="minEnvelopeGapControl">内外圈最小间隔 <input id="minEnvelopeGapControl" data-control-number="minEnvelopeGapPx" type="number" min="4" max="48" value="12" /> px</label>
+                    <label><input type="checkbox" data-control-boolean="showDensityDebug" />密度调试层</label>
+                    <p>本阶段不计算 D3 density，也不渲染自然轮廓。</p>
+                  </section>
+
+                  <section class="control-panel-section control-baseline-stats" aria-label="冻结布局统计">
+                    <div class="control-section-title"><strong>当前布局统计</strong><span>缓存基线</span></div>
+                    <div class="baseline-counts"><span><b>282</b><small>缓存总数</small></span><span><b>252</b><small>参与布局</small></span><span><b>138</b><small>已摆放</small></span><span><b>114</b><small>未摆放</small></span><span><b>30</b><small>圈外审计</small></span></div>
+                    <p>逐圈 eligible：39 / 83 / 130</p>
+                    <p>算法 `stage21-time-sprite-board-v1` · 指纹 `fnv1a-8b0581ae`</p>
+                    <p class="control-warning">参与布局不等于全部可见；第33号前不宣称全量摆放。</p>
+                  </section>
+
+                  <div class="control-apply-status" id="controlApplyStatus" role="status" aria-live="polite">草稿与已应用参数一致 · 数据缓存不受影响</div>
+                  <div class="control-actions">
+                    <button type="button" class="control-apply" id="applyPanmapControls">应用并重新布局</button>
+                    <button type="button" id="resetPanmapControls">恢复默认</button>
+                    <button type="button" id="pinPanmapSeed">固定当前随机种子</button>
+                    <button type="button" id="exportPanmapMetrics">导出布局指标</button>
+                    <button type="button" id="controlThemeToggle" aria-label="切换深浅主题">切换深浅主题</button>
+                  </div>
+                </div>
+              </aside>
               <div class="traditional-map-shell" id="traditionalMapShell">
                 <div id="traditionalMap" class="traditional-map" aria-label="MapLibre 传统地图"></div>
                 <div id="traditionalMapStatus" class="map-status" role="status" aria-live="polite"></div>
@@ -634,9 +702,10 @@
                   <div class="overview-section category-stat"><strong>各类别 POI 数量</strong><div><span><i style="--overview-color:#F2A12C"></i>餐饮美食</span><b>2,689</b></div><div><span><i style="--overview-color:#ED6C8C"></i>购物商场</span><b>2,214</b></div><div><span><i style="--overview-color:#4E9AEA"></i>交通设施</span><b>1,742</b></div><div><span><i style="--overview-color:#49B4A6"></i>生活服务</span><b>1,638</b></div><div><span><i style="--overview-color:#A978DC"></i>酒店住宿</span><b>1,271</b></div><div><span><i style="--overview-color:#9C75D7"></i>教育培训</span><b>972</b></div><div><span><i style="--overview-color:#E5A73D"></i>景点休闲</span><b>761</b></div><div><span><i style="--overview-color:#EB7B9C"></i>医疗健康</span><b>377</b></div><div><span><i style="--overview-color:#EF875E"></i>休闲娱乐</span><b>178</b></div></div>
                   <div class="overview-section overview-share"><strong>比例分布</strong><div class="share-chart"><div class="share-donut" aria-label="类别比例环形图"></div><div class="share-legend"><span><i style="--overview-color:#F2A12C"></i>餐饮 22.7%</span><span><i style="--overview-color:#ED6C8C"></i>购物 18.7%</span><span><i style="--overview-color:#4E9AEA"></i>交通 14.7%</span><span><i style="--overview-color:#49B4A6"></i>服务 13.8%</span><span><i style="--overview-color:#A978DC"></i>酒店 10.7%</span></div></div></div>
                   <div class="overview-section name-cloud-overview" id="nameCloudOverview" hidden>
-                    <strong>未分类名称云</strong>
-                    <p>颜色表示步行可达时间，不表示 POI 类别。</p>
-                    <p>本版标签字号不表示 POI 重要性。</p>
+                    <strong>精确时间 POI 标签云</strong>
+                    <p>颜色、字号和透明度仅编码 Matrix 步行时间；不含类别、评分或热度。</p>
+                    <p id="layoutComparison">A 106/252 · B 待布局 · 超出30分 30</p>
+                    <p id="layoutBandComparison" class="layout-band-comparison">10分 A17/B待定 · 20分 A30/B待定 · 30分 A59/B待定</p>
                     <dl>
                       <div><dt>已显示</dt><dd id="overviewNameCloudPlaced">0</dd></div>
                       <div><dt>未显示</dt><dd id="overviewNameCloudUnplaced">0</dd></div>
@@ -646,11 +715,12 @@
                   <button type="button" class="overview-detail">查看详情</button>
                 </div>
               </aside>
-              <div class="map-scale"><span>0</span><span>1</span><span>2</span><span>3 km</span><div class="scale-bar"><i></i><i></i><i></i></div></div>
 
               <div class="result-card" id="resultCard">
                 <div class="result-title-row"><span class="result-icon">⌁</span><strong>分析结果</strong><span class="status-pill" id="resultStatusPill">待生成</span></div>
                 <div class="result-stats"><div><strong id="resultRingCount">0</strong><span>个时间圈层</span></div><div><strong id="resultPoiCount">0</strong><span>个 POI</span></div><div><strong id="resultCategoryCount">0</strong><span>个一级类别</span></div></div>
+                <div class="name-cloud-stats" id="matrixResultSummary" aria-live="polite" hidden>尚未计算 Matrix 路网估算</div>
+                <div class="name-cloud-stats" id="matrixPoiDetail" aria-live="polite" hidden></div>
                 <button type="button" class="enter-panmap" id="enterPanmap">进入泛地图探索 <span>→</span></button>
               </div>
 
@@ -689,17 +759,19 @@
     <script src="./src/config/center-presets.js?v=20260730-stage5live"></script>
     <script src="./src/config/app-config.js?v=20260730-stage5ui"></script>
     <script src="./src/config/category-labels.js?v=20260728-stage5a"></script>
+    <script src="./src/config/ring-tokens.js?v=20260801-stage6layout"></script>
     <script src="./src/config/map-config.js?v=20260728-stage5a"></script>
-    <script src="./src/contracts/analysis-contracts.js?v=20260730-stage5ui"></script>
+    <script src="./src/contracts/analysis-contracts.js?v=20260731-stage6matrix1"></script>
     <script src="./src/taxonomy/category-tree.js?v=20260728-stage5a"></script>
     <script src="./src/state/analysis-store.js?v=20260730-stage5ui"></script>
-    <script src="./src/api/analysis-client.js?v=20260730-stage5namecloud1"></script>
-    <script src="./src/adapters/panmap-layout-adapter.js?v=20260730-stage5namecloud1"></script>
+    <script src="./src/state/panmap-control-state.js?v=20260801-stage31controls"></script>
+    <script src="./src/api/analysis-client.js?v=20260731-stage6matrix1"></script>
+    <script src="./src/adapters/panmap-layout-adapter.js?v=20260801-stage6layout"></script>
     <script src="./src/map/analysis-map-geojson.js?v=20260727-stage4a"></script>
-    <script src="./src/map/analysis-poi-geojson.js?v=20260728-stage5a"></script>
-    <script src="./src/adapters/traditional-map-adapter.js?v=20260727-stage4b"></script>
-    <script src="./panmap-layout.js?v=20260730-stage5namecloud1"></script>
-    <script src="./app.js?v=20260730-stage5namecloud3"></script>
+    <script src="./src/map/analysis-poi-geojson.js?v=20260731-stage6matrix1"></script>
+    <script src="./src/adapters/traditional-map-adapter.js?v=20260731-ui-controls1"></script>
+    <script src="./panmap-layout.js?v=20260801-stage6layout"></script>
+    <script src="./app.js?v=20260801-stage31controls"></script>
     <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
     <script src="./src/map/maplibre-loader.js?v=20260727-stage4b"></script>
   </body>

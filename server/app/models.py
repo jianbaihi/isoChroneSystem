@@ -143,6 +143,26 @@ class Poi(BaseModel):
     importance: Optional[float] = None
 
 
+class PoiAccessibility(BaseModel):
+    analysisRunId: str
+    poiId: str
+    centerId: Optional[str] = None
+    center: Center
+    profile: Profile
+    travelTimeSeconds: Optional[float] = Field(default=None, ge=0)
+    networkDistanceMeters: Optional[float] = Field(default=None, ge=0)
+    reachable: bool
+    matrixBandId: Optional[str] = None
+    spatialBandId: str
+    bandAssignmentMethod: Literal["matrix-duration"] = "matrix-duration"
+    routingProvider: Literal["ors-public-api"] = "ors-public-api"
+    routingGraphDate: Optional[str] = None
+    calculatedAt: str
+    snappedDistanceMeters: Optional[float] = Field(default=None, ge=0)
+    matrixBatchId: str
+    matrixStatus: Literal["ok", "unreachable", "invalid"]
+
+
 class AnalysisSources(BaseModel):
     isochrones: Literal["mock", "ors", "ors-public-api"]
     pois: Literal["mock", "local-overture", "none", "ors-openpoiservice"]
@@ -169,6 +189,7 @@ class AnalysisMetadata(BaseModel):
     rangesSeconds: Optional[list[int]] = None
     apiQuota: Optional[dict[str, Any]] = None
     panmapMode: Optional[str] = None
+    matrix: Optional[dict[str, Any]] = None
 
 
 class AnalysisResult(BaseModel):
@@ -181,9 +202,15 @@ class AnalysisResult(BaseModel):
     cumulativeIsochrones: list[CumulativeIsochrone] = Field(default_factory=list)
     rings: list[Ring] = Field(default_factory=list)
     pois: list[Poi] = Field(default_factory=list)
+    accessibility: list[PoiAccessibility] = Field(default_factory=list)
     categories: list[Category] = Field(default_factory=list)
     nameCloud: Optional[dict[str, Any]] = None
     metadata: AnalysisMetadata
+
+
+class MatrixAccessibilityRequest(BaseModel):
+    schemaVersion: Literal["1.0"] = SCHEMA_VERSION
+    baseResult: AnalysisResult
 
 
 class ErrorDetail(BaseModel):

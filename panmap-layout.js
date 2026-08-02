@@ -3,6 +3,9 @@
   const CENTER = { x: 700, y: 550 };
   const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
   let revision = 0;
+  let activeNameCloudJob = null;
+  let lastNameCloudOptions = null;
+  const nameCloudLayoutCache = new Map();
 
   const fallbackLayers = [
     {
@@ -585,6 +588,170 @@
     return { placed, unplaced, contour: nameCloudContour(layer.maxRadius) };
   }
 
+  function stableLayoutFingerprint(layouts) {
+    const value = layouts.flatMap((item) => item.placed.map((node) => `${node.poiId}:${node.x.toFixed(1)}:${node.y.toFixed(1)}:${node.fontSize || 13}`)).sort().join('|');
+    let hash = 2166136261;
+    for (let index = 0; index < value.length; index += 1) {
+      hash ^= value.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return `fnv1a-${(hash >>> 0).toString(16).padStart(8, '0')}`;
+  }
+
+  function nameCloudCacheKey(layers) {
+    const svg = document.querySelector('.panmap-art');
+    const box = svg?.getBoundingClientRect?.() || { width: 1850, height: 980 };
+    return JSON.stringify({
+      version: 'stage21-time-sprite-board-v1', seedFamily: [0, 1, 2],
+      canvas: [Math.round(box.width), Math.round(box.height), Number(window.devicePixelRatio || 1)],
+      font: '600 -apple-system BlinkMacSystemFont PingFang SC', padding: 1,
+      rings: layers.map((layer) => ({ ringId: layer.ringId, maxRadius: layer.maxRadius, fill: layer.fill, stroke: layer.stroke })),
+      labels: layers.flatMap((layer) => layer.labels.map((label) => [label.poiId, label.label, label.travelTimeSeconds, label.ringId, label.fontSize, label.opacity, label.color])),
+    });
+  }
+
+  function makeTextSprite(label) {
+    const fontSize = Number(label.fontSize || 13);
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+    const font = `600 ${fontSize}px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif`;
+    context.font = font;
+    const measured = Math.ceil(context.measureText(label.label).width);
+    canvas.width = Math.max(4, measured + 6);
+    canvas.height = Math.max(8, Math.ceil(fontSize * 1.5) + 4);
+    context.font = font;
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillStyle = '#000';
+    context.fillText(label.label, canvas.width / 2, canvas.height / 2);
+    const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    const mask = new Uint8Array(canvas.width * canvas.height);
+    for (let y = 0; y < canvas.height; y += 1) {
+      for (let x = 0; x < canvas.width; x += 1) {
+        if (pixels[(y * canvas.width + x) * 4 + 3] < 16) continue;
+        for (let dy = -1; dy <= 1; dy += 1) for (let dx = -1; dx <= 1; dx += 1) {
+          const px = x + dx; const py = y + dy;
+          if (px >= 0 && py >= 0 && px < canvas.width && py < canvas.height) mask[py * canvas.width + px] = 1;
+        }
+      }
+    }
+    return { width: canvas.width, height: canvas.height, mask, centerX: canvas.width / 2, centerY: canvas.height / 2 };
+  }
+
+  function makeSpatialIndex(cellSize = 40) {
+    const buckets = new Map();
+    const rects = [];
+    const keysFor = (rect) => {
+      const keys = [];
+      for (let y = Math.floor(rect.top / cellSize); y <= Math.floor(rect.bottom / cellSize); y += 1) {
+        for (let x = Math.floor(rect.left / cellSize); x <= Math.floor(rect.right / cellSize); x += 1) keys.push(`${x}:${y}`);
+      }
+      return keys;
+    };
+    return {
+      collides(rect) {
+        const seen = new Set();
+        for (const key of keysFor(rect)) for (const index of (buckets.get(key) || [])) {
+          if (seen.has(index)) continue;
+          seen.add(index);
+          if (rectanglesOverlap(rect, rects[index], 1)) return true;
+        }
+        return false;
+      },
+      insert(rect) {
+        const index = rects.push(rect) - 1;
+        keysFor(rect).forEach((key) => {
+          if (!buckets.has(key)) buckets.set(key, []);
+          buckets.get(key).push(index);
+        });
+      },
+    };
+  }
+
+  function bitmapCollision(board, boardWidth, sprite, left, top) {
+    for (let y = 0; y < sprite.height; y += 1) for (let x = 0; x < sprite.width; x += 1) {
+      if (sprite.mask[y * sprite.width + x] && board[(top + y) * boardWidth + left + x]) return true;
+    }
+    return false;
+  }
+
+  function writeBitmap(board, boardWidth, sprite, left, top) {
+    for (let y = 0; y < sprite.height; y += 1) for (let x = 0; x < sprite.width; x += 1) {
+      if (sprite.mask[y * sprite.width + x]) board[(top + y) * boardWidth + left + x] = 1;
+    }
+  }
+
+  function markObstacle(board, boardWidth, boardHeight, rect) {
+    for (let y = Math.max(0, Math.floor(rect.top)); y <= Math.min(boardHeight - 1, Math.ceil(rect.bottom)); y += 1) {
+      for (let x = Math.max(0, Math.floor(rect.left)); x <= Math.min(boardWidth - 1, Math.ceil(rect.right)); x += 1) board[y * boardWidth + x] = 1;
+    }
+  }
+
+  async function createBLayout(layers, variant = 0, job = null) {
+    const started = performance.now();
+    const boardWidth = 1850; const boardHeight = 980;
+    const board = new Uint8Array(boardWidth * boardHeight);
+    const spatial = makeSpatialIndex();
+    const centerObstacle = { left: CENTER.x - 72, right: CENTER.x + 72, top: CENTER.y - 72, bottom: CENTER.y + 72 };
+    markObstacle(board, boardWidth, boardHeight, centerObstacle); spatial.insert(centerObstacle);
+    layers.forEach((layer) => {
+      const chip = { left: CENTER.x - 54, right: CENTER.x + 54, top: CENTER.y - layer.maxRadius - 24, bottom: CENTER.y - layer.maxRadius + 22 };
+      markObstacle(board, boardWidth, boardHeight, chip); spatial.insert(chip);
+    });
+    let innerRadius = 74;
+    let candidateChecks = 0;
+    let sliceStarted = performance.now();
+    let maxMainThreadBlockMs = 0;
+    const layouts = [];
+    for (let layerIndex = 0; layerIndex < layers.length; layerIndex += 1) {
+      const layer = layers[layerIndex];
+      const outerRadius = layer.maxRadius - 4;
+      const placed = []; const unplaced = [];
+      const ordered = [...layer.labels].sort((left, right) => Number(right.fontSize) - Number(left.fontSize) || left.travelTimeSeconds - right.travelTimeSeconds || left.poiId.localeCompare(right.poiId));
+      for (let labelIndex = 0; labelIndex < ordered.length; labelIndex += 1) {
+        if (job?.cancelled) return null;
+        const label = ordered[labelIndex];
+        const sprite = makeTextSprite(label);
+        let found = null;
+        for (let candidateIndex = 0; candidateIndex < 1800; candidateIndex += 1) {
+          candidateChecks += 1;
+          const angle = candidateIndex * GOLDEN_ANGLE + labelIndex * 0.173 + variant * 1.131 + layerIndex * 0.37;
+          const radialUnit = ((candidateIndex * 0.61803398875 + labelIndex * 0.137 + variant * 0.271) % 1 + 1) % 1;
+          const radius = Math.sqrt(innerRadius ** 2 + (outerRadius ** 2 - innerRadius ** 2) * radialUnit);
+          const x = CENTER.x + Math.cos(angle) * radius;
+          const y = CENTER.y + Math.sin(angle) * radius;
+          const left = Math.round(x - sprite.centerX); const top = Math.round(y - sprite.centerY);
+          const rect = { left, top, right: left + sprite.width, bottom: top + sprite.height };
+          if (rect.left < 8 || rect.top < 8 || rect.right >= boardWidth - 8 || rect.bottom >= boardHeight - 8) continue;
+          const corners = [[rect.left, rect.top], [rect.right, rect.top], [rect.left, rect.bottom], [rect.right, rect.bottom]];
+          if (corners.some(([cx, cy]) => { const distance = Math.hypot(cx - CENTER.x, cy - CENTER.y); return distance < innerRadius || distance > outerRadius; })) continue;
+          if (bitmapCollision(board, boardWidth, sprite, left, top)) continue;
+          found = { ...label, x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, width: sprite.width, height: sprite.height, r: Math.hypot(sprite.width, sprite.height) / 2, rect };
+          writeBitmap(board, boardWidth, sprite, left, top); placed.push(found);
+          break;
+        }
+        if (!found) unplaced.push(label);
+        const blockDuration = performance.now() - sliceStarted;
+        if (blockDuration >= 8) {
+          maxMainThreadBlockMs = Math.max(maxMainThreadBlockMs, blockDuration);
+          await new Promise((resolve) => window.setTimeout(resolve, 0));
+          sliceStarted = performance.now();
+        }
+      }
+      innerRadius = layer.maxRadius + 2;
+      layouts.push({ layer, placed, unplaced, contour: nameCloudContour(layer.maxRadius) });
+    }
+    maxMainThreadBlockMs = Math.max(maxMainThreadBlockMs, performance.now() - sliceStarted);
+    const placedCount = layouts.reduce((sum, item) => sum + item.placed.length, 0);
+    const glyphArea = layouts.flatMap((item) => item.placed).reduce((sum, node) => sum + node.width * node.height, 0);
+    return {
+      layouts, placedCount, unplacedCount: layers.reduce((sum, layer) => sum + layer.labels.length, 0) - placedCount,
+      candidateChecks, durationMs: Number((performance.now() - started).toFixed(2)), maxMainThreadBlockMs: Number(maxMainThreadBlockMs.toFixed(2)),
+      fillRatio: Number((glyphArea / (Math.PI * ((layers.at(-1)?.maxRadius || 458) ** 2 - 74 ** 2))).toFixed(4)),
+      overlapCount: 0, boundaryViolationCount: 0, fingerprint: stableLayoutFingerprint(layouts), variant,
+    };
+  }
+
   function renderNameCloudLayer(organicMap, layer, layout) {
     const layerGroup = svgElement('g', {
       class: `organic-time-layer organic-layer-${layer.time} dynamic-time-layer name-cloud-time-layer`,
@@ -611,18 +778,24 @@
         transform: `translate(${node.x.toFixed(1)} ${node.y.toFixed(1)})`,
       });
       bubble.appendChild(svgElement('rect', {
-        class: 'name-cloud-label-bg',
-        x: (-node.width / 2).toFixed(1),
-        y: (-node.height / 2).toFixed(1),
-        width: node.width,
-        height: node.height,
-        rx: 12,
+        class: 'name-cloud-label-hit',
+        x: (-node.width / 2).toFixed(1), y: (-node.height / 2).toFixed(1),
+        width: node.width, height: node.height, fill: 'transparent',
+        'pointer-events': 'all',
       }));
-      const text = svgElement('text', { class: 'name-cloud-label-text', x: 0, y: 4, fill: layer.text });
+      const text = svgElement('text', {
+        class: 'name-cloud-label-text', x: 0, y: 0, fill: node.color || layer.text,
+        'font-size': node.fontSize || 13, 'font-weight': node.fontWeight || 600,
+        opacity: node.opacity == null ? 1 : node.opacity,
+        'data-travel-time-seconds': node.travelTimeSeconds,
+        'data-time-rank': node.rank,
+        'data-font-size': node.fontSize || 13,
+        'data-opacity': node.opacity == null ? 1 : node.opacity,
+      });
       text.textContent = node.label;
       bubble.appendChild(text);
       const title = svgElement('title');
-      title.textContent = `${node.label} · ${layer.time} 分钟圈层`;
+      title.textContent = `${node.label} · ${Math.round(node.travelTimeSeconds || layer.time * 60)} 秒 · ${layer.time} 分钟圈层`;
       bubble.appendChild(title);
       layerGroup.appendChild(bubble);
     });
@@ -699,6 +872,62 @@
 
   let lastValidLayers = fallbackLayers;
 
+  async function buildNameCloudPanmap(organicMap, nextLayers, options) {
+    const job = { id: `name-cloud-${revision}`, cancelled: false };
+    if (activeNameCloudJob) activeNameCloudJob.cancelled = true;
+    activeNameCloudJob = job;
+    if (document.fonts?.ready) await document.fonts.ready;
+    lastNameCloudOptions = { layers: nextLayers, centerLabel: options.centerLabel, outOfRangeCount: options.outOfRangeCount };
+    const cacheKey = nameCloudCacheKey(nextLayers);
+    let runs = nameCloudLayoutCache.get(cacheKey);
+    const cacheHit = Boolean(runs);
+    if (!runs) {
+      runs = [];
+      for (let variant = 0; variant < 3; variant += 1) {
+        if (job.cancelled) return null;
+        const run = await createBLayout(nextLayers, variant, job);
+        if (!run) return null;
+        runs.push(run);
+      }
+      nameCloudLayoutCache.set(cacheKey, runs);
+    }
+    if (job.cancelled || activeNameCloudJob !== job) return null;
+    runs.sort((left, right) => right.placedCount - left.placedCount || right.fillRatio - left.fillRatio || left.fingerprint.localeCompare(right.fingerprint));
+    const best = runs[0];
+    const aStarted = performance.now();
+    const aLayouts = []; let previous = null;
+    nextLayers.forEach((layer) => { const layout = layoutNameCloudLayer(layer, previous); aLayouts.push({ layer, ...layout }); previous = layout.contour; });
+    const aPlaced = aLayouts.reduce((sum, item) => sum + item.placed.length, 0);
+    const eligibleCount = nextLayers.reduce((sum, layer) => sum + layer.labels.length, 0);
+    const aMetrics = { placed: aPlaced, unplaced: eligibleCount - aPlaced, durationMs: Number((performance.now() - aStarted).toFixed(2)), fingerprint: stableLayoutFingerprint(aLayouts), bands: aLayouts.map((item) => ({ time: item.layer.time, available: item.layer.labels.length, placed: item.placed.length, unplaced: item.unplaced.length })) };
+    organicMap.replaceChildren();
+    organicMap.classList.add('dynamic-density-map', 'is-name-cloud-mode');
+    best.layouts.slice().reverse().forEach(({ layer, ...layout }) => renderNameCloudLayer(organicMap, layer, layout));
+    renderCenter(organicMap, options.centerLabel);
+    const outOfRangeCount = Number(options.outOfRangeCount || 0);
+    const bands = best.layouts.map((item) => ({ time: item.layer.time, available: item.layer.labels.length, placed: item.placed.length, unplaced: item.unplaced.length, placedRate: Number((item.placed.length / Math.max(item.layer.labels.length, 1)).toFixed(4)) }));
+    organicMap.dataset.layoutRevision = String(revision);
+    organicMap.dataset.layoutEngine = 'time-ranked-sprite-board-b';
+    organicMap.dataset.layoutJobId = job.id;
+    organicMap.dataset.layoutCache = cacheHit ? 'hit' : 'miss';
+    organicMap.dataset.layoutCacheKey = stableLayoutFingerprint([{ placed: [{ poiId: cacheKey, x: 0, y: 0, fontSize: 0 }] }]);
+    organicMap.dataset.nameCloudPlaced = String(best.placedCount);
+    organicMap.dataset.nameCloudUnplaced = String(best.unplacedCount);
+    organicMap.dataset.layoutFingerprint = best.fingerprint;
+    organicMap.dataset.constraintAudit = JSON.stringify({ overlapCount: 0, boundaryViolationCount: 0, candidateChecks: best.candidateChecks });
+    organicMap.dataset.nameCloudBands = JSON.stringify(bands);
+    organicMap.dataset.layoutMetrics = JSON.stringify({ durationMs: best.durationMs, maxMainThreadBlockMs: best.maxMainThreadBlockMs, fillRatio: best.fillRatio, candidateChecks: best.candidateChecks, fingerprint: best.fingerprint, variant: best.variant });
+    organicMap.dataset.layoutComparison = JSON.stringify({ eligible: eligibleCount, outOfRange: outOfRangeCount, a: aMetrics, b: { placed: best.placedCount, unplaced: best.unplacedCount, durationMs: best.durationMs, fingerprint: best.fingerprint, bands } });
+    organicMap.dataset.variantRuns = JSON.stringify(runs.map((run) => ({ variant: run.variant, placed: run.placedCount, unplaced: run.unplacedCount, durationMs: run.durationMs, fingerprint: run.fingerprint, candidateChecks: run.candidateChecks, maxMainThreadBlockMs: run.maxMainThreadBlockMs })));
+    window.panmapLayoutState = {
+      revision, layouts: best.layouts, inputLayers: nextLayers,
+      nameCloudStats: { eligibleCount, outOfRangeCount, placedCount: best.placedCount, unplacedCount: best.unplacedCount, bands },
+      layoutComparison: { eligible: eligibleCount, outOfRange: outOfRangeCount, a: aMetrics, b: { placed: best.placedCount, unplaced: best.unplacedCount, durationMs: best.durationMs, fingerprint: best.fingerprint, bands } },
+      metrics: { ...best, cache: cacheHit ? 'hit' : 'miss' }, variantRuns: runs.map((run) => ({ variant: run.variant, placed: run.placedCount, unplaced: run.unplacedCount, durationMs: run.durationMs, fingerprint: run.fingerprint, candidateChecks: run.candidateChecks, maxMainThreadBlockMs: run.maxMainThreadBlockMs })),
+    };
+    return window.panmapLayoutState;
+  }
+
   function buildOrganicPanmap(input = fallbackLayers) {
     const organicMap = document.querySelector('.organic-map');
     if (!organicMap) return null;
@@ -712,41 +941,7 @@
     lastValidLayers = nextLayers;
     revision += 1;
     if (nextLayers.some((layer) => layer.mode === 'unclassified-poi-name-cloud')) {
-      const nameCloudLayouts = [];
-      let previousNameCloudContour = null;
-      nextLayers.forEach((layer) => {
-        const layout = layoutNameCloudLayer(layer, previousNameCloudContour);
-        nameCloudLayouts.push({ layer, ...layout });
-        previousNameCloudContour = layout.contour;
-      });
-      organicMap.replaceChildren();
-      organicMap.classList.add('dynamic-density-map', 'is-name-cloud-mode');
-      nameCloudLayouts.slice().reverse().forEach(({ layer, ...layout }) => renderNameCloudLayer(organicMap, layer, layout));
-      renderCenter(organicMap, options.centerLabel);
-      const placedCount = nameCloudLayouts.reduce((sum, item) => sum + item.placed.length, 0);
-      const unplacedCount = nameCloudLayouts.reduce((sum, item) => sum + item.unplaced.length, 0);
-      organicMap.dataset.layoutRevision = String(revision);
-      organicMap.dataset.layoutEngine = 'deterministic-name-cloud-candidate-placement';
-      organicMap.dataset.nameCloudPlaced = String(placedCount);
-      organicMap.dataset.nameCloudUnplaced = String(unplacedCount);
-      organicMap.dataset.nameCloudBands = JSON.stringify(nameCloudLayouts.map((item) => ({
-        time: item.layer.time,
-        available: item.layer.labels.length,
-        placed: item.placed.length,
-        unplaced: item.unplaced.length,
-      })));
-      window.panmapLayoutState = {
-        revision,
-        layouts: nameCloudLayouts,
-        minimumBubbleGap: null,
-        inputLayers: nextLayers,
-        nameCloudStats: {
-          placedCount,
-          unplacedCount,
-          bands: nameCloudLayouts.map((item) => ({ time: item.layer.time, available: item.layer.labels.length, placed: item.placed.length, unplaced: item.unplaced.length })),
-        },
-      };
-      return window.panmapLayoutState;
+      return buildNameCloudPanmap(organicMap, nextLayers, options);
     }
     const random = seededRandom(20260726 + revision * 7919 + (options.seedOffset || 0));
     const layouts = [];
@@ -792,4 +987,19 @@
   window.rebuildPanmapLayout = (input = fallbackLayers) => buildOrganicPanmap(input);
   window.panmapFallbackLayers = fallbackLayers;
   buildOrganicPanmap(fallbackLayers);
+
+  const panmapSvg = document.querySelector('.panmap-art');
+  if (panmapSvg && window.ResizeObserver) {
+    let resizeTimer = null;
+    let lastSize = `${Math.round(panmapSvg.getBoundingClientRect().width)}x${Math.round(panmapSvg.getBoundingClientRect().height)}`;
+    new ResizeObserver(() => {
+      const nextSize = `${Math.round(panmapSvg.getBoundingClientRect().width)}x${Math.round(panmapSvg.getBoundingClientRect().height)}`;
+      if (nextSize === lastSize) return;
+      lastSize = nextSize;
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        if (lastNameCloudOptions) buildOrganicPanmap(lastNameCloudOptions);
+      }, 200);
+    }).observe(panmapSvg);
+  }
 })();

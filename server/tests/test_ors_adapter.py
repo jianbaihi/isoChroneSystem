@@ -204,7 +204,9 @@ class OrsAdapterTest(unittest.TestCase):
 class ConfigurationTest(unittest.TestCase):
     def test_provider_and_timeout_configuration(self):
         settings = Settings.from_environment({
+            "APP_ENV": "test",
             "ANALYSIS_PROVIDER": "mock",
+            "ALLOW_NETWORK": "false",
             "ORS_BASE_URL": "https://example.test/",
             "ORS_TIMEOUT_SECONDS": "12.5",
         })
@@ -212,7 +214,7 @@ class ConfigurationTest(unittest.TestCase):
         self.assertEqual(settings.ors_base_url, "https://example.test")
         self.assertEqual(settings.ors_timeout_seconds, 12.5)
         self.assertTrue(settings.provider_ready)
-        default_settings = Settings.from_environment({"ANALYSIS_PROVIDER": "mock"})
+        default_settings = Settings.from_environment({"APP_ENV": "test", "ANALYSIS_PROVIDER": "mock", "ALLOW_NETWORK": "false"})
         self.assertEqual(default_settings.ors_base_url, "https://api.heigit.org/openrouteservice")
 
     def test_invalid_provider_or_timeout_is_rejected(self):

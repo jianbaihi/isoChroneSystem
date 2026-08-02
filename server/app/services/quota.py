@@ -6,7 +6,7 @@ from threading import Lock
 from typing import Any, Mapping
 
 
-SERVICES = ("isochrones", "geocoder", "pois")
+SERVICES = ("isochrones", "geocoder", "pois", "matrix")
 ALLOWED_HEADERS = {
     "x-ratelimit-limit",
     "x-ratelimit-remaining",
