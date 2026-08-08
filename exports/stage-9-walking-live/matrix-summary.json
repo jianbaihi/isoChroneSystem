@@ -1,0 +1,22 @@
+{
+  "provider": "ors-public-api",
+  "endpointProfile": "foot-walking",
+  "mode": "one-to-many",
+  "batchSizeLimit": 500,
+  "concurrency": 1,
+  "destinationCount": 284,
+  "batchCount": 1,
+  "actualUpstreamRequests": 1,
+  "retryCount": 0,
+  "ok": 284,
+  "null": 0,
+  "invalid": 0,
+  "outOfRange": 30,
+  "eligible": 254,
+  "ringCounts": {"ring-0-10": 39, "ring-10-20": 85, "ring-20-30": 130},
+  "countConservation": "39 + 85 + 130 + 30 + 0 + 0 = 284",
+  "resultFingerprint": "c4a00b9309bdd758ad6313c068a3321151e6576079c78fa97cc78db75c67578f",
+  "routingGraphDate": "2026-07-28T19:03:26Z",
+  "durationSeconds": {"min": 58.73, "median": 1303.575, "p90": 1815.84, "max": 2498.38},
+  "distanceMeters": {"min": 81.57, "median": 1810.54, "p90": 2522.04, "max": 3470.02}
+}

@@ -1,0 +1,24 @@
+{
+  "stage": 49,
+  "status": "passed",
+  "htmlLink": {
+    "rel": "icon",
+    "type": "image/svg+xml",
+    "href": "./favicon.svg",
+    "resolvedUrl": "http://127.0.0.1:5500/favicon.svg"
+  },
+  "pageAssetInventory": {
+    "inventoryId": "827bfc3e-2fe5-4cbc-aec7-c36f06c9b982",
+    "found": true,
+    "kind": "image",
+    "name": "favicon.svg",
+    "sources": ["resource", "href attribute"],
+    "missingOr404": false
+  },
+  "asset": {
+    "path": "favicon.svg",
+    "transparentBackground": true,
+    "visualSemantics": ["isochrone rings", "location pin", "green-blue-orange project palette"]
+  },
+  "screenshot": "stage49-browser-favicon.png"
+}

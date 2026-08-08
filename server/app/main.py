@@ -7,16 +7,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import settings
-from app.errors import ApiError, FeatureNotAvailableError
+from app.errors import ApiError, FeatureNotAvailableError, InvalidProviderParameterError
 from app.models import AnalysisRequest, MatrixAccessibilityRequest, NameCloudRequest, PoiPreviewRequest
 from app.providers.geocoder import OrsGeocoder
 from app.providers.poi.ors_remote import OrsRemotePoiProvider
 from app.repositories.local_poi import LocalPoiRepository
 from app.services.analysis import create_analysis as build_analysis
 from app.services.analysis import create_name_cloud
+from app.services.cycling_job_ledger import CyclingJobLedger, cycling_input_fingerprint
 from app.services.matrix_accessibility import calculate_matrix_accessibility
 from app.services.poi_batch_planner import build_poi_query_plan, public_plan
 from app.services.quota import QuotaObserver
+from app.services.stage51_cycling_cache import build_cached_name_cloud, complete_cached_matrix
+from app.services.walking_job_ledger import WalkingJobLedger, walking_input_fingerprint
 
 
 app = FastAPI(title="Panmap Analysis API", version="1.0")
@@ -25,10 +28,38 @@ app.add_middleware(
     allow_origins=list(settings.cors_origins),
     allow_credentials=False,
     allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type", "Accept", "X-Request-ID"],
+    allow_headers=["Content-Type", "Accept", "X-Request-ID", "X-Stage45-Job-ID", "X-Stage51-Job-ID"],
 )
 app.state.settings = settings
 app.state.quota_observer = QuotaObserver()
+app.state.walking_job_ledger = WalkingJobLedger()
+app.state.cycling_job_ledger = CyclingJobLedger()
+
+
+def walking_job_id_for(request: Request) -> str | None:
+    value = request.headers.get("X-Stage45-Job-ID")
+    return value.strip()[:120] if value and value.strip() else None
+
+
+def cycling_job_id_for(request: Request) -> str | None:
+    value = request.headers.get("X-Stage51-Job-ID")
+    return value.strip()[:120] if value and value.strip() else None
+
+
+def stage_job_for(request: Request, profile: str) -> tuple[str | None, Any | None, Any | None]:
+    walking_id = walking_job_id_for(request)
+    cycling_id = cycling_job_id_for(request)
+    if walking_id and cycling_id:
+        raise InvalidProviderParameterError("jobHeader", "multiple_stage_job_headers")
+    if cycling_id:
+        if profile != "cycling-regular":
+            raise InvalidProviderParameterError("X-Stage51-Job-ID", "profile_must_be_cycling_regular")
+        return cycling_id, getattr(request.app.state, "cycling_job_ledger", None), cycling_input_fingerprint
+    if walking_id:
+        if profile != "foot-walking":
+            raise InvalidProviderParameterError("X-Stage45-Job-ID", "profile_must_be_foot_walking")
+        return walking_id, getattr(request.app.state, "walking_job_ledger", None), walking_input_fingerprint
+    return None, None, None
 
 
 def request_id_for(request: Request) -> str:
@@ -119,14 +150,29 @@ async def create_analysis(request: AnalysisRequest, raw_request: Request):
             [{"field": "options.calculateTravelTimes", "reason": "stage_2_only_mock"}],
         )
     runtime_settings = getattr(raw_request.app.state, "settings", settings)
-    result = await build_analysis(
-        request,
-        request_id,
-        runtime_settings,
-        getattr(raw_request.app.state, "ors_adapter", None),
-        getattr(raw_request.app.state, "poi_provider", None),
-        getattr(raw_request.app.state, "quota_observer", None),
-    )
+    job_id, ledger, fingerprint_builder = stage_job_for(raw_request, request.profile)
+    if job_id:
+        if list(request.rangesMinutes) != [10, 20, 30]:
+            raise FeatureNotAvailableError("当前真实点击链路仅批准黄鹤楼 10/20/30 分钟。")
+        ledger.begin(job_id, fingerprint_builder(request.center, request.profile, request.rangesMinutes))
+        ledger.transition(job_id, "isochrone-running")
+    try:
+        result = await build_analysis(
+            request,
+            request_id,
+            runtime_settings,
+            getattr(raw_request.app.state, "ors_adapter", None),
+            getattr(raw_request.app.state, "poi_provider", None),
+            getattr(raw_request.app.state, "quota_observer", None),
+        )
+    except Exception:
+        if job_id:
+            ledger.transition(job_id, "failed")
+        raise
+    if job_id:
+        cache_hit = bool(result.metadata.cacheHit)
+        ledger.record(job_id, "isochrones", attempted=1, cache_hits=int(cache_hit), upstream=int(not cache_hit))
+        ledger.transition(job_id, "isochrone-ready")
     return JSONResponse(
         status_code=200,
         content=result.model_dump(mode="json") if hasattr(result, "model_dump") else result.dict(),
@@ -192,13 +238,32 @@ async def create_name_cloud_endpoint(request: NameCloudRequest, raw_request: Req
     provider = getattr(raw_request.app.state, "poi_provider", None)
     if not isinstance(provider, OrsRemotePoiProvider):
         provider = OrsRemotePoiProvider(runtime_settings, quota_observer=quota_observer)
-    result = await create_name_cloud(
-        request,
-        request_id,
-        runtime_settings,
-        poi_provider=provider,
-        quota_observer=quota_observer,
-    )
+    job_id, ledger, fingerprint_builder = stage_job_for(raw_request, request.profile)
+    if job_id:
+        ledger.begin(job_id, fingerprint_builder(request.center, request.profile, request.rangesMinutes))
+        ledger.transition(job_id, "poi-planning")
+        ledger.transition(job_id, "poi-running")
+    try:
+        if request.profile == "cycling-regular":
+            result = build_cached_name_cloud(request, request_id)
+        else:
+            result = await create_name_cloud(
+                request,
+                request_id,
+                runtime_settings,
+                poi_provider=provider,
+                quota_observer=quota_observer,
+            )
+    except Exception:
+        if job_id:
+            ledger.transition(job_id, "partial")
+        raise
+    if job_id:
+        coverage = result.metadata.poiCoverage or {}
+        attempted = int(coverage.get("requests", 0))
+        hits = int(coverage.get("cacheHits", int(bool(coverage.get("cacheHit")))))
+        ledger.record(job_id, "pois", attempted=attempted, cache_hits=hits, upstream=max(0, attempted - hits))
+        ledger.transition(job_id, "poi-ready")
     return JSONResponse(
         status_code=200,
         content=result.model_dump(mode="json") if hasattr(result, "model_dump") else result.dict(),
@@ -210,16 +275,96 @@ async def create_name_cloud_endpoint(request: NameCloudRequest, raw_request: Req
 async def create_matrix_accessibility_endpoint(request: MatrixAccessibilityRequest, raw_request: Request):
     request_id = request_id_for(raw_request)
     runtime_settings = getattr(raw_request.app.state, "settings", settings)
-    result = await calculate_matrix_accessibility(
-        request,
-        runtime_settings,
-        matrix_adapter=getattr(raw_request.app.state, "matrix_adapter", None),
-        quota_observer=getattr(raw_request.app.state, "quota_observer", None),
-    )
+    profile = request.baseResult.profile
+    job_id, ledger, fingerprint_builder = stage_job_for(raw_request, profile)
+    if job_id:
+        ledger.begin(job_id, fingerprint_builder(request.baseResult.center, profile, request.baseResult.rangesMinutes))
+        ledger.transition(job_id, "matrix-planning")
+        batch_count = (len(request.baseResult.pois) + 499) // 500
+        limit = 12 if profile == "cycling-regular" else 2
+        if batch_count > limit:
+            ledger.transition(job_id, "approval-required")
+            raise FeatureNotAvailableError(f"Matrix 需要 {batch_count} 批，超过本阶段批准上限 {limit}。")
+        ledger.transition(job_id, "matrix-running")
+    try:
+        if profile == "cycling-regular":
+            result = complete_cached_matrix(request)
+        else:
+            result = await calculate_matrix_accessibility(
+                request,
+                runtime_settings,
+                matrix_adapter=getattr(raw_request.app.state, "matrix_adapter", None),
+                quota_observer=getattr(raw_request.app.state, "quota_observer", None),
+            )
+    except Exception:
+        if job_id:
+            ledger.transition(job_id, "partial")
+        raise
+    if job_id:
+        metadata = result.metadata.matrix or {}
+        upstream = int(metadata.get("upstreamRequestCount", 0))
+        attempted = int(metadata.get("batchCount", 1))
+        cache_hits = int(metadata.get("cacheHits", attempted if upstream == 0 else 0))
+        ledger.record(job_id, "matrix", attempted=attempted, cache_hits=cache_hits, upstream=upstream)
+        ledger.transition(job_id, "layout-ready")
     return JSONResponse(
         status_code=200,
         content=result.model_dump(mode="json") if hasattr(result, "model_dump") else result.dict(),
         headers={"X-Request-ID": request_id},
+    )
+
+
+@app.get("/api/v1/walking-job-ledger")
+async def walking_job_ledger(raw_request: Request, jobId: str | None = Query(default=None)) -> JSONResponse:
+    request_id = request_id_for(raw_request)
+    ledger = getattr(raw_request.app.state, "walking_job_ledger", None)
+    return JSONResponse(
+        status_code=200,
+        content=ledger.snapshot(jobId) if ledger else {"stage": 45, "job": None, "jobCount": 0},
+        headers={"X-Request-ID": request_id, "X-Upstream-Request-Count": "0"},
+    )
+
+
+@app.post("/api/v1/walking-jobs/{job_id}/publish")
+async def publish_walking_job(job_id: str, raw_request: Request) -> JSONResponse:
+    request_id = request_id_for(raw_request)
+    ledger = getattr(raw_request.app.state, "walking_job_ledger", None)
+    if ledger is None or job_id not in ledger.jobs:
+        raise InvalidProviderParameterError("jobId", "walking_job_not_found")
+    if ledger.jobs[job_id]["status"] != "layout-ready":
+        raise InvalidProviderParameterError("walkingJob.status", "layout_not_ready")
+    ledger.mark_published(job_id)
+    return JSONResponse(
+        status_code=200,
+        content=ledger.snapshot(job_id),
+        headers={"X-Request-ID": request_id, "X-Upstream-Request-Count": "0"},
+    )
+
+
+@app.get("/api/v1/cycling-job-ledger")
+async def cycling_job_ledger(raw_request: Request, jobId: str | None = Query(default=None)) -> JSONResponse:
+    request_id = request_id_for(raw_request)
+    ledger = getattr(raw_request.app.state, "cycling_job_ledger", None)
+    return JSONResponse(
+        status_code=200,
+        content=ledger.snapshot(jobId) if ledger else {"stage": 51, "job": None, "jobCount": 0},
+        headers={"X-Request-ID": request_id, "X-Upstream-Request-Count": "0"},
+    )
+
+
+@app.post("/api/v1/cycling-jobs/{job_id}/publish")
+async def publish_cycling_job(job_id: str, raw_request: Request) -> JSONResponse:
+    request_id = request_id_for(raw_request)
+    ledger = getattr(raw_request.app.state, "cycling_job_ledger", None)
+    if ledger is None or job_id not in ledger.jobs:
+        raise InvalidProviderParameterError("jobId", "cycling_job_not_found")
+    if ledger.jobs[job_id]["status"] != "layout-ready":
+        raise InvalidProviderParameterError("cyclingJob.status", "layout_not_ready")
+    ledger.mark_published(job_id)
+    return JSONResponse(
+        status_code=200,
+        content=ledger.snapshot(job_id),
+        headers={"X-Request-ID": request_id, "X-Upstream-Request-Count": "0"},
     )
 
 

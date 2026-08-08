@@ -1,0 +1,136 @@
+{
+  "stage": 57,
+  "status": "completed-approval-ready",
+  "selection": "A",
+  "selectionReason": "All hard geometry and complexity constraints pass; A reaches the mathematical 43-piece lower bound, has no <1 km² leaf, and therefore precedes B (44 leaves) and C (61 leaves) under the frozen selection ordering.",
+  "theoreticalLowerBound": 43,
+  "candidates": {
+    "A": {
+      "pieceCount": 43,
+      "areaKm2": {
+        "min": 44.261534,
+        "max": 44.261534,
+        "median": 44.261534,
+        "p10": 44.261534,
+        "p90": 44.261534
+      },
+      "smallFragments": {
+        "lt0_1": 0,
+        "lt1": 0,
+        "lt5": 0,
+        "gt40": 43
+      },
+      "maxVertexCount": 236,
+      "maxGeometryBytes": 9370,
+      "multiPolygonCount": 5,
+      "coverage": {
+        "outerAreaKm2": 1903.245963,
+        "plannedAreaKm2": 1903.24597,
+        "areaDifferenceKm2": 7.209e-06,
+        "uncoveredAreaKm2": 2.1412e-05,
+        "outsideAreaKm2": 2.8621e-05,
+        "overlapAreaKm2": 0.0,
+        "toleranceKm2": 1.903246,
+        "areaConserved": true
+      },
+      "compactness": {
+        "min": 0.108693764,
+        "max": 0.736374483,
+        "median": 0.699127598
+      },
+      "executionUpstreamRequests": 0,
+      "maxAreaKm2": 45,
+      "planFingerprint": "633aa700d21cc7582b77dea610a5e43a2bf35c7b382df6bbb48a6b90a941efd0",
+      "executionSeconds": 0.986711,
+      "peakProcessRssBytes": 104480768,
+      "peakProcessRssDeltaBytes": 3997696,
+      "rssUnit": "bytes on macOS",
+      "strategy": "balanced_recursive_bisection"
+    },
+    "B": {
+      "pieceCount": 44,
+      "areaKm2": {
+        "min": 43.25559,
+        "max": 43.25559,
+        "median": 43.25559,
+        "p10": 43.25559,
+        "p90": 43.25559
+      },
+      "smallFragments": {
+        "lt0_1": 0,
+        "lt1": 0,
+        "lt5": 0,
+        "gt40": 44
+      },
+      "maxVertexCount": 253,
+      "maxGeometryBytes": 10047,
+      "multiPolygonCount": 6,
+      "coverage": {
+        "outerAreaKm2": 1903.245963,
+        "plannedAreaKm2": 1903.24597,
+        "areaDifferenceKm2": 7.209e-06,
+        "uncoveredAreaKm2": 2.1412e-05,
+        "outsideAreaKm2": 2.8621e-05,
+        "overlapAreaKm2": 0.0,
+        "toleranceKm2": 1.903246,
+        "areaConserved": true
+      },
+      "compactness": {
+        "min": 0.078995549,
+        "max": 0.77084075,
+        "median": 0.700535924
+      },
+      "executionUpstreamRequests": 0,
+      "maxAreaKm2": 44,
+      "planFingerprint": "7f16b0ff7ff2ab9a6534ce101ff12140eea3ed4eb3dcb7d965f3416d4fedc6b2",
+      "executionSeconds": 0.964661,
+      "peakProcessRssBytes": 104906752,
+      "peakProcessRssDeltaBytes": 425984,
+      "rssUnit": "bytes on macOS",
+      "strategy": "balanced_recursive_bisection"
+    },
+    "C": {
+      "pieceCount": 61,
+      "areaKm2": {
+        "min": 0.357505,
+        "max": 45.0,
+        "median": 39.273401,
+        "p10": 3.516416,
+        "p90": 45.0
+      },
+      "smallFragments": {
+        "lt0_1": 0,
+        "lt1": 2,
+        "lt5": 9,
+        "gt40": 30
+      },
+      "maxVertexCount": 259,
+      "maxGeometryBytes": 10256,
+      "multiPolygonCount": 0,
+      "coverage": {
+        "outerAreaKm2": 1903.245963,
+        "plannedAreaKm2": 1903.245973,
+        "areaDifferenceKm2": 9.662e-06,
+        "uncoveredAreaKm2": 5.4216e-05,
+        "outsideAreaKm2": 5.294e-05,
+        "overlapAreaKm2": 1.0939e-05,
+        "toleranceKm2": 1.903246,
+        "areaConserved": true
+      },
+      "compactness": {
+        "min": 0.094611039,
+        "max": 0.798141411,
+        "median": 0.596366876
+      },
+      "executionUpstreamRequests": 0,
+      "maxAreaKm2": 45,
+      "planFingerprint": "8748ec6c69c3d8a873f8980efc3f45526248b5741f41b4263cbb50af86a9330b",
+      "executionSeconds": 1.183215,
+      "peakProcessRssBytes": 105545728,
+      "peakProcessRssDeltaBytes": 638976,
+      "rssUnit": "bytes on macOS",
+      "strategy": "v1-grid-plus-adjacency_constrained_merge"
+    }
+  },
+  "upstreamRequestCount": 0
+}

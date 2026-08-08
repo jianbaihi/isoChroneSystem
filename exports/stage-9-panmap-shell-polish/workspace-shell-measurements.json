@@ -1,0 +1,35 @@
+{
+  "stage": 49,
+  "status": "passed",
+  "viewport": {
+    "widthPx": 1367,
+    "heightPx": 897
+  },
+  "tokens": {
+    "workspacePanelWidthPx": 425,
+    "workspacePanelRadiusPx": 13,
+    "workspacePanelCanvasGapCssPx": 12,
+    "workspaceShellPaddingPx": 10,
+    "transitionDurationMs": 280,
+    "transitionEasing": "cubic-bezier(.22,.8,.22,1)"
+  },
+  "reachability": {
+    "panelWidthPx": 425,
+    "measuredPanelCanvasGapPx": 13,
+    "horizontalOverflow": false
+  },
+  "panmap": {
+    "panelWidthPx": 425,
+    "measuredPanelCanvasGapPx": 13,
+    "horizontalOverflow": false,
+    "participatesInFlexLayout": true,
+    "overlaysCanvas": false,
+    "collapseButtonPresent": false
+  },
+  "equalWidth": true,
+  "equalGap": true,
+  "responsiveWidthsPx": {
+    "max1230": 390,
+    "max900": 350
+  }
+}

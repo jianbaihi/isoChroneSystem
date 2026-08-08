@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 37,
+  "status": "frozen",
+  "source": "exports/stage-6-layout/stage20-cache-baseline.json",
+  "sourceSha256": "c1ac3a837cf96bd576ad5ed6ac228be78d88da706c0c5db04d35194f14e4d51b",
+  "inputFingerprint": "4c4ff7d3915d9cb4d04d1e6441aabaa970d5ab41fd6eaf4f41dd656ceb879f78",
+  "counts": {
+    "total": 282,
+    "eligible": 252,
+    "outOfRange": 0,
+    "rings": {
+      "ring-0-10": 39,
+      "ring-10-20": 83,
+      "ring-20-30": 130
+    }
+  },
+  "frozenFields": [
+    "poiId",
+    "name",
+    "travelTimeSeconds",
+    "ringId",
+    "longitude",
+    "latitude"
+  ],
+  "profiles": {
+    "footWalking": "local-cache-only",
+    "cyclingRegular": "frozen",
+    "drivingCar": "awaiting-approval"
+  },
+  "oldLayout": {
+    "fingerprint": "fnv1a-c715b7de",
+    "placed": 252,
+    "canvas": [
+      2324,
+      2324
+    ]
+  },
+  "naturalEnvelope": "stage35 quality issue frozen; not loaded or executed"
+}

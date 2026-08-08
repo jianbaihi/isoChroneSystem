@@ -1,0 +1,22 @@
+{
+  "provider": "OpenPOIService",
+  "queryGeometry": "30-minute cumulative isochrone outer Polygon",
+  "outerRangeSeconds": 1800,
+  "areaKm2": 9.7695,
+  "safePieceAreaKm2": 45,
+  "plannedPieces": 1,
+  "requests": 1,
+  "rawPoiCount": 432,
+  "parsedPoiCount": 284,
+  "namedPoiCount": 284,
+  "unnamedCount": 148,
+  "deduplicatedPoiCount": 284,
+  "insideCount": 284,
+  "outsideCount": 0,
+  "invalidCount": 0,
+  "missingNameCount": 148,
+  "resultLimit": 2000,
+  "resultTruncated": false,
+  "fullyCovered": true,
+  "fixedRadiusPreviewUsed": false
+}

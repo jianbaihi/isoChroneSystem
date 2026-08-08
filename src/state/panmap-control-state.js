@@ -3,13 +3,14 @@
   const SCHEMA_VERSION = '1.0';
   const STORAGE_KEY = 'isotagmap.panmap-controls.v1';
   const ORDER = [
-    'schemaVersion', 'labelOrientation', 'envelopeMode', 'compactness', 'fontHierarchy',
+    'schemaVersion', 'labelOrientation', 'compactAlgorithm', 'envelopeMode', 'compactness', 'fontHierarchy',
     'autoExpandRings', 'allEligibleRequired', 'adaptiveCanvas', 'autoFitView',
     'envelopeTightness', 'envelopeSmoothness', 'minEnvelopeGapPx', 'showDensityDebug', 'randomSeed',
   ];
   const DEFAULTS = Object.freeze({
     schemaVersion: SCHEMA_VERSION,
     labelOrientation: 'legacy-baseline',
+    compactAlgorithm: 'frontier-contact',
     envelopeMode: 'circular',
     compactness: 50,
     fontHierarchy: 50,
@@ -24,7 +25,8 @@
     randomSeed: 'stage21-baseline-seed',
   });
   const ENUMS = {
-    labelOrientation: new Set(['legacy-baseline', 'geographic-radial', 'random-radial']),
+    labelOrientation: new Set(['legacy-baseline', 'geographic-radial', 'random-radial', 'compact-geographic', 'compact-random-match', 'direction-preserving-radial']),
+    compactAlgorithm: new Set(['fermat', 'poisson-disc', 'frontier-contact']),
     envelopeMode: new Set(['circular', 'natural-density']),
   };
   const NUMBER_RANGES = {
@@ -71,11 +73,13 @@
     return `fnv1a-${(hash >>> 0).toString(16).padStart(8, '0')}`;
   }
   function isBaselineCompatible(value) {
-    return value.labelOrientation === 'legacy-baseline'
-      && value.envelopeMode === 'circular'
-      && value.compactness === DEFAULTS.compactness
-      && value.fontHierarchy === DEFAULTS.fontHierarchy
-      && value.showDensityDebug === false;
+    if (value.labelOrientation === 'legacy-baseline') return value.envelopeMode === 'circular' && value.showDensityDebug === false;
+    if (['compact-geographic', 'compact-random-match'].includes(value.labelOrientation)) {
+      return value.envelopeMode === 'circular' && value.showDensityDebug === false;
+    }
+    if (value.labelOrientation === 'direction-preserving-radial') return value.envelopeMode === 'circular' && value.showDensityDebug === false;
+    return ['geographic-radial', 'random-radial'].includes(value.labelOrientation)
+      && ['circular', 'natural-density'].includes(value.envelopeMode);
   }
   function createMemoryStorage(initial = {}) {
     const values = { ...initial };
@@ -100,7 +104,7 @@
       resetDraft() { draft = clone(DEFAULTS); return notify(); },
       apply() {
         if (!isBaselineCompatible(draft)) {
-          const reason = '所选布局参数将在第33号实现；当前第22号基线保持不变。';
+          const reason = '自然包络仅支持第33号双径向布局；当前布局保持不变。';
           options.onWarning?.(reason);
           return { applied: false, reason, state: snapshot() };
         }

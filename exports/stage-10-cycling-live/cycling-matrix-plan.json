@@ -1,0 +1,14 @@
+{
+  "profile": "cycling-regular",
+  "mode": "one-to-many",
+  "source": "wuhan-huanghelou",
+  "destinationCount": 2413,
+  "batchSize": 500,
+  "batchCount": 5,
+  "concurrency": 1,
+  "approvedMaximumBatches": 12,
+  "cacheHits": 5,
+  "upstreamRequests": 0,
+  "countConserved": true,
+  "atomicPublish": true
+}

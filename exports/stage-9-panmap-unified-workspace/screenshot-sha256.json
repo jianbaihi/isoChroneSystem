@@ -1,0 +1,9 @@
+{
+  "algorithm": "SHA-256",
+  "actualFormat": "PNG",
+  "files": {
+    "stage47-mode-switch-preserved-state.png": "79a5e2b7c38bc06e2f82a4305698e00b8a3be3d7085e5b9ca606ffbe2a56ebcb",
+    "stage47-ordinary-unified-workspace.png": "07873b4877e735676845550bfb8fcda05b6d4aead8e0105d572a91824b5ef799",
+    "stage47-research-unified-workspace.png": "e3b4fe651e16756ca7ecc2873c2d3b6367808446f9d1f804c94359d60be404c3"
+  }
+}

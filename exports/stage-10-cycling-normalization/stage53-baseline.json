@@ -1,0 +1,28 @@
+{
+  "stage": 53,
+  "source": "stage51 historical real upstream cache reuse",
+  "analysisId": "analysis-stage51-cycling-38ef5a3bdd60c562354e88fd",
+  "profile": "cycling-regular",
+  "rangesMinutes": [
+    10,
+    20,
+    30
+  ],
+  "total": 2413,
+  "eligible": 1800,
+  "outOfRange": 613,
+  "rings": [
+    127,
+    433,
+    1240
+  ],
+  "matrixFingerprint": "f41b23c25e23a997c03b0050451a8976303683d15342842129d8f47e80d0d203",
+  "layoutFingerprint": "fnv1a-9a1fe12a",
+  "upstreamBudget": {
+    "Isochrones": 0,
+    "OpenPOIService": 0,
+    "Matrix": 0,
+    "Geocoder": 0,
+    "Directions": 0
+  }
+}

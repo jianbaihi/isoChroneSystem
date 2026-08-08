@@ -201,11 +201,95 @@
   function matrixPoiDetailText(result, poiId) {
     if (!poiId) return '';
     const poi = (result?.pois || []).find((item) => item.poiId === poiId);
-    const item = (result?.accessibility || []).find((entry) => entry.poiId === poiId);
     const name = poi?.name || '当前 POI';
-    if (!item) return `${name} · 尚无 Matrix 路网估算`;
-    if (item.matrixStatus !== 'ok') return `${name} · Matrix 路网估算不可达或无效`;
-    return `${name} · Matrix 路网估算：${formatMatrixDuration(item.travelTimeSeconds)} · 路网距离 ${formatMatrixDistance(item.networkDistanceMeters)}`;
+    if (!poi?.matrixStatus) return `${name} · 尚无 Matrix 路网估算`;
+    if (poi.matrixStatus !== 'ok') return `${name} · Matrix 路网估算不可达或无效`;
+    return `${name} · Matrix 路网估算：${formatMatrixDuration(poi.travelTimeSeconds)} · 路网距离 ${formatMatrixDistance(poi.networkDistanceMeters)}`;
+  }
+
+  function matrixBandForDuration(seconds, rangesMinutes) {
+    if (!Number.isFinite(seconds) || seconds <= 0) throw new Error('Matrix 时间必须是正的有限数字。');
+    let previous = 0;
+    for (const range of rangesMinutes) {
+      if (seconds <= range * 60) return `ring-${previous}-${range}`;
+      previous = range;
+    }
+    return 'matrix-out-of-range';
+  }
+
+  function normalizeMatrixStatus(status) {
+    // Stage-51 v1 used unreachable for a Matrix null.  v2 exposes null while
+    // preserving the original row as an audit-compatible record.
+    return status === 'unreachable' ? 'null' : status;
+  }
+
+  function enrichPoisWithMatrix(pois, matrixRecords, rangesMinutes, ringIds = []) {
+    const sourcePois = Array.isArray(pois) ? pois : [];
+    const sourceMatrix = Array.isArray(matrixRecords) ? matrixRecords : [];
+    const poiIds = new Set();
+    sourcePois.forEach((poi, index) => {
+      const poiId = String(poi?.poiId || '');
+      if (!poiId || poiIds.has(poiId)) throw new Error(`pois[${index}].poiId 必须稳定且唯一。`);
+      poiIds.add(poiId);
+    });
+    if (!sourceMatrix.length) {
+      return { pois: sourcePois.map((poi) => ({ ...poi, travelTimeSeconds: null })), accessibility: [], migrated: false };
+    }
+    const matrixById = new Map();
+    sourceMatrix.forEach((record, index) => {
+      const poiId = String(record?.poiId || '');
+      if (!poiIds.has(poiId) || matrixById.has(poiId)) throw new Error(`accessibility[${index}].poiId 必须映射到唯一 POI。`);
+      matrixById.set(poiId, record);
+    });
+    if (matrixById.size !== poiIds.size) throw new Error('accessibility 必须完整覆盖本次 POI。');
+    const legalBands = new Set([...ringIds, 'matrix-out-of-range', 'matrix-null', 'matrix-invalid']);
+    const accessibility = [];
+    const enriched = sourcePois.map((poi) => {
+      const poiId = String(poi.poiId);
+      const record = matrixById.get(poiId);
+      const matrixStatus = normalizeMatrixStatus(String(record.matrixStatus || ''));
+      if (!['ok', 'null', 'invalid'].includes(matrixStatus)) throw new Error(`accessibility.${poiId}.matrixStatus 无效。`);
+      const spatialBandId = record.spatialBandId == null ? (poi.spatialBandId || poi.ringId || null) : String(record.spatialBandId);
+      let matrixBandId;
+      let travelTimeSeconds = null;
+      let networkDistanceMeters = null;
+      let reachable = false;
+      if (matrixStatus === 'ok') {
+        travelTimeSeconds = Number(record.travelTimeSeconds);
+        networkDistanceMeters = Number(record.networkDistanceMeters);
+        if (!Number.isFinite(travelTimeSeconds) || travelTimeSeconds <= 0 || !Number.isFinite(networkDistanceMeters) || networkDistanceMeters < 0) {
+          throw new Error(`accessibility.${poiId} 缺少合法 Matrix 数值。`);
+        }
+        matrixBandId = matrixBandForDuration(travelTimeSeconds, rangesMinutes);
+        reachable = true;
+      } else {
+        matrixBandId = matrixStatus === 'null' ? 'matrix-null' : 'matrix-invalid';
+      }
+      if (!legalBands.has(matrixBandId)) throw new Error(`accessibility.${poiId}.matrixBandId 无效。`);
+      const normalizedRecord = {
+        ...record, poiId, matrixStatus, matrixBandId, spatialBandId,
+        travelTimeSeconds, networkDistanceMeters, reachable,
+      };
+      accessibility.push(normalizedRecord);
+      return {
+        ...poi,
+        poiId,
+        travelTimeSeconds,
+        networkDistanceMeters,
+        ringId: matrixBandId,
+        matrixBandId,
+        spatialBandId,
+        bandAssignmentMethod: 'matrix-duration',
+        reachable,
+        matrixStatus,
+        routingProvider: record.routingProvider || null,
+        routingGraphDate: record.routingGraphDate || null,
+        calculatedAt: record.calculatedAt || null,
+        snappedDistanceMeters: record.snappedDistanceMeters == null ? null : Number(record.snappedDistanceMeters),
+        matrixBatchId: record.matrixBatchId || null,
+      };
+    });
+    return { pois: enriched, accessibility, migrated: true };
   }
 
   function normalizeAnalysisResult(result) {
@@ -245,7 +329,7 @@
     });
     const ringIds = new Set(normalized.rings.map((ring) => ring.ringId));
     normalized.pois.forEach((poi, index) => {
-      if (poi.ringId && !ringIds.has(poi.ringId) && !['matrix-out-of-range', 'matrix-unreachable-or-invalid'].includes(poi.ringId)) {
+      if (poi.ringId && !ringIds.has(poi.ringId) && !['matrix-out-of-range', 'matrix-unreachable-or-invalid', 'matrix-null', 'matrix-invalid'].includes(poi.ringId)) {
         throw new Error(`pois[${index}].ringId 不属于本次结果。`);
       }
     });
@@ -255,22 +339,25 @@
         throw new Error(`accessibility[${index}].poiId 必须映射到唯一 POI。`);
       }
       accessibilityIds.add(String(item.poiId));
-      const matrixStatus = String(item.matrixStatus || '');
-      if (!['ok', 'unreachable', 'invalid'].includes(matrixStatus)) throw new Error(`accessibility[${index}].matrixStatus 无效。`);
+      const matrixStatus = normalizeMatrixStatus(String(item.matrixStatus || ''));
+      if (!['ok', 'null', 'invalid'].includes(matrixStatus)) throw new Error(`accessibility[${index}].matrixStatus 无效。`);
       const travelTimeSeconds = item.travelTimeSeconds == null ? null : Number(item.travelTimeSeconds);
       const networkDistanceMeters = item.networkDistanceMeters == null ? null : Number(item.networkDistanceMeters);
       if (travelTimeSeconds != null && (!Number.isFinite(travelTimeSeconds) || travelTimeSeconds < 0)) throw new Error(`accessibility[${index}].travelTimeSeconds 无效。`);
       if (networkDistanceMeters != null && (!Number.isFinite(networkDistanceMeters) || networkDistanceMeters < 0)) throw new Error(`accessibility[${index}].networkDistanceMeters 无效。`);
       const matrixBandId = item.matrixBandId == null ? null : String(item.matrixBandId);
-      if (matrixBandId && !ringIds.has(matrixBandId) && matrixBandId !== 'matrix-out-of-range') throw new Error(`accessibility[${index}].matrixBandId 无效。`);
-      if (matrixStatus === 'ok' && (travelTimeSeconds == null || networkDistanceMeters == null || !matrixBandId)) {
+      if (matrixBandId && !ringIds.has(matrixBandId) && !['matrix-out-of-range', 'matrix-null', 'matrix-invalid'].includes(matrixBandId)) throw new Error(`accessibility[${index}].matrixBandId 无效。`);
+      // Legacy v1 caches may carry duration and distance but omit a derived
+      // matrixBandId.  The canonical join below derives it from duration.
+      if (matrixStatus === 'ok' && (travelTimeSeconds == null || networkDistanceMeters == null)) {
         throw new Error(`accessibility[${index}] 缺少合法 Matrix 数值。`);
       }
       return { ...item, poiId: String(item.poiId), matrixStatus, matrixBandId, travelTimeSeconds, networkDistanceMeters };
     });
-    if (normalized.accessibility.length && normalized.accessibility.length !== normalized.pois.length) {
-      throw new Error('accessibility 必须完整覆盖本次 POI。');
-    }
+    const enriched = enrichPoisWithMatrix(normalized.pois, normalized.accessibility, normalized.rangesMinutes, [...ringIds]);
+    normalized.pois = enriched.pois;
+    normalized.accessibility = enriched.accessibility;
+    if (enriched.migrated) normalized.publishedResultSchemaVersion = '2.0';
     normalized.metadata = normalizeMetadata(normalized);
     return normalized;
   }
@@ -281,6 +368,8 @@
     normalizeAnalysisRequest,
     normalizeDraftRanges,
     normalizeAnalysisResult,
+    enrichPoisWithMatrix,
+    matrixBandForDuration,
     normalizePoiPreview,
     normalizeGeoJsonGeometry,
     formatMatrixDuration,

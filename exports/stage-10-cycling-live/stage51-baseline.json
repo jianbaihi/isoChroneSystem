@@ -1,0 +1,63 @@
+{
+  "stage": 51,
+  "capturedAt": "2026-08-06T17:28:13+08:00",
+  "repository": {
+    "root": "/Users/zhangzhihan/Desktop/项目的UI界面",
+    "branch": "main",
+    "head": "6379d19b644d44d471c7ad3ed29c4e3e558928c3",
+    "dirtyItemsAtStart": 76,
+    "dirtyItemsAtDelivery": 83,
+    "resetCleanCheckoutUsed": false,
+    "existingChangesPreserved": true
+  },
+  "runtime": {
+    "frontend": "http://127.0.0.1:5500/",
+    "backend": "http://127.0.0.1:8000/",
+    "health": "ready",
+    "analysisProvider": "ors",
+    "poiProvider": "ors_remote",
+    "mockFallback": false,
+    "networkProbePerformed": false,
+    "keyLocation": "server/.env only",
+    "keyExposed": false
+  },
+  "frozenWalking": {
+    "analysisId": "analysis-name-cloud-7823d8e3-5c27-4a22-8b78-be5939c4e2ba",
+    "profile": "foot-walking",
+    "total": 284,
+    "eligible": 254,
+    "outOfRange": 30,
+    "rings": [
+      39,
+      85,
+      130
+    ],
+    "matrixFingerprint": "c4a00b9309bdd758ad6313c068a3321151e6576079c78fa97cc78db75c67578f",
+    "cacheOnlyValidation": true,
+    "upstreamRequests": 0
+  },
+  "frozenResearch43": {
+    "eligible": 252,
+    "rings": [
+      39,
+      83,
+      130
+    ],
+    "recomputed": false
+  },
+  "layoutCapacityGate": {
+    "source": "exports/stage-6-integrated-live/stage29-cycling-complete.json",
+    "eligible": 1800,
+    "domNodes": 1800,
+    "uniquePoiIds": 1800,
+    "silentTruncation": false,
+    "passed": true
+  },
+  "initialPageLoadBusinessRequests": {
+    "Isochrones": 0,
+    "OpenPOIService": 0,
+    "Matrix": 0,
+    "Geocoder": 0,
+    "Directions": 0
+  }
+}

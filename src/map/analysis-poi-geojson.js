@@ -5,7 +5,7 @@
     return { type: 'FeatureCollection', features: [] };
   }
 
-  function pointForPoi(poi, index, accessibility) {
+  function pointForPoi(poi, index) {
     const lon = Number(poi?.location?.lon);
     const lat = Number(poi?.location?.lat);
     if (!Number.isFinite(lon) || !Number.isFinite(lat) || lon < -180 || lon > 180 || lat < -90 || lat > 90) {
@@ -26,10 +26,10 @@
           basicCategoryId: category.basicCategoryId || '',
           primaryCategoryId: category.primaryCategoryId || poi.categoryId || '',
           name: String(poi.name || ''),
-          matrixStatus: accessibility?.matrixStatus || '',
-          matrixBandId: accessibility?.matrixBandId || '',
-          travelTimeSeconds: accessibility?.travelTimeSeconds ?? null,
-          networkDistanceMeters: accessibility?.networkDistanceMeters ?? null,
+          matrixStatus: poi.matrixStatus || '',
+          matrixBandId: poi.matrixBandId || '',
+          travelTimeSeconds: poi.travelTimeSeconds ?? null,
+          networkDistanceMeters: poi.networkDistanceMeters ?? null,
         },
         geometry: { type: 'Point', coordinates: [lon, lat] },
       },
@@ -38,9 +38,8 @@
 
   function buildPoiFeatures(result, diagnostics = []) {
     const features = [];
-    const accessibilityById = new Map((Array.isArray(result?.accessibility) ? result.accessibility : []).map((item) => [item.poiId, item]));
     (Array.isArray(result?.pois) ? result.pois : []).forEach((poi, index) => {
-      const normalized = pointForPoi(poi, index, accessibilityById.get(poi.poiId));
+      const normalized = pointForPoi(poi, index);
       if (normalized.error) {
         diagnostics.push(normalized.error);
         return;

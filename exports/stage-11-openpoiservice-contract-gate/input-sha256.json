@@ -1,0 +1,14 @@
+{
+  "selectedPlan": {
+    "path": "exports/stage-11-driving-partitioner-v2/selected-driving-poi-plan-v2.json",
+    "sha256": "7ce21e84f7928586bc781806a12bdf68b69c4b26e4ad40d579cb5379b4b6767a"
+  },
+  "selectedPlanGeoJson": {
+    "path": "exports/stage-11-driving-partitioner-v2/selected-driving-poi-plan-v2.geojson",
+    "sha256": "2ac5494932fcb72943ea9845d4643b8044814bca86947c3495baa83071d9e750"
+  },
+  "drivingIsochroneCache": {
+    "path": "data/generated/ors-cache/stage-5-live-validation/20260730T020216Z-be95b0fa/e8bb30111305495cf7ab9e17441cceab2079caa7b071c313b6802f7bafb7d55e.json",
+    "sha256": "9e82fa716a4036d5257d06b746de87a09e13bad09de751cd67259387fef3db3a"
+  }
+}

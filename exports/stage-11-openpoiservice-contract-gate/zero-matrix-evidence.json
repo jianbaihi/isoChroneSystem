@@ -1,0 +1,6 @@
+{
+  "stage": 59,
+  "matrixRequests": 0,
+  "analysisIdsCreated": 0,
+  "reason": "Stage59 stops before any POI Canary when quota is unknown; Matrix is prohibited in every Stage59 outcome."
+}

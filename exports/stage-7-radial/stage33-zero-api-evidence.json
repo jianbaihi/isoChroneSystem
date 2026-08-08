@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 33,
+  "status": "completed-with-view-contract",
+  "budget": {
+    "isochrones": 0,
+    "poi": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "actual": {
+    "isochrones": 0,
+    "poi": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "dataSource": "local-stage20-cache-only",
+  "profiles": {
+    "footWalking": "cache-only",
+    "cyclingRegular": "frozen-not-read",
+    "drivingCar": "awaiting-approval-not-scheduled"
+  },
+  "businessRoutes": [],
+  "networkGuard": "test-environment-network-forbidden"
+}

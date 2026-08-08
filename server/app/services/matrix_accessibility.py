@@ -9,9 +9,10 @@ from typing import Any
 
 from app.adapters.ors_matrix import MatrixComputation, OrsMatrixAdapter
 from app.config import Settings
-from app.errors import InvalidProviderParameterError, MatrixIncompleteError
+from app.errors import InvalidProviderParameterError
 from app.models import AnalysisResult, MatrixAccessibilityRequest
 from app.services.quota import QuotaObserver, empty_quota_service
+from app.services.published_result_normalization import enrich_pois_with_matrix
 
 
 FROZEN_CENTER = (114.296944, 30.546944)
@@ -126,9 +127,6 @@ def _apply_complete_result(
     summary: dict[str, Any],
 ) -> AnalysisResult:
     result = base_result.model_copy(deep=True)
-    accessibility_by_id = {item.poiId: item for item in computation.accessibility}
-    for poi in result.pois:
-        poi.ringId = accessibility_by_id[poi.poiId].matrixBandId or "matrix-unreachable-or-invalid"
     result.accessibility = computation.accessibility
 
     band_counts = {band: int(summary["matrixBandCounts"].get(band, 0)) for band in VISIBLE_MATRIX_BANDS}
@@ -170,7 +168,7 @@ def _apply_complete_result(
     ]
     if "POI 圈层已按 ORS Matrix 路网估算时间重新判定；不是实时到达时间。" not in result.metadata.warnings:
         result.metadata.warnings.append("POI 圈层已按 ORS Matrix 路网估算时间重新判定；不是实时到达时间。")
-    return result
+    return enrich_pois_with_matrix(result)
 
 
 async def calculate_matrix_accessibility(
@@ -189,6 +187,4 @@ async def calculate_matrix_accessibility(
         spatial_band_by_id=prior_spatial,
     )
     summary = _summary(computation)
-    if summary["matrixNullCount"] or summary["matrixInvalidCount"]:
-        raise MatrixIncompleteError(summary["matrixNullCount"], summary["matrixInvalidCount"])
     return _apply_complete_result(base_result, computation, summary)

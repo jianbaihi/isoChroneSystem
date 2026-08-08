@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "research-evaluation/v1",
+  "runId": "local-single-run",
+  "generatedAt": "2026-08-04T14:26:16.084Z",
+  "evaluatorVersion": "stage39-spatial-semantic-evaluator-v1",
+  "dataRef": {
+    "centerId": "wuhan-huanghelou",
+    "centerLabel": "武汉·黄鹤楼",
+    "profile": "foot-walking",
+    "rangesSeconds": [
+      600,
+      1200,
+      1800
+    ],
+    "eligibleCount": 252
+  },
+  "layout": {
+    "algorithmId": "direction-preserving-radial",
+    "algorithmVersion": "stage41-direction-preserving-radial-v1",
+    "seed": null,
+    "fingerprint": "fnv1a-19b5d803"
+  },
+  "epsilon": {
+    "sourceAxisMeters": 1,
+    "layoutAxisPx": 0.5,
+    "sectorBoundaryDeg": 0.01,
+    "pairSourceMeters": 1,
+    "pairLayoutPx": 0.5
+  },
+  "metrics": {
+    "completeness": {
+      "inputCount": 252,
+      "placedCount": 252,
+      "unplacedCount": 0,
+      "placementRate": 1,
+      "placedByRing": {
+        "ring-0-10": 39,
+        "ring-10-20": 83,
+        "ring-20-30": 130
+      }
+    },
+    "constraints": {
+      "overlapCount": 0,
+      "overlapRate": 0,
+      "outsideOwnRingCount": 0,
+      "outsideOwnRingRate": 0,
+      "centerCollisionCount": 0,
+      "timeLabelCollisionCount": 0
+    },
+    "direction": {
+      "meanAngularErrorDeg": 2.003173,
+      "medianAngularErrorDeg": 0.002616,
+      "p95AngularErrorDeg": 9.999418,
+      "maxAngularErrorDeg": 62.080071,
+      "angularDenominator": 252,
+      "angularExcluded": 0,
+      "eastWestFlipRate": 0,
+      "northSouthFlipRate": 0,
+      "sectorRetentionRate4": 0.948413,
+      "sectorRetentionRate8": 0.968254,
+      "sectorRetentionRate12": 0.93254,
+      "denominators": {
+        "eastWest": {
+          "rate": 0,
+          "flipped": 0,
+          "denominator": 252,
+          "boundaryExcluded": 0
+        },
+        "northSouth": {
+          "rate": 0,
+          "flipped": 0,
+          "denominator": 252,
+          "boundaryExcluded": 0
+        },
+        "sector4": {
+          "rate": 0.948413,
+          "retained": 239,
+          "denominator": 252,
+          "boundaryExcluded": 0,
+          "sectors": 4
+        },
+        "sector8": {
+          "rate": 0.968254,
+          "retained": 244,
+          "denominator": 252,
+          "boundaryExcluded": 0,
+          "sectors": 8
+        },
+        "sector12": {
+          "rate": 0.93254,
+          "retained": 235,
+          "denominator": 252,
+          "boundaryExcluded": 0,
+          "sectors": 12
+        }
+      }
+    },
+    "pairwiseRelations": {
+      "pairwiseLeftRightRetentionRate": 0.93362,
+      "pairwiseUpDownRetentionRate": 0.944847,
+      "pairCountEvaluatedLR": 31576,
+      "pairCountEvaluatedUD": 31567,
+      "exclusions": {
+        "leftRight": {
+          "rate": 0.93362,
+          "retained": 29480,
+          "denominator": 31576,
+          "sourceExcluded": 34,
+          "layoutExcluded": 16
+        },
+        "upDown": {
+          "rate": 0.944847,
+          "retained": 29826,
+          "denominator": 31567,
+          "sourceExcluded": 27,
+          "layoutExcluded": 32
+        }
+      },
+      "epsilon": {
+        "sourceMeters": 1,
+        "layoutPx": 0.5
+      }
+    },
+    "performance": {
+      "layoutDurationMs": 1275,
+      "evaluationDurationMs": 24,
+      "candidateChecks": 957781,
+      "layoutFingerprint": "fnv1a-19b5d803",
+      "evaluationFingerprint": "fnv1a-ea59dcc4"
+    }
+  },
+  "evaluationFingerprint": "fnv1a-ea59dcc4"
+}

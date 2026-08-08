@@ -1,0 +1,12 @@
+{
+  "status": "completed",
+  "jobId": "f0dbb825-55d6-40c0-b676-5e0503b96697",
+  "inputFingerprint": "9579b48f9570c9ba340c98a22b1562703134012469b7199785fc5367f94b9525",
+  "resultFingerprint": "c4a00b9309bdd758ad6313c068a3321151e6576079c78fa97cc78db75c67578f",
+  "transitions": ["idle", "isochrone-running", "isochrone-ready", "poi-planning", "poi-running", "poi-ready", "matrix-planning", "matrix-running", "layout-ready", "completed"],
+  "published": true,
+  "cacheHits": {"Isochrones": 1, "OpenPOIService": 1, "Matrix": 1},
+  "upstreamRequests": {"Isochrones": 0, "OpenPOIService": 0, "Matrix": 0, "Geocoder": 0, "Directions": 0},
+  "sameCounts": {"totalPoi": 284, "eligible": 254, "outOfRange": 30, "rings": [39, 85, 130]},
+  "sameOrdinaryAndResearchResult": true
+}

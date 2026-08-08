@@ -1,0 +1,15 @@
+{
+  "stage": 57,
+  "selectedPlanFingerprint": "633aa700d21cc7582b77dea610a5e43a2bf35c7b382df6bbb48a6b90a941efd0",
+  "coverage": {
+    "outerAreaKm2": 1903.245963,
+    "plannedAreaKm2": 1903.245963,
+    "areaDifferenceKm2": -0.0,
+    "uncoveredAreaKm2": 0.0,
+    "outsideAreaKm2": 0.0,
+    "overlapAreaKm2": 0.0,
+    "toleranceKm2": 1.903246,
+    "areaConserved": true
+  },
+  "allHardConstraintsPass": true
+}

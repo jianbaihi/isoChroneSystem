@@ -11,10 +11,11 @@ test('converts POIs to stable point features and preserves taxonomy properties',
   const diagnostics = [];
   const collection = poiGeoJson.buildPoiFeatures({ pois: [{
     poiId: 'overture:one', datasetId: 'dataset', name: '地点', ringId: 'ring-0-10',
+    matrixStatus: 'ok', matrixBandId: 'ring-0-10', travelTimeSeconds: 754.2, networkDistanceMeters: 914.6,
     location: { lon: 114.3, lat: 30.5 }, category: {
       topLevelId: 'food_and_drink', basicCategoryId: 'restaurant', primaryCategoryId: 'hot_pot_restaurant',
     },
-  }], accessibility: [{ poiId: 'overture:one', matrixStatus: 'ok', matrixBandId: 'ring-0-10', travelTimeSeconds: 754.2, networkDistanceMeters: 914.6 }] }, diagnostics);
+  }] }, diagnostics);
   assert.equal(collection.features[0].id, 'overture:one');
   assert.equal(collection.features[0].properties.primaryCategoryId, 'hot_pot_restaurant');
   assert.equal(collection.features[0].properties.travelTimeSeconds, 754.2);

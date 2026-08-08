@@ -1,0 +1,5 @@
+const fs=require('node:fs'); const vm=require('node:vm'); const test=require('node:test'); const assert=require('node:assert/strict');
+global.window={PanmapApp:{}}; vm.runInThisContext(fs.readFileSync(require.resolve('./radial-view-contract.js'),'utf8'));
+const contract=window.PanmapApp.radialViewContract;
+test('overview fits all bounds while reading view preserves the 8px minimum',()=>{const value=contract.create({bounds:{x:0,y:0,width:2324,height:2324},viewport:{width:997,height:656},semanticMinimumPx:14.8,readableMinimumPx:8});assert.ok(value.overview.viewBox.width>=2324);assert.ok(value.overview.viewBox.height>=2324);assert.ok(value.overview.minimumScreenFontPx<8);assert.ok(value.reading.minimumScreenFontPx>=8);});
+test('view calculations are deterministic and do not accept layout nodes',()=>{const input={bounds:{x:0,y:0,width:2324,height:2324},viewport:{width:1280,height:720},semanticMinimumPx:14.8};assert.deepEqual(contract.create(input),contract.create(input));assert.equal('nodes' in contract.create(input),false);});

@@ -40,8 +40,65 @@ function matrixResult() {
 test('normalizes complete Matrix accessibility and formats summary and POI detail', () => {
   const result = contracts.normalizeAnalysisResult(matrixResult());
   assert.equal(result.accessibility[0].travelTimeSeconds, 754.2);
+  assert.equal(result.publishedResultSchemaVersion, '2.0');
+  assert.equal(result.pois[0].travelTimeSeconds, 754.2);
+  assert.equal(result.pois[0].networkDistanceMeters, 914.6);
+  assert.equal(result.pois[0].ringId, 'ring-10-20');
+  assert.equal(result.pois[0].matrixBandId, 'ring-10-20');
+  assert.equal(result.pois[0].spatialBandId, 'ring-10-20');
   assert.equal(contracts.matrixSummaryText(result), 'Matrix 已计算 1/1 · 圈内 1 · 超出30分 0 · 异常 0');
   assert.equal(contracts.matrixPoiDetailText(result, 'poi-1'), '测试地点 · Matrix 路网估算：12 分 34 秒 · 路网距离 915 米');
+});
+
+test('POI--Matrix join is immutable, keyed by poiId, and respects exact boundaries', () => {
+  const input = matrixResult();
+  input.pois = [
+    { poiId: 'a', name: 'A', location: { lon: 114.3, lat: 30.55 }, ringId: 'ring-20-30' },
+    { poiId: 'b', name: 'B', location: { lon: 114.3, lat: 30.55 }, ringId: 'ring-20-30' },
+    { poiId: 'c', name: 'C', location: { lon: 114.3, lat: 30.55 }, ringId: 'ring-20-30' },
+    { poiId: 'd', name: 'D', location: { lon: 114.3, lat: 30.55 }, ringId: 'ring-20-30' },
+  ];
+  input.accessibility = [
+    { poiId: 'd', matrixStatus: 'ok', travelTimeSeconds: 1801, networkDistanceMeters: 4, spatialBandId: 'ring-0-10' },
+    { poiId: 'b', matrixStatus: 'ok', travelTimeSeconds: 1200, networkDistanceMeters: 2, spatialBandId: 'ring-0-10' },
+    { poiId: 'a', matrixStatus: 'ok', travelTimeSeconds: 600, networkDistanceMeters: 1, spatialBandId: 'ring-0-10' },
+    { poiId: 'c', matrixStatus: 'ok', travelTimeSeconds: 1800, networkDistanceMeters: 3, spatialBandId: 'ring-0-10' },
+  ];
+  const before = JSON.stringify(input);
+  const result = contracts.normalizeAnalysisResult(input);
+  assert.equal(JSON.stringify(input), before);
+  assert.deepEqual(result.pois.map((poi) => [poi.poiId, poi.ringId]), [
+    ['a', 'ring-0-10'], ['b', 'ring-10-20'], ['c', 'ring-20-30'], ['d', 'matrix-out-of-range'],
+  ]);
+  assert.ok(result.pois.every((poi) => poi.ringId === poi.matrixBandId));
+});
+
+test('POI--Matrix normalization rejects duplicate, missing and extra Matrix records', () => {
+  const duplicate = matrixResult();
+  duplicate.accessibility.push({ ...duplicate.accessibility[0] });
+  assert.throws(() => contracts.normalizeAnalysisResult(duplicate));
+  const missing = matrixResult();
+  missing.pois.push({ poiId: 'other', name: 'Other', location: { lon: 114.3, lat: 30.55 }, ringId: 'ring-0-10' });
+  assert.throws(() => contracts.normalizeAnalysisResult(missing));
+  const extra = matrixResult();
+  extra.accessibility[0].poiId = 'not-a-poi';
+  assert.throws(() => contracts.normalizeAnalysisResult(extra));
+});
+
+test('Matrix null and invalid remain auditable rather than entering spatial rings', () => {
+  const input = matrixResult();
+  input.pois = [
+    { poiId: 'null', name: 'Null', location: { lon: 114.3, lat: 30.55 }, ringId: 'ring-0-10' },
+    { poiId: 'invalid', name: 'Invalid', location: { lon: 114.3, lat: 30.55 }, ringId: 'ring-0-10' },
+  ];
+  input.accessibility = [
+    { poiId: 'null', matrixStatus: 'null', spatialBandId: 'ring-0-10' },
+    { poiId: 'invalid', matrixStatus: 'invalid', spatialBandId: 'ring-0-10' },
+  ];
+  const result = contracts.normalizeAnalysisResult(input);
+  assert.deepEqual(result.pois.map((poi) => [poi.matrixStatus, poi.ringId, poi.travelTimeSeconds]), [
+    ['null', 'matrix-null', null], ['invalid', 'matrix-invalid', null],
+  ]);
 });
 
 test('old responses remain compatible and null Matrix values do not crash', () => {

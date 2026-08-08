@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "stage43-zero-api/v1",
+  "stage": 43,
+  "status": "passed",
+  "budget": {
+    "isochrones": 0,
+    "openPoiService": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "actual": {
+    "isochrones": 0,
+    "openPoiService": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "source": "exports/stage-6-layout/stage20-cache-baseline.json",
+  "evidence": [
+    "density selector and three layout engines contain no fetch/XHR",
+    "evidence builder reads frozen local JSON only",
+    "browser ledger is recorded separately"
+  ]
+}

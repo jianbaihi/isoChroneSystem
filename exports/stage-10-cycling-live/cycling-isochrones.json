@@ -1,0 +1,32 @@
+{
+  "analysisId": "analysis-stage51-cycling-38ef5a3bdd60c562354e88fd",
+  "profile": "cycling-regular",
+  "rangesSeconds": [
+    600,
+    1200,
+    1800
+  ],
+  "rangeType": "time",
+  "geometryTypes": [
+    "Polygon",
+    "Polygon",
+    "Polygon"
+  ],
+  "areasKm2": [
+    6.6565,
+    38.5478,
+    121.1096
+  ],
+  "outerAreaKm2": 121.109624,
+  "cache": {
+    "attempted": 1,
+    "hits": 1,
+    "upstreamRequests": 0
+  },
+  "palette": {
+    "10": "green",
+    "20": "blue",
+    "30": "purple"
+  },
+  "fixedRadiusPreviewUsed": false
+}

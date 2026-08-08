@@ -500,7 +500,7 @@
     return top;
   }
 
-  function renderLayer(organicMap, layer, nodes, contour, random) {
+  function renderLayer(organicMap, layer, nodes, contour, random, compact = false) {
     const layerGroup = svgElement('g', {
       class: `organic-time-layer organic-layer-${layer.time} dynamic-time-layer`,
       'data-time-layer': layer.time,
@@ -525,7 +525,7 @@
       'data-layer-target': layer.time,
       role: 'button',
       'aria-label': `聚焦${layer.time}分钟圈层`,
-      transform: `translate(${(top[0] - 50).toFixed(1)} ${(top[1] - 20).toFixed(1)})`,
+      transform: `translate(${(top[0] - 50).toFixed(1)} ${(top[1] - (compact ? 48 : 20)).toFixed(1)})`,
     });
     chip.appendChild(svgElement('rect', { width: 100, height: 40, rx: 20 }));
     const chipText = svgElement('text', { x: 50, y: 26 });
@@ -543,6 +543,15 @@
       points.push([CENTER.x + Math.cos(angle) * radius, CENTER.y + Math.sin(angle) * radius]);
     }
     return { radii: Array(sampleCount).fill(radius), points, path: catmullRomClosed(points) };
+  }
+
+  function radialContour(radius, center) {
+    const points = [];
+    for (let index = 0; index < 120; index += 1) {
+      const angle = index / 120 * Math.PI * 2;
+      points.push([center.x + Math.cos(angle) * radius, center.y + Math.sin(angle) * radius]);
+    }
+    return { radii: Array(120).fill(radius), points, path: catmullRomClosed(points) };
   }
 
   function measureNameCloudLabel(label) {
@@ -820,19 +829,112 @@
     organicMap.appendChild(layerGroup);
   }
 
-  function renderCenter(organicMap, centerLabel = '未生成') {
+  function renderCenter(organicMap, centerLabel = '未生成', centerPosition = CENTER) {
     const labelText = String(centerLabel || '未生成');
     const center = svgElement('g', { class: 'organic-center', 'aria-label': `中心点${labelText}` });
-    center.appendChild(svgElement('circle', { cx: CENTER.x, cy: CENTER.y, r: 57, fill: '#eef5e5', stroke: '#fff', 'stroke-width': 4 }));
-    center.appendChild(svgElement('circle', { cx: CENTER.x, cy: CENTER.y, r: 54, fill: 'url(#centerHex)' }));
-    const pin = svgElement('g', { transform: `translate(${CENTER.x} ${CENTER.y - 7})`, filter: 'url(#pinShadow)' });
+    center.appendChild(svgElement('circle', { cx: centerPosition.x, cy: centerPosition.y, r: 57, fill: '#eef5e5', stroke: '#fff', 'stroke-width': 4 }));
+    center.appendChild(svgElement('circle', { cx: centerPosition.x, cy: centerPosition.y, r: 54, fill: 'url(#centerHex)' }));
+    const pin = svgElement('g', { transform: `translate(${centerPosition.x} ${centerPosition.y - 7})`, filter: 'url(#pinShadow)' });
     pin.innerHTML = '<path d="M0 24c-11-19-22-31-22-46a22 22 0 1 1 44 0C22-7 11 5 0 24Z" fill="#e7474f" stroke="#fff" stroke-width="4"/><circle cy="-22" r="7" fill="#fff"/>';
     center.appendChild(pin);
-    const label = svgElement('text', { x: CENTER.x, y: CENTER.y + 40 });
+    const label = svgElement('text', { x: centerPosition.x, y: centerPosition.y + 40 });
     label.textContent = labelText;
     center.appendChild(label);
     organicMap.appendChild(center);
   }
+
+  const radialLayoutCache = new Map();
+  let radialLayoutExecutionCount = 0;
+  let directionalLayoutExecutionCount = 0;
+  const naturalEnvelopeManager = window.PanmapApp?.naturalEnvelope?.createManager?.() || null;
+  async function buildRadialPanmap(organicMap, nextLayers, options, controls) {
+    const compactMode = ['compact-geographic', 'compact-random-match'].includes(controls.labelOrientation);
+    const directionalMode = controls.labelOrientation === 'direction-preserving-radial';
+    const engine = directionalMode ? window.PanmapApp?.directionPreservingRadialLayout : compactMode ? window.PanmapApp?.compactAnnularLayout : window.PanmapApp?.dualRadialLayout;
+    if (!engine) return null;
+    const job = { id: `radial-${revision}`, cancelled: false };
+    if (activeNameCloudJob) activeNameCloudJob.cancelled = true;
+    activeNameCloudJob = job;
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+    const input = nextLayers.flatMap((layer) => layer.labels.map((label) => ({
+      poiId: label.poiId, name: label.label, longitude: label.longitude, latitude: label.latitude,
+      travelTimeSeconds: label.travelTimeSeconds, ringId: label.ringId, opacity: label.opacity, color: label.color,
+    })));
+    const config = {
+      mode: directionalMode ? 'direction-preserving-radial' : compactMode ? (controls.labelOrientation === 'compact-random-match' ? 'random-match' : 'geographic') : controls.labelOrientation,
+      algorithm: compactMode ? controls.compactAlgorithm : undefined,
+      randomSeed: controls.randomSeed, compactness: controls.compactness,
+      fontHierarchy: controls.fontHierarchy,
+      center: { longitude: Number(options.center?.lon ?? 114.296944), latitude: Number(options.center?.lat ?? 30.546944) },
+    };
+    const cacheKey = JSON.stringify({ version: engine.VERSION, config, ids: input.map(item => [item.poiId, item.travelTimeSeconds, item.ringId]) });
+    let result = radialLayoutCache.get(cacheKey); const cacheHit = Boolean(result);
+    if (!result) { result = engine.layout(input, config); radialLayoutExecutionCount += 1; if (directionalMode) directionalLayoutExecutionCount += 1; radialLayoutCache.set(cacheKey, result); }
+    if (job.cancelled || activeNameCloudJob !== job) return null;
+    const radialCenter = { x: result.center.canvasX, y: result.center.canvasY };
+    const envelopeMode = !compactMode && !directionalMode && controls.envelopeMode === 'natural-density' ? 'natural-density' : 'circular';
+    const envelopeRequest = envelopeMode === 'natural-density' && naturalEnvelopeManager ? naturalEnvelopeManager.request(result, controls) : null;
+    const naturalResult = envelopeRequest?.result || null;
+    const layouts = nextLayers.map((layer, index) => {
+      const nodes = result.nodes.filter(node => node.ringId === layer.ringId).map(node => ({ ...node, label: node.name, rect: { left: node.x-node.width/2, right: node.x+node.width/2, top: node.y-node.height/2, bottom: node.y+node.height/2 }, r: Math.hypot(node.width,node.height)/2 }));
+      const natural = naturalResult?.envelopes[index];
+      return { layer: { ...layer, maxRadius: result.ringRadii[index].outer }, placed: nodes, unplaced: result.unplacedNodes.filter(node => node.ringId === layer.ringId), contour: natural ? {radii:natural.radii,points:natural.points,path:natural.path} : radialContour(result.ringRadii[index].outer, radialCenter), envelope:natural || null, compact:compactMode };
+    });
+    organicMap.removeAttribute('transform');
+    organicMap.replaceChildren();
+    organicMap.classList.add('dynamic-density-map', 'is-name-cloud-mode', 'is-radial-layout');
+    organicMap.classList.toggle('is-natural-envelope', envelopeMode === 'natural-density');
+    layouts.slice().reverse().forEach(({ layer, ...layout }) => renderNameCloudLayer(organicMap, layer, layout));
+    if (naturalResult && controls.showDensityDebug) { const debug=svgElement('g',{class:'envelope-density-debug','pointer-events':'none'});naturalResult.envelopes.forEach((envelope,index)=>envelope.debugSamples.forEach(([x,y])=>debug.appendChild(svgElement('circle',{cx:x,cy:y,r:1.6,fill:['#159447','#1877f2','#ff7a00'][index],opacity:.32}))));organicMap.appendChild(debug); }
+    renderCenter(organicMap, options.centerLabel, radialCenter);
+    const bands = layouts.map(item => ({ time:item.layer.time, available:item.layer.labels.length, placed:item.placed.length, unplaced:item.unplaced.length, placedRate:Number((item.placed.length/Math.max(1,item.layer.labels.length)).toFixed(4)) }));
+    const oldBaseline = { placed:138, unplaced:114, durationMs:null, fingerprint:'fnv1a-8b0581ae', bands:[{time:10,available:39,placed:12,unplaced:27},{time:20,available:83,placed:31,unplaced:52},{time:30,available:130,placed:95,unplaced:35}] };
+    organicMap.dataset.layoutRevision=String(revision); organicMap.dataset.layoutEngine=result.algorithmVersion; organicMap.dataset.layoutJobId=job.id;
+    organicMap.dataset.layoutCache=cacheHit?'hit':'miss'; organicMap.dataset.nameCloudPlaced=String(result.placed); organicMap.dataset.nameCloudUnplaced=String(result.unplaced);
+    organicMap.dataset.layoutFingerprint=result.layoutFingerprint; organicMap.dataset.constraintAudit=JSON.stringify(result.constraints); organicMap.dataset.nameCloudBands=JSON.stringify(bands);
+    organicMap.dataset.envelopeMode=envelopeMode; organicMap.dataset.layoutExecutionCount=String(radialLayoutExecutionCount); organicMap.dataset.envelopeCache=envelopeRequest?.cacheHit?'hit':envelopeRequest?'miss':'not-run'; organicMap.dataset.envelopeFingerprint=naturalResult?.envelopeFingerprint||`circular-${result.layoutFingerprint}`; organicMap.dataset.envelopeValid=String(naturalResult?.allValid??true); organicMap.dataset.envelopeMetrics=JSON.stringify(naturalResult?.envelopes.map(item=>item.metrics)||[]);
+    organicMap.dataset.layoutMetrics=JSON.stringify({durationMs:result.layoutDurationMs,candidateChecks:result.candidateChecks,fingerprint:result.layoutFingerprint,fitScale:result.fitScale,semanticFontPx:result.semanticFontPx,finalScreenFontPx:result.finalScreenFontPx,ringRadii:result.ringRadii,expansionIterations:result.expansionIterations,mode:result.mode});
+    organicMap.dataset.layoutComparison=JSON.stringify({eligible:result.eligible,outOfRange:Number(options.outOfRangeCount||0),a:oldBaseline,b:{placed:result.placed,unplaced:result.unplaced,durationMs:result.layoutDurationMs,fingerprint:result.layoutFingerprint,bands}});
+    organicMap.dataset.stage37Compact=String(compactMode); organicMap.dataset.stage37Algorithm=compactMode?result.algorithm:'not-run'; organicMap.dataset.stage37RandomContract=compactMode?String(result.tokens?.randomContract||'N/A'):'N/A'; organicMap.dataset.stage41Directional=String(directionalMode); organicMap.dataset.stage41DirectionalRuns=String(directionalLayoutExecutionCount);
+    window.panmapLayoutState={revision,layouts,inputLayers:nextLayers,nameCloudStats:{eligibleCount:result.eligible,outOfRangeCount:Number(options.outOfRangeCount||0),placedCount:result.placed,unplacedCount:result.unplaced,bands},layoutComparison:{eligible:result.eligible,outOfRange:Number(options.outOfRangeCount||0),a:oldBaseline,b:{placed:result.placed,unplaced:result.unplaced,durationMs:result.layoutDurationMs,fingerprint:result.layoutFingerprint,bands}},metrics:{...result,cache:cacheHit?'hit':'miss'},radialResult:result,envelopeMode,envelopeResult:naturalResult,envelopeCache:organicMap.dataset.envelopeCache};
+    if (!compactMode && !directionalMode) window.dispatchEvent(new CustomEvent('stage35-envelope-ready',{detail:{mode:result.mode,envelopeMode,layoutFingerprint:result.layoutFingerprint,envelopeFingerprint:organicMap.dataset.envelopeFingerprint,layoutExecutionCount:radialLayoutExecutionCount,nodeCount:result.nodes.length,cache:organicMap.dataset.envelopeCache,valid:organicMap.dataset.envelopeValid,metrics:naturalResult?.envelopes.map(item=>item.metrics)||[]}}));
+    window.dispatchEvent(new CustomEvent('stage33-radial-layout-ready',{detail:{revision,fingerprint:result.layoutFingerprint,nodeCount:result.nodes.length,bounds:{x:0,y:0,width:result.canvasLogicalWidth,height:result.canvasLogicalHeight},semanticMinimumPx:result.semanticFontPx.min}}));
+    if (compactMode) window.dispatchEvent(new CustomEvent('stage37-compact-layout-ready',{detail:{revision,algorithm:result.algorithm,mode:result.mode,fingerprint:result.layoutFingerprint,nodeCount:result.nodes.length,bounds:{x:0,y:0,width:result.canvasLogicalWidth,height:result.canvasLogicalHeight},semanticMinimumPx:result.semanticFontPx.min,constraints:result.constraints,ringMetrics:result.ringMetrics}}));
+    if (directionalMode) { const stage37Badge=document.getElementById('stage37LayoutBadge'); if(stage37Badge)stage37Badge.hidden=true; document.documentElement.dataset.stage41DirectionalLayoutRuns=String(directionalLayoutExecutionCount); window.dispatchEvent(new CustomEvent('stage41-directional-layout-ready',{detail:{revision,fingerprint:result.layoutFingerprint,nodeCount:result.nodes.length,constraints:result.constraints,preferredWindowPlacedCount:result.preferredWindowPlacedCount,preferredWindowExceededCount:result.preferredWindowExceededCount,relaxationLevelCounts:result.relaxationLevelCounts}})); }
+    return window.panmapLayoutState;
+  }
+
+  let stage43ResearchLayoutExecutionCount = 0;
+  window.applyStage43ResearchLayout = ({ result, selection, algorithmKey, centerLabel = '武汉·黄鹤楼' }) => {
+    if (!result || !selection || !document.documentElement.matches('[data-research-mode="active"]')) return null;
+    const organicMap = document.querySelector('.organic-map');
+    const previousLayers = window.panmapLayoutState?.inputLayers || [];
+    if (!organicMap || !previousLayers.length) return null;
+    const selectedIds = new Set(selection.selectedPoiIds);
+    const nextLayers = previousLayers.map((layer) => ({ ...layer, labels: (layer.labels || []).filter((label) => selectedIds.has(label.poiId)) }));
+    const radialCenter = { x: result.center.canvasX, y: result.center.canvasY };
+    const layouts = nextLayers.map((layer, index) => {
+      const nodes = result.nodes.filter((node) => node.ringId === layer.ringId).map((node) => ({
+        ...node, label: node.name, rect: { left:node.x-node.width/2,right:node.x+node.width/2,top:node.y-node.height/2,bottom:node.y+node.height/2 }, r:Math.hypot(node.width,node.height)/2,
+      }));
+      return { layer:{...layer,maxRadius:result.ringRadii[index].outer}, placed:nodes, unplaced:result.capacityHidden?.filter((node)=>node.ringId===layer.ringId)||[], contour:radialContour(result.ringRadii[index].outer,radialCenter) };
+    });
+    revision += 1;
+    stage43ResearchLayoutExecutionCount += 1;
+    organicMap.removeAttribute('transform');
+    organicMap.replaceChildren();
+    organicMap.classList.add('dynamic-density-map','is-name-cloud-mode','is-radial-layout','is-stage43-research-layout');
+    organicMap.classList.remove('is-natural-envelope');
+    layouts.slice().reverse().forEach(({layer,...layout})=>renderNameCloudLayer(organicMap,layer,layout));
+    renderCenter(organicMap,centerLabel,radialCenter);
+    const bands=layouts.map((item)=>({time:item.layer.time,available:item.layer.labels.length,placed:item.placed.length,unplaced:item.unplaced.length,placedRate:Number((item.placed.length/Math.max(1,item.layer.labels.length)).toFixed(4))}));
+    organicMap.dataset.layoutRevision=String(revision);organicMap.dataset.layoutEngine=result.algorithmVersion;organicMap.dataset.layoutFingerprint=result.layoutFingerprint;organicMap.dataset.constraintAudit=JSON.stringify(result.constraints);organicMap.dataset.nameCloudBands=JSON.stringify(bands);organicMap.dataset.nameCloudPlaced=String(result.placed);organicMap.dataset.nameCloudUnplaced=String(result.unplaced);organicMap.dataset.stage43Algorithm=algorithmKey;organicMap.dataset.stage43SelectionFingerprint=selection.selectionFingerprint;organicMap.dataset.stage43ExecutionCount=String(stage43ResearchLayoutExecutionCount);
+    window.panmapLayoutState={revision,layouts,inputLayers:previousLayers,nameCloudStats:{eligibleCount:252,selectedCount:selection.selectedCount,quotaHiddenCount:selection.quotaHiddenCount,capacityHiddenCount:result.unplaced,placedCount:result.placed,unplacedCount:result.unplaced,bands},metrics:result,radialResult:result,envelopeMode:'circular',envelopeResult:null,envelopeCache:'not-run',stage43:{algorithmKey,selectionFingerprint:selection.selectionFingerprint,selection}};
+    document.documentElement.dataset.stage43ResearchLayoutRuns=String(stage43ResearchLayoutExecutionCount);
+    window.dispatchEvent(new CustomEvent('stage33-radial-layout-ready',{detail:{revision,fingerprint:result.layoutFingerprint,nodeCount:result.nodes.length,bounds:{x:0,y:0,width:result.canvasLogicalWidth,height:result.canvasLogicalHeight},semanticMinimumPx:result.semanticFontPx.min}}));
+    window.dispatchEvent(new CustomEvent('stage43-research-layout-ready',{detail:{revision,algorithmKey,selectionFingerprint:selection.selectionFingerprint,layoutFingerprint:result.layoutFingerprint,placed:result.placed,capacityHidden:result.unplaced}}));
+    return window.panmapLayoutState;
+  };
 
   function minimumGap(nodes) {
     let minimum = Infinity;
@@ -873,6 +975,10 @@
   let lastValidLayers = fallbackLayers;
 
   async function buildNameCloudPanmap(organicMap, nextLayers, options) {
+    const controls = window.PanmapApp?.panmapControlStore?.getState?.().applied;
+    if (['circular','natural-density'].includes(controls?.envelopeMode) && ['geographic-radial','random-radial','compact-geographic','compact-random-match','direction-preserving-radial'].includes(controls.labelOrientation)) {
+      return buildRadialPanmap(organicMap, nextLayers, options, controls);
+    }
     const job = { id: `name-cloud-${revision}`, cancelled: false };
     if (activeNameCloudJob) activeNameCloudJob.cancelled = true;
     activeNameCloudJob = job;
@@ -900,6 +1006,8 @@
     const aPlaced = aLayouts.reduce((sum, item) => sum + item.placed.length, 0);
     const eligibleCount = nextLayers.reduce((sum, layer) => sum + layer.labels.length, 0);
     const aMetrics = { placed: aPlaced, unplaced: eligibleCount - aPlaced, durationMs: Number((performance.now() - aStarted).toFixed(2)), fingerprint: stableLayoutFingerprint(aLayouts), bands: aLayouts.map((item) => ({ time: item.layer.time, available: item.layer.labels.length, placed: item.placed.length, unplaced: item.unplaced.length })) };
+    organicMap.setAttribute('transform', 'translate(225 -60)');
+    organicMap.classList.remove('is-radial-layout');
     organicMap.replaceChildren();
     organicMap.classList.add('dynamic-density-map', 'is-name-cloud-mode');
     best.layouts.slice().reverse().forEach(({ layer, ...layout }) => renderNameCloudLayer(organicMap, layer, layout));
@@ -963,7 +1071,7 @@
 
     organicMap.replaceChildren();
     organicMap.classList.add('dynamic-density-map');
-    layouts.slice().reverse().forEach(({ layer, nodes, contour }) => renderLayer(organicMap, layer, nodes, contour, random));
+    layouts.slice().reverse().forEach(({ layer, nodes, contour, compact }) => renderLayer(organicMap, layer, nodes, contour, random, compact));
     renderCenter(organicMap, options.centerLabel);
     organicMap.dataset.layoutRevision = String(revision);
     organicMap.dataset.layoutEngine = 'force-collision+kde-polar-level-set';
@@ -996,9 +1104,18 @@
       const nextSize = `${Math.round(panmapSvg.getBoundingClientRect().width)}x${Math.round(panmapSvg.getBoundingClientRect().height)}`;
       if (nextSize === lastSize) return;
       lastSize = nextSize;
+      if (document.documentElement.dataset.stage49ShellTransition === 'true') return;
       window.clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(() => {
-        if (lastNameCloudOptions) buildOrganicPanmap(lastNameCloudOptions);
+        const rect = panmapSvg.getBoundingClientRect();
+        const shell = document.querySelector('#appShell');
+        if (document.documentElement.dataset.stage49ShellTransition === 'true'
+          || !shell?.classList.contains('is-panmap')
+          || !shell?.classList.contains('panmap-ready')
+          || rect.width < 2
+          || rect.height < 2) return;
+        if (document.querySelector('.organic-map')?.classList.contains('is-radial-layout')) window.dispatchEvent(new CustomEvent('stage33-radial-view-resize'));
+        else if (lastNameCloudOptions) buildOrganicPanmap(lastNameCloudOptions);
       }, 200);
     }).observe(panmapSvg);
   }

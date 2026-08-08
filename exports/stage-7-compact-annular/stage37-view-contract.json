@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 37,
+  "status": "passed",
+  "inheritedFrom": "stage33-view-contract-v1",
+  "layoutFingerprint": "fnv1a-59ce1506",
+  "nodeCount": 252,
+  "modes": {
+    "overview": {
+      "label": "全景预览",
+      "scale": 0.624503,
+      "minimumScreenFontPx": 9.24,
+      "readingState": false
+    },
+    "reading": {
+      "label": "阅读视图",
+      "scale": 0.541216,
+      "minimumScreenFontPx": 8.01,
+      "readingState": true
+    }
+  },
+  "invariants": {
+    "fitPanZoomResizeTransformOnly": true,
+    "viewSwitchRecomputesLayout": false,
+    "domNodesExpected": 252,
+    "matrixTimeChanges": 0,
+    "ringIdChanges": 0,
+    "hiddenLabels": 0
+  },
+  "browserEvidence": {
+    "viewport": "1280x720",
+    "renderedLayoutFingerprint": "fnv1a-ac6abd7a",
+    "overview": {
+      "nodeCount": 252,
+      "minimumScreenFontPx": 5.46
+    },
+    "reading": {
+      "nodeCount": 252,
+      "minimumScreenFontPx": 8.67
+    },
+    "layoutRevisionBefore": 3,
+    "layoutRevisionAfter": 3,
+    "fingerprintUnchanged": true,
+    "nodeCountUnchanged": true,
+    "apiRequests": {
+      "isochrones": 0,
+      "openPoiService": 0,
+      "matrix": 0,
+      "geocoder": 0
+    },
+    "naturalEnvelopeRuns": 0
+  }
+}

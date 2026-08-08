@@ -1,0 +1,73 @@
+{
+  "stage": 49,
+  "capturedAt": "2026-08-06T11:31:00+08:00",
+  "status": "passed",
+  "repository": {
+    "branch": "main",
+    "head": "6379d19b644d44d471c7ad3ed29c4e3e558928c3",
+    "dirty": true,
+    "statusItemCount": 65,
+    "existingChangesPreserved": true
+  },
+  "stage45PublishedBaseline": {
+    "analysisId": "analysis-name-cloud-7823d8e3-5c27-4a22-8b78-be5939c4e2ba",
+    "profile": "foot-walking",
+    "totalPois": 284,
+    "eligiblePois": 254,
+    "outOfRangePois": 30,
+    "ringCounts": [39, 85, 130],
+    "matrixFingerprint": "c4a00b9309bdd758ad6313c068a3321151e6576079c78fa97cc78db75c67578f",
+    "cacheReplay": {
+      "reason": "Fresh browser session did not inherit Stage45 sessionStorage; the accepted same-parameter local cache was replayed once and then the published ID was restored only after counts and Matrix fingerprint matched.",
+      "jobId": "a087d3ed-6d21-4329-89b0-a1f70795f4ff",
+      "isochrones": { "attempted": 1, "cacheHits": 1, "upstreamRequests": 0 },
+      "openPoiService": { "attempted": 1, "cacheHits": 1, "upstreamRequests": 0 },
+      "matrix": { "attempted": 1, "cacheHits": 1, "upstreamRequests": 0 },
+      "geocoder": { "attempted": 0, "cacheHits": 0, "upstreamRequests": 0 },
+      "directions": { "attempted": 0, "cacheHits": 0, "upstreamRequests": 0 }
+    }
+  },
+  "stage43FrozenBaseline": {
+    "eligiblePois": 252,
+    "ringCounts": [39, 83, 130],
+    "recomputed": false
+  },
+  "modeState": {
+    "ordinary": {
+      "labelDomNodes": 254,
+      "labelCoordinateFingerprint": "fnv1a-58331b21",
+      "viewBox": "-156.29213483146077 70.97378277153553 1812.5842696629215 1358.052434456929"
+    },
+    "research": {
+      "labelDomNodes": 254,
+      "labelCoordinateFingerprint": "fnv1a-58331b21",
+      "viewBox": "-156.29213483146077 70.97378277153553 1812.5842696629215 1358.052434456929"
+    },
+    "preserved": true
+  },
+  "shellMeasurements": {
+    "viewport": [1367, 897],
+    "reachabilityPanelWidthPx": 420.96875,
+    "panmapPanelWidthPx": 282,
+    "reachabilityPanelCanvasGapPx": 10.059432983398438,
+    "panmapPanelCanvasGapPx": 0,
+    "sameWidth": false,
+    "sameGap": false
+  },
+  "uiCapabilities": {
+    "faviconPresent": false,
+    "mapPickingButtonPresent": true,
+    "mapPickingAriaPressed": null,
+    "mapPickingCursor": "crosshair",
+    "compactWorkbenchSwitch": false,
+    "panmapCollapseButtonPresent": true
+  },
+  "initialBusinessUpstreamRequests": {
+    "Isochrones": 0,
+    "OpenPOIService": 0,
+    "Matrix": 0,
+    "Geocoder": 0,
+    "Directions": 0
+  },
+  "gatePassed": true
+}

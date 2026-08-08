@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from app.adapters.ors_matrix import MatrixComputation, OrsMatrixAdapter, matrix_band_id
 from app.config import Settings
-from app.errors import InvalidMatrixResponseError, MatrixIncompleteError
+from app.errors import InvalidMatrixResponseError
 from app.main import app
 from app.models import AnalysisMetadata, AnalysisResult, Center, MatrixAccessibilityRequest, Poi, Ring, RingStatistics
 from app.services.matrix_accessibility import calculate_matrix_accessibility
@@ -196,7 +196,7 @@ class MatrixAccessibilityServiceTest(unittest.TestCase):
         self.assertEqual(result.metadata.matrix["spatialVsMatrixMismatchCount"], 3)
         self.assertEqual([ring.statistics.poiCount for ring in result.rings], [0, 1, 1])
 
-    def test_partial_result_does_not_mutate_previous_complete_result(self):
+    def test_null_destination_is_audited_and_input_is_not_mutated(self):
         base = sample_result()
         before = copy.deepcopy(base.model_dump(mode="json"))
         computation = self._computation(sample_payload([600, None, 1800], [500, None, 1500]))
@@ -205,10 +205,14 @@ class MatrixAccessibilityServiceTest(unittest.TestCase):
             async def calculate(self, **kwargs):
                 return computation
 
-        with self.assertRaises(MatrixIncompleteError):
-            asyncio.run(calculate_matrix_accessibility(
-                MatrixAccessibilityRequest(baseResult=base), sample_settings(), matrix_adapter=FakeAdapter()
-            ))
+        result = asyncio.run(calculate_matrix_accessibility(
+            MatrixAccessibilityRequest(baseResult=base), sample_settings(), matrix_adapter=FakeAdapter()
+        ))
+        self.assertEqual(result.metadata.matrix["requestedPoiCount"], 3)
+        self.assertEqual(result.metadata.matrix["matrixOkCount"], 2)
+        self.assertEqual(result.metadata.matrix["matrixNullCount"], 1)
+        self.assertEqual(result.metadata.matrix["matrixInvalidCount"], 0)
+        self.assertEqual(len(result.accessibility), 3)
         self.assertEqual(base.model_dump(mode="json"), before)
 
 

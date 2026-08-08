@@ -1,0 +1,43 @@
+{
+  "stage": 49,
+  "status": "passed",
+  "before": {
+    "name": "武汉·黄鹤楼",
+    "coordinate": "30.5469° N, 114.2969° E",
+    "resultStale": false
+  },
+  "pickingMode": {
+    "buttonAriaPressed": true,
+    "mapClass": "is-picking",
+    "dragPanDisabledDuringPick": true,
+    "cursor": "url(\"http://127.0.0.1:5500/assets/map-pick-cursor.svg\") 16 35, crosshair",
+    "cursorHotspot": [16, 35],
+    "hoverCoordinate": "116.478860° E · 40.000757° N",
+    "coordinatePrecisionDigits": 6,
+    "screenshot": "stage49-map-picking-cursor.png"
+  },
+  "afterClick": {
+    "name": "地图选点",
+    "coordinateSummary": "40.0008° N, 116.4789° E",
+    "coordinateDetail": "116.478860° E, 40.000757° N",
+    "source": "map-pick",
+    "buttonAriaPressed": false,
+    "dragPanRestored": true,
+    "liveRegion": "已选择新的中心点：地图选点",
+    "staleBanner": "中心点已改变：地图上的圈层与 POI 是上一中心点的旧结果，请重新生成可达域。",
+    "explorePanmapDisabled": true,
+    "generateReachabilityDisabled": false,
+    "automaticGeocoder": false,
+    "automaticAnalysis": false,
+    "automaticPoi": false,
+    "automaticMatrix": false,
+    "screenshot": "stage49-map-picked-new-center.png"
+  },
+  "escapeCancellation": {
+    "passed": true,
+    "buttonAriaPressed": false,
+    "mapClassRemoved": true,
+    "cursorAfterCancel": "grab"
+  },
+  "finalBaselineRestored": true
+}

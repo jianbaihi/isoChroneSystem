@@ -1,0 +1,147 @@
+{
+  "stage": 51,
+  "budgets": {
+    "isochrones": 1,
+    "pois": 12,
+    "matrix": 12,
+    "geocoder": 0,
+    "directions": 0
+  },
+  "jobs": [
+    {
+      "jobId": "cc8c2d0b-eab4-4e4d-b5b1-24d9175804c4",
+      "profile": "cycling-regular",
+      "status": "completed",
+      "published": true,
+      "inputFingerprint": "ea3840ffcf7d49140b53fd94350f4df7a1ad4afe7ab3893dffb7c29c8181a92d",
+      "services": {
+        "isochrones": {
+          "attempted": 1,
+          "cacheHits": 1,
+          "upstreamRequests": 0,
+          "retries": 0
+        },
+        "pois": {
+          "attempted": 10,
+          "cacheHits": 10,
+          "upstreamRequests": 0,
+          "retries": 0
+        },
+        "matrix": {
+          "attempted": 5,
+          "cacheHits": 5,
+          "upstreamRequests": 0,
+          "retries": 0
+        },
+        "geocoder": {
+          "attempted": 0,
+          "cacheHits": 0,
+          "upstreamRequests": 0,
+          "retries": 0
+        },
+        "directions": {
+          "attempted": 0,
+          "cacheHits": 0,
+          "upstreamRequests": 0,
+          "retries": 0
+        }
+      },
+      "transitions": [
+        "idle",
+        "isochrone-running",
+        "isochrone-ready",
+        "poi-planning",
+        "poi-running",
+        "poi-ready",
+        "matrix-planning",
+        "matrix-running",
+        "layout-ready",
+        "completed"
+      ]
+    },
+    {
+      "jobId": "4178245e-fbf4-4648-b960-a5bacf1876c2",
+      "profile": "cycling-regular",
+      "status": "completed",
+      "published": true,
+      "inputFingerprint": "ea3840ffcf7d49140b53fd94350f4df7a1ad4afe7ab3893dffb7c29c8181a92d",
+      "services": {
+        "isochrones": {
+          "attempted": 1,
+          "cacheHits": 1,
+          "upstreamRequests": 0,
+          "retries": 0
+        },
+        "pois": {
+          "attempted": 10,
+          "cacheHits": 10,
+          "upstreamRequests": 0,
+          "retries": 0
+        },
+        "matrix": {
+          "attempted": 5,
+          "cacheHits": 5,
+          "upstreamRequests": 0,
+          "retries": 0
+        },
+        "geocoder": {
+          "attempted": 0,
+          "cacheHits": 0,
+          "upstreamRequests": 0,
+          "retries": 0
+        },
+        "directions": {
+          "attempted": 0,
+          "cacheHits": 0,
+          "upstreamRequests": 0,
+          "retries": 0
+        }
+      },
+      "transitions": [
+        "idle",
+        "isochrone-running",
+        "isochrone-ready",
+        "poi-planning",
+        "poi-running",
+        "poi-ready",
+        "matrix-planning",
+        "matrix-running",
+        "layout-ready",
+        "completed"
+      ]
+    }
+  ],
+  "totals": {
+    "isochrones": {
+      "attempted": 2,
+      "cacheHits": 2,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "pois": {
+      "attempted": 20,
+      "cacheHits": 20,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "matrix": {
+      "attempted": 10,
+      "cacheHits": 10,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "geocoder": {
+      "attempted": 0,
+      "cacheHits": 0,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "directions": {
+      "attempted": 0,
+      "cacheHits": 0,
+      "upstreamRequests": 0,
+      "retries": 0
+    }
+  },
+  "note": "Budgets constrain upstream requests per approved run; cache attempts do not consume upstream budget."
+}

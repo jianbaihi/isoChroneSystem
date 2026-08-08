@@ -11,11 +11,18 @@
     }
   }
 
-  async function createAnalysis(request, { signal } = {}) {
+  function stageJobHeaders(jobId, profile) {
+    if (!jobId) return {};
+    if (profile === 'cycling-regular') return { 'X-Stage51-Job-ID': jobId };
+    if (profile === 'foot-walking') return { 'X-Stage45-Job-ID': jobId };
+    return {};
+  }
+
+  async function createAnalysis(request, { signal, jobId } = {}) {
     const normalized = app.contracts.normalizeAnalysisRequest(request);
     const response = await fetch(`${app.config.apiBaseUrl}/analyses`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...stageJobHeaders(jobId, normalized.profile) },
       body: JSON.stringify(normalized),
       signal,
     });
@@ -79,10 +86,10 @@
     return app.contracts.normalizePoiPreview(payload);
   }
 
-  async function createNameCloud(request, { signal } = {}) {
+  async function createNameCloud(request, { signal, jobId } = {}) {
     const response = await fetch(`${app.config.apiBaseUrl}/name-clouds`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...stageJobHeaders(jobId, request.profile) },
       body: JSON.stringify({
         schemaVersion: '1.0',
         center: request.center,
@@ -105,10 +112,10 @@
     return app.contracts.normalizeAnalysisResult(payload);
   }
 
-  async function createMatrixAccessibility(baseResult, { signal } = {}) {
+  async function createMatrixAccessibility(baseResult, { signal, jobId } = {}) {
     const response = await fetch(`${app.config.apiBaseUrl}/matrix-accessibility`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...stageJobHeaders(jobId, baseResult.profile) },
       body: JSON.stringify({ schemaVersion: '1.0', baseResult }),
       signal,
     });
@@ -146,5 +153,49 @@
     return geocode('reverse', { lon, lat }, { signal });
   }
 
-  app.analysisClient = Object.freeze({ getHealth, createAnalysis, createPoiPreview, createNameCloud, createMatrixAccessibility, listPoiDatasets, geocode, reverseGeocode });
+  async function getWalkingJobLedger(jobId, { signal } = {}) {
+    const query = jobId ? `?jobId=${encodeURIComponent(jobId)}` : '';
+    const response = await fetch(`${app.config.apiBaseUrl}/walking-job-ledger${query}`, { headers: { Accept: 'application/json' }, signal });
+    const payload = await parseJson(response);
+    if (!response.ok) throw new Error(payload?.error?.message || `步行作业账本读取失败（${response.status}）。`);
+    return payload;
+  }
+
+  async function publishWalkingJob(jobId, { signal } = {}) {
+    const response = await fetch(`${app.config.apiBaseUrl}/walking-jobs/${encodeURIComponent(jobId)}/publish`, {
+      method: 'POST', headers: { Accept: 'application/json' }, signal,
+    });
+    const payload = await parseJson(response);
+    if (!response.ok) throw new Error(payload?.error?.message || `步行作业发布失败（${response.status}）。`);
+    return payload;
+  }
+
+  async function getCyclingJobLedger(jobId, { signal } = {}) {
+    const query = jobId ? `?jobId=${encodeURIComponent(jobId)}` : '';
+    const response = await fetch(`${app.config.apiBaseUrl}/cycling-job-ledger${query}`, { headers: { Accept: 'application/json' }, signal });
+    const payload = await parseJson(response);
+    if (!response.ok) throw new Error(payload?.error?.message || `骑行作业账本读取失败（${response.status}）。`);
+    return payload;
+  }
+
+  async function publishCyclingJob(jobId, { signal } = {}) {
+    const response = await fetch(`${app.config.apiBaseUrl}/cycling-jobs/${encodeURIComponent(jobId)}/publish`, {
+      method: 'POST', headers: { Accept: 'application/json' }, signal,
+    });
+    const payload = await parseJson(response);
+    if (!response.ok) throw new Error(payload?.error?.message || `骑行作业发布失败（${response.status}）。`);
+    return payload;
+  }
+
+  async function publishProfileJob(profile, jobId, options = {}) {
+    if (profile === 'cycling-regular') return publishCyclingJob(jobId, options);
+    if (profile === 'foot-walking') return publishWalkingJob(jobId, options);
+    throw new Error(`当前交通方式不支持发布：${profile || 'unknown'}`);
+  }
+
+  app.analysisClient = Object.freeze({
+    getHealth, createAnalysis, createPoiPreview, createNameCloud, createMatrixAccessibility,
+    getWalkingJobLedger, publishWalkingJob, getCyclingJobLedger, publishCyclingJob,
+    publishProfileJob, listPoiDatasets, geocode, reverseGeocode,
+  });
 })(window);

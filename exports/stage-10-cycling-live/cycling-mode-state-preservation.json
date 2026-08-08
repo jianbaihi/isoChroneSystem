@@ -1,0 +1,24 @@
+{
+  "switchCount": 20,
+  "before": {
+    "analysisId": "analysis-stage51-cycling-38ef5a3bdd60c562354e88fd",
+    "labels": 1800,
+    "fingerprint": "fnv1a-9a1fe12a",
+    "viewBox": "981.7178526841448 1200.7430711610486 1217.8496878901374 907.2898876404495",
+    "mode": "research"
+  },
+  "after": {
+    "analysisId": "analysis-stage51-cycling-38ef5a3bdd60c562354e88fd",
+    "labels": 1800,
+    "fingerprint": "fnv1a-9a1fe12a",
+    "viewBox": "981.7178526841448 1200.7430711610486 1217.8496878901374 907.2898876404495",
+    "mode": "research"
+  },
+  "zoomPerformed": true,
+  "panPerformed": true,
+  "layoutRecomputed": false,
+  "businessUpstreamRequests": 0,
+  "stage41DirectionalLayoutRuns": 0,
+  "stage43ResearchLayoutRuns": 0,
+  "passed": true
+}

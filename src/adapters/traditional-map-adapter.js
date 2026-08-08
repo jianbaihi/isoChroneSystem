@@ -20,19 +20,19 @@
   const TIANDITU_BASE_LAYER_ID = 'tianditu-vector-base';
   const TIANDITU_LABEL_LAYER_ID = 'tianditu-vector-label';
   const RING_TOKENS = app.ringTokens || {};
+  const ISOCHRONE_PALETTE = app.isochronePalette || null;
 
   const EMPTY_COLLECTION = { type: 'FeatureCollection', features: [] };
 
-  function ringColorExpression() {
-    return [
-      'interpolate', ['linear'], ['get', 'outerRangeMinutes'],
-      0, RING_TOKENS['ring-0-10']?.color || '#1e9152',
+  function ringColorExpression(ranges = [10, 20, 30], colorKey = 'stroke') {
+    if (ISOCHRONE_PALETTE?.maplibreMatchExpression) {
+      return ISOCHRONE_PALETTE.maplibreMatchExpression(ranges, 'outerRangeMinutes', colorKey);
+    }
+    return ['match', ['to-number', ['get', 'outerRangeMinutes']],
       10, RING_TOKENS['ring-0-10']?.color || '#1e9152',
       20, RING_TOKENS['ring-10-20']?.color || '#2670e1',
       30, RING_TOKENS['ring-20-30']?.color || '#8b57be',
-      60, '#e86778',
-      180, '#d54c85',
-    ];
+      RING_TOKENS['ring-20-30']?.color || '#8b57be'];
   }
 
   function createStyle(config) {
@@ -67,7 +67,7 @@
       'lifestyle_services', '#34afa5', 'arts_and_entertainment', '#eea22e', '#2d7bea'];
   }
 
-  function addGeoJsonLayers(map) {
+  function addGeoJsonLayers(map, paletteRanges = [10, 20, 30]) {
     const empty = JSON.parse(JSON.stringify(EMPTY_COLLECTION));
     map.addSource(RING_SOURCE_ID, { type: 'geojson', data: empty });
     map.addSource(CENTER_SOURCE_ID, { type: 'geojson', data: empty });
@@ -78,9 +78,10 @@
       id: RING_FILL_LAYER_ID,
       type: 'fill',
       source: RING_SOURCE_ID,
+      layout: { 'fill-sort-key': ['-', ['to-number', ['get', 'outerRangeMinutes']]] },
       paint: {
-        'fill-color': ringColorExpression(),
-        'fill-opacity': 0.16,
+        'fill-color': ringColorExpression(paletteRanges, 'fill'),
+        'fill-opacity': 0.17,
       },
     });
     map.addLayer({
@@ -88,7 +89,7 @@
       type: 'line',
       source: RING_SOURCE_ID,
       paint: {
-        'line-color': ringColorExpression(),
+        'line-color': ringColorExpression(paletteRanges, 'stroke'),
         'line-width': 2.5,
         'line-opacity': 0.92,
       },
@@ -99,10 +100,10 @@
       source: RING_SOURCE_ID,
       filter: ['==', ['get', 'ringId'], '__none__'],
       paint: {
-        'line-color': '#ffffff',
-        'line-width': 5,
+        'line-color': ringColorExpression(paletteRanges, 'activeStroke'),
+        'line-width': 4.5,
         'line-opacity': 0.98,
-        'line-gap-width': 1,
+        'line-gap-width': 0.5,
       },
     });
     map.addLayer({
@@ -186,7 +187,7 @@
     source?.setData(data);
   }
 
-  function createTraditionalMap({ container, config, onRingClick, onRingHover, onPoiClick, onPoiHover, onMapPointSelected, onMapStatus }) {
+  function createTraditionalMap({ container, config, onRingClick, onRingHover, onPoiClick, onPoiHover, onMapPointSelected, onMapCoordinate, onMapStatus }) {
     let map = null;
     let isReady = false;
     let isPickMode = false;
@@ -199,6 +200,8 @@
     let pendingResult = null;
     let pendingDraftCenter = null;
     let lastFitAnalysisId = null;
+    let paletteRanges = [10, 20, 30];
+    let resultStale = false;
 
     function status(message) {
       if (typeof onMapStatus === 'function') onMapStatus(message || '');
@@ -221,6 +224,13 @@
         : null;
       map.setFilter(POI_LAYER_ID, categoryFilter);
       map.setFilter(POI_LABEL_LAYER_ID, categoryFilter);
+      map.setPaintProperty(RING_FILL_LAYER_ID, 'fill-opacity', activeRingId
+        ? ['case', ['==', ['get', 'ringId'], activeRingId], resultStale ? 0.1 : 0.3, resultStale ? 0.035 : 0.065]
+        : (resultStale ? 0.065 : 0.17));
+      map.setPaintProperty(RING_OUTLINE_LAYER_ID, 'line-opacity', activeRingId
+        ? ['case', ['==', ['get', 'ringId'], activeRingId], resultStale ? 0.58 : 1, resultStale ? 0.2 : 0.34]
+        : (resultStale ? 0.32 : 0.92));
+      map.setPaintProperty(POI_LAYER_ID, 'circle-opacity', resultStale ? 0.26 : 0.9);
     }
 
     function updateBasemapVisibility() {
@@ -286,8 +296,22 @@
     function setPickMode(active) {
       isPickMode = Boolean(active);
       if (!map) return;
-      map.getCanvas().style.cursor = isPickMode ? 'crosshair' : '';
+      map.getCanvas().style.cursor = isPickMode ? 'url("./assets/map-pick-cursor.svg") 16 35, crosshair' : '';
+      if (map.dragPan) {
+        if (isPickMode) map.dragPan.disable();
+        else map.dragPan.enable();
+      }
       status(isPickMode ? '地图选点模式：点击地图选择待分析中心点，按 Escape 取消。' : '');
+      if (!isPickMode && typeof onMapCoordinate === 'function') onMapCoordinate(null);
+    }
+
+    function updatePaletteRanges(ranges) {
+      paletteRanges = ISOCHRONE_PALETTE?.normalizeRanges?.(ranges) || [10, 20, 30];
+      container.dataset.paletteRanges = paletteRanges.join(',');
+      if (!isReady) return;
+      map.setPaintProperty(RING_FILL_LAYER_ID, 'fill-color', ringColorExpression(paletteRanges, 'fill'));
+      map.setPaintProperty(RING_OUTLINE_LAYER_ID, 'line-color', ringColorExpression(paletteRanges, 'stroke'));
+      map.setPaintProperty(RING_ACTIVE_LAYER_ID, 'line-color', ringColorExpression(paletteRanges, 'activeStroke'));
     }
 
     function bindEvents() {
@@ -300,6 +324,13 @@
         if (typeof onMapPointSelected === 'function') {
           onMapPointSelected({ lon: event.lngLat.lng, lat: event.lngLat.lat });
         }
+      });
+      map.on('mousemove', (event) => {
+        if (!isPickMode || typeof onMapCoordinate !== 'function') return;
+        onMapCoordinate({ lon: event.lngLat.lng, lat: event.lngLat.lat });
+      });
+      map.on('mouseout', () => {
+        if (typeof onMapCoordinate === 'function') onMapCoordinate(null);
       });
       map.on('mouseenter', RING_FILL_LAYER_ID, (event) => {
         if (isPickMode) return;
@@ -351,6 +382,8 @@
         setActiveRingId(ringId) { activeRingId = ringId || null; },
         setHoveredRingId(ringId) { hoveredRingId = ringId || null; },
         setMapPickMode(active) { isPickMode = Boolean(active); },
+        setPaletteRanges(ranges) { paletteRanges = ranges || [10, 20, 30]; },
+        setResultStale(active) { resultStale = Boolean(active); },
         setSelectedPoiId(poiId) { selectedPoiId = poiId || null; },
         setHoveredPoiId(poiId) { hoveredPoiId = poiId || null; },
         setVisibleTopLevelCategoryIds(ids) { visibleTopLevelCategoryIds = ids; },
@@ -380,7 +413,7 @@
         }), 'bottom-right');
         map.once('load', () => {
           isReady = true;
-          addGeoJsonLayers(map);
+          addGeoJsonLayers(map, paletteRanges);
           bindEvents();
           if (pendingResult) applyResult(pendingResult, false);
           if (pendingDraftCenter) applyDraftCenter(pendingDraftCenter);
@@ -437,6 +470,14 @@
       },
       setMapPickMode(active) {
         setPickMode(active);
+      },
+      setPaletteRanges(ranges) {
+        updatePaletteRanges(ranges);
+      },
+      setResultStale(active) {
+        resultStale = Boolean(active);
+        container.dataset.resultStale = String(resultStale);
+        updateRingFilters();
       },
       resize() {
         map?.resize();

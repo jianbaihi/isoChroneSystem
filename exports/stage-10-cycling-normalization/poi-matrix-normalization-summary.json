@@ -1,0 +1,269 @@
+{
+  "publishedResultSchemaVersion": "2.0",
+  "poiCount": 2413,
+  "accessibilityCount": 2413,
+  "matrixStatusCounts": {
+    "ok": 2413
+  },
+  "ringCounts": {
+    "ring-0-10": 127,
+    "ring-10-20": 433,
+    "ring-20-30": 1240,
+    "matrix-out-of-range": 613,
+    "matrix-null": 0,
+    "matrix-invalid": 0
+  },
+  "poiMatrixBandMatchesRing": true,
+  "okPoiTimeAndDistancePresent": true,
+  "analysisIdUnchanged": true,
+  "matrixFingerprintUnchanged": true,
+  "sourceArchiveSchemaVersion": "1.0",
+  "sourcePublishedResultSchemaVersion": "1.0",
+  "normalizedPublishedResultSchemaVersion": "2.0",
+  "samples": {
+    "eligible20": [
+      {
+        "poiId": "ors-poi:1:10304714936",
+        "travelTimeSeconds": 1064.05,
+        "networkDistanceMeters": 4151.65,
+        "ringId": "ring-10-20",
+        "matrixBandId": "ring-10-20",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10307985075",
+        "travelTimeSeconds": 1560.43,
+        "networkDistanceMeters": 6559.31,
+        "ringId": "ring-20-30",
+        "matrixBandId": "ring-20-30",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10307985076",
+        "travelTimeSeconds": 1554.35,
+        "networkDistanceMeters": 6549.17,
+        "ringId": "ring-20-30",
+        "matrixBandId": "ring-20-30",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10310099990",
+        "travelTimeSeconds": 1045.35,
+        "networkDistanceMeters": 4476.28,
+        "ringId": "ring-10-20",
+        "matrixBandId": "ring-10-20",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10310099991",
+        "travelTimeSeconds": 1298.29,
+        "networkDistanceMeters": 5340.48,
+        "ringId": "ring-20-30",
+        "matrixBandId": "ring-20-30",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10310099992",
+        "travelTimeSeconds": 487.85,
+        "networkDistanceMeters": 1364.53,
+        "ringId": "ring-0-10",
+        "matrixBandId": "ring-0-10",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10676211579",
+        "travelTimeSeconds": 518.39,
+        "networkDistanceMeters": 2041.23,
+        "ringId": "ring-0-10",
+        "matrixBandId": "ring-0-10",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10676211583",
+        "travelTimeSeconds": 540.46,
+        "networkDistanceMeters": 2131.44,
+        "ringId": "ring-0-10",
+        "matrixBandId": "ring-0-10",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10676212039",
+        "travelTimeSeconds": 578.27,
+        "networkDistanceMeters": 2203.67,
+        "ringId": "ring-0-10",
+        "matrixBandId": "ring-0-10",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10688841053",
+        "travelTimeSeconds": 846.93,
+        "networkDistanceMeters": 3683.98,
+        "ringId": "ring-10-20",
+        "matrixBandId": "ring-10-20",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10688841081",
+        "travelTimeSeconds": 846.93,
+        "networkDistanceMeters": 3683.98,
+        "ringId": "ring-10-20",
+        "matrixBandId": "ring-10-20",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10694206509",
+        "travelTimeSeconds": 846.58,
+        "networkDistanceMeters": 3547.44,
+        "ringId": "ring-10-20",
+        "matrixBandId": "ring-10-20",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10742576350",
+        "travelTimeSeconds": 1550.01,
+        "networkDistanceMeters": 7116.43,
+        "ringId": "ring-20-30",
+        "matrixBandId": "ring-20-30",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10742578168",
+        "travelTimeSeconds": 1695.59,
+        "networkDistanceMeters": 7203.0,
+        "ringId": "ring-20-30",
+        "matrixBandId": "ring-20-30",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10742603866",
+        "travelTimeSeconds": 1601.94,
+        "networkDistanceMeters": 6858.69,
+        "ringId": "ring-20-30",
+        "matrixBandId": "ring-20-30",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10743000838",
+        "travelTimeSeconds": 1666.48,
+        "networkDistanceMeters": 7078.49,
+        "ringId": "ring-20-30",
+        "matrixBandId": "ring-20-30",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10743000839",
+        "travelTimeSeconds": 1670.62,
+        "networkDistanceMeters": 7085.39,
+        "ringId": "ring-20-30",
+        "matrixBandId": "ring-20-30",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10743000840",
+        "travelTimeSeconds": 1674.53,
+        "networkDistanceMeters": 7091.9,
+        "ringId": "ring-20-30",
+        "matrixBandId": "ring-20-30",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10743000841",
+        "travelTimeSeconds": 1681.54,
+        "networkDistanceMeters": 7103.59,
+        "ringId": "ring-20-30",
+        "matrixBandId": "ring-20-30",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      },
+      {
+        "poiId": "ors-poi:1:10743258309",
+        "travelTimeSeconds": 1699.72,
+        "networkDistanceMeters": 7690.11,
+        "ringId": "ring-20-30",
+        "matrixBandId": "ring-20-30",
+        "matrixStatus": "ok",
+        "routingProvider": "ors-public-api",
+        "matrixBatchId": "ors-matrix-acb12f1b8dc9984d8060bd31"
+      }
+    ],
+    "outOfRange5": [
+      {
+        "poiId": "ors-poi:1:10000056633",
+        "travelTimeSeconds": 1975.61,
+        "networkDistanceMeters": 8001.57,
+        "ringId": "matrix-out-of-range",
+        "matrixBandId": "matrix-out-of-range",
+        "matrixStatus": "ok"
+      },
+      {
+        "poiId": "ors-poi:1:10087142307",
+        "travelTimeSeconds": 2075.02,
+        "networkDistanceMeters": 8872.23,
+        "ringId": "matrix-out-of-range",
+        "matrixBandId": "matrix-out-of-range",
+        "matrixStatus": "ok"
+      },
+      {
+        "poiId": "ors-poi:1:10281923060",
+        "travelTimeSeconds": 2080.14,
+        "networkDistanceMeters": 9274.49,
+        "ringId": "matrix-out-of-range",
+        "matrixBandId": "matrix-out-of-range",
+        "matrixStatus": "ok"
+      },
+      {
+        "poiId": "ors-poi:1:10292793619",
+        "travelTimeSeconds": 1842.19,
+        "networkDistanceMeters": 8683.89,
+        "ringId": "matrix-out-of-range",
+        "matrixBandId": "matrix-out-of-range",
+        "matrixStatus": "ok"
+      },
+      {
+        "poiId": "ors-poi:1:10295106316",
+        "travelTimeSeconds": 1802.72,
+        "networkDistanceMeters": 7048.95,
+        "ringId": "matrix-out-of-range",
+        "matrixBandId": "matrix-out-of-range",
+        "matrixStatus": "ok"
+      }
+    ]
+  }
+}

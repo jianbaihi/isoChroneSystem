@@ -23,10 +23,10 @@ test('taxonomy 为空时按三段互斥圈层生成确定性名称云输入', ()
       { ringId: 'ring-20-30', outerRangeMinutes: 30 },
     ],
     pois: [
-      { poiId: 'poi-b', ringId: 'ring-0-10', name: '乙地', category: { hierarchy: [] } },
-      { poiId: 'poi-a', ringId: 'ring-0-10', name: '甲地', category: { hierarchy: [] } },
-      { poiId: 'poi-c', ringId: 'ring-10-20', name: 'Bridge', category: { hierarchy: [] } },
-      { poiId: 'poi-d', ringId: 'ring-20-30', name: '公园', category: { hierarchy: [] } },
+      { poiId: 'poi-b', ringId: 'ring-0-10', matrixBandId: 'ring-0-10', matrixStatus: 'ok', travelTimeSeconds: 599, networkDistanceMeters: 500, name: '乙地', category: { hierarchy: [] } },
+      { poiId: 'poi-a', ringId: 'ring-0-10', matrixBandId: 'ring-0-10', matrixStatus: 'ok', travelTimeSeconds: 120, networkDistanceMeters: 100, name: '甲地', category: { hierarchy: [] } },
+      { poiId: 'poi-c', ringId: 'ring-10-20', matrixBandId: 'ring-10-20', matrixStatus: 'ok', travelTimeSeconds: 1000, networkDistanceMeters: 800, name: 'Bridge', category: { hierarchy: [] } },
+      { poiId: 'poi-d', ringId: 'ring-20-30', matrixBandId: 'ring-20-30', matrixStatus: 'ok', travelTimeSeconds: 1700, networkDistanceMeters: 1400, name: '公园', category: { hierarchy: [] } },
     ],
     accessibility: [
       { poiId: 'poi-b', matrixStatus: 'ok', matrixBandId: 'ring-0-10', travelTimeSeconds: 599, networkDistanceMeters: 500 },
@@ -50,7 +50,11 @@ test('taxonomy 为空时按三段互斥圈层生成确定性名称云输入', ()
 test('视觉模型只编码 Matrix 时间并排除 out-of-range', () => {
   const adapter = loadAdapter();
   const result = {
-    pois: [{ poiId: 'near', name: '近点' }, { poiId: 'far', name: '远点' }, { poiId: 'out', name: '审计点' }],
+    pois: [
+      { poiId: 'near', name: '近点', matrixStatus: 'ok', ringId: 'ring-0-10', matrixBandId: 'ring-0-10', travelTimeSeconds: 100, networkDistanceMeters: 90 },
+      { poiId: 'far', name: '远点', matrixStatus: 'ok', ringId: 'ring-10-20', matrixBandId: 'ring-10-20', travelTimeSeconds: 1000, networkDistanceMeters: 900 },
+      { poiId: 'out', name: '审计点', matrixStatus: 'ok', ringId: 'matrix-out-of-range', matrixBandId: 'matrix-out-of-range', travelTimeSeconds: 1900, networkDistanceMeters: 2000 },
+    ],
     accessibility: [
       { poiId: 'far', matrixStatus: 'ok', matrixBandId: 'ring-10-20', travelTimeSeconds: 1000, networkDistanceMeters: 900 },
       { poiId: 'near', matrixStatus: 'ok', matrixBandId: 'ring-0-10', travelTimeSeconds: 100, networkDistanceMeters: 90 },

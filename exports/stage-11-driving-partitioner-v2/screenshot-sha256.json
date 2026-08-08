@@ -1,0 +1,11 @@
+{
+  "stage": 57,
+  "images": [
+    {
+      "file": "v1-fragmentation-map.png",
+      "sha256": "25d71e8c118e7e251a5364b4fa2851ca71e45925442d87c24e028f79c596b7d1",
+      "format": "PNG",
+      "purpose": "offline fragmentation audit, not product browser acceptance"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "poiIdsUnique": true,
+  "matrixIdsUnique": true,
+  "sameIdSet": true,
+  "poiCount": 2413,
+  "matrixRecordCount": 2413,
+  "okWithTime": 2413,
+  "okWithDistance": 2413,
+  "ringMatchesMatrixBand": 2413,
+  "matrixStatusCounts": {
+    "ok": 2413
+  }
+}

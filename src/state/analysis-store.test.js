@@ -15,12 +15,28 @@ test('keeps a parameter draft separate from submitted and successful result stat
   assert.deepEqual([initial.data.parameterDraft.center.lon, initial.data.parameterDraft.center.lat], [114.296944, 30.546944]);
   assert.equal(initial.data.parameterDraft.center.label, '武汉·黄鹤楼');
 
-  store.setDraftCenter({ lon: 116.4, lat: 39.9, crs: 'EPSG:4326', label: '地图选点（116.4, 39.9）' }, 'map');
+  store.setDraftCenter({ lon: 116.4, lat: 39.9, crs: 'EPSG:4326', label: '地图选点' }, 'map');
   store.setParameterDraft({ profile: 'cycling-regular', rangesMinutes: [5, 15, 30] });
   const draft = store.getState().data.parameterDraft;
-  assert.equal(draft.centerSource, 'map-click');
+  assert.equal(draft.centerSource, 'map-pick');
   assert.equal(draft.profile, 'cycling-regular');
   assert.deepEqual(draft.rangesMinutes, [5, 15, 30]);
+});
+
+test('changing the center marks an existing result stale and a matching result clears it', () => {
+  const store = createStore();
+  const base = {
+    analysisId: 'analysis-1', status: 'completed', profile: 'foot-walking',
+    center: { lon: 114.296944, lat: 30.546944 }, rings: [], pois: [], categories: [],
+  };
+  store.setResult(base);
+  assert.equal(store.getState().data.resultStale, false);
+  store.setDraftCenter({ lon: 114.31, lat: 30.55, label: '地图选点' }, 'map-pick');
+  assert.equal(store.getState().data.resultStale, true);
+  assert.equal(store.getState().data.staleReason, 'center-changed');
+  store.setResult({ ...base, analysisId: 'analysis-2', center: { lon: 114.31, lat: 30.55 } });
+  assert.equal(store.getState().data.resultStale, false);
+  assert.equal(store.getState().data.staleReason, null);
 });
 
 test('failure keeps the last successful result and active ring is shared by ID', () => {
@@ -63,7 +79,9 @@ test('keeps results and jobs isolated by profile and switching never calls a net
   store.setProfileJob('driving-car', { jobId: 'drive-job', profile: 'driving-car', status: 'partial' });
   store.setActiveProfile('driving-car');
   let state = store.getState();
-  assert.equal(state.data.lastSuccessfulResult, null);
+  assert.equal(state.data.lastSuccessfulResult.analysisId, 'walk-result');
+  assert.equal(state.data.resultStale, true);
+  assert.equal(state.data.staleReason, 'profile-changed');
   assert.equal(state.data.status, 'partial');
   store.setActiveProfile('foot-walking');
   state = store.getState();

@@ -22,6 +22,7 @@ from app.providers.poi.ors_catalog import category_catalog_item, category_filter
 from app.providers.poi.ors_client import OrsPoiClient
 from app.services.poi_tiling import PoiCell, plan_poi_cells, split_poi_cell
 from app.services.quota import QuotaObserver
+from app.provider_capabilities import SUPPORTED_PROFILES
 
 
 @dataclass
@@ -120,8 +121,8 @@ class OrsRemotePoiProvider:
     def validate_request(self, request: AnalysisRequest) -> None:
         if request.poiDatasetId:
             raise InvalidProviderParameterError("poiDatasetId", "ors_remote_does_not_use_dataset")
-        if request.profile != self.settings.ors_profile:
-            raise InvalidProviderParameterError("profile", "must_match_ors_profile")
+        if request.profile not in SUPPORTED_PROFILES:
+            raise InvalidProviderParameterError("profile", "unsupported_profile")
         configured_ranges = tuple(value // 60 for value in self.settings.ors_isochrone_ranges_seconds)
         if tuple(request.rangesMinutes) != configured_ranges:
             raise InvalidProviderParameterError("rangesMinutes", "must_match_ors_isochrone_ranges")

@@ -1,0 +1,31 @@
+{
+  "stage": 47,
+  "commands": [
+    {
+      "command": "node --test src/**/*.test.js",
+      "passed": 96,
+      "failed": 0,
+      "durationMs": 7447.293583
+    },
+    {
+      "command": "PYTHONPATH=server server/.venv/bin/python -m unittest discover -s server/tests -p 'test_*.py'",
+      "passed": 88,
+      "failed": 0,
+      "durationSeconds": 0.187,
+      "warnings": ["Starlette httpx deprecation", "Pydantic dict deprecation"]
+    },
+    {
+      "command": "git diff --check",
+      "passed": true
+    }
+  ],
+  "browser": {
+    "consoleErrors": 0,
+    "modeSwitches": 20,
+    "invalidQueryFallback": true,
+    "legacyQueryCompatibility": true,
+    "statePreservation": true,
+    "businessUpstreamRequests": 0
+  },
+  "status": "passed"
+}

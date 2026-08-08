@@ -59,3 +59,11 @@ test('serialization order and fingerprints are stable without unseeded randomnes
   assert.equal(controls.stableStringify(a), controls.stableStringify(b));
   assert.equal(controls.fingerprint(a), controls.fingerprint(b));
 });
+
+test('direction-preserving layout is a circular-only research draft', () => {
+  const store = controls.createPanmapControlStore({ storage: controls.createMemoryStorage() });
+  store.setDraft({ labelOrientation: 'direction-preserving-radial', envelopeMode: 'circular', showDensityDebug: false });
+  assert.equal(store.apply().applied, true);
+  store.setDraft({ envelopeMode: 'natural-density' });
+  assert.equal(store.apply().applied, false);
+});

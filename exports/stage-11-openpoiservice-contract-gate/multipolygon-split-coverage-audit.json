@@ -1,0 +1,33 @@
+{
+  "auditLayer": "multipolygon-split-provider-payload-roundtrip",
+  "coordinateDecimals": null,
+  "outerAreaKm2": 1903.2459628579993,
+  "plannedAreaKm2": 1903.245970067141,
+  "uncoveredAreaKm2": 2.1412463007026268e-05,
+  "outsideAreaKm2": 2.862149947358502e-05,
+  "overlapAreaKm2": 1.0754774848464876e-10,
+  "areaDifferenceKm2": 7.209141585917678e-06,
+  "toleranceKm2": 1.9032459628579994,
+  "withinTolerance": true,
+  "displayScientific": {
+    "outerAreaKm2": "1.903245962858e+03",
+    "plannedAreaKm2": "1.903245970067e+03",
+    "uncoveredAreaKm2": "2.141246300703e-05",
+    "outsideAreaKm2": "2.862149947359e-05",
+    "overlapAreaKm2": "1.075477484846e-10",
+    "areaDifferenceKm2": "7.209141585918e-06"
+  },
+  "stage": 59,
+  "selectedPlanFingerprint": "633aa700d21cc7582b77dea610a5e43a2bf35c7b382df6bbb48a6b90a941efd0",
+  "summary": {
+    "originalRequestUnits": 43,
+    "polygonUnits": 38,
+    "multiPolygonUnits": 5,
+    "multiPolygonComponentTotal": 15,
+    "fallbackRequestUnits": 53,
+    "additionalRequestsIfSplit": 10
+  },
+  "componentAreaConserved": true,
+  "componentUnionEqualsParent": true,
+  "upstreamRequestCount": 0
+}

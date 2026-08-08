@@ -1,0 +1,46 @@
+{
+  "stage": 47,
+  "budget": {
+    "Isochrones": 0,
+    "OpenPOIService": 0,
+    "Matrix": 0,
+    "Geocoder": 0,
+    "Directions": 0
+  },
+  "sessionCacheSeed": {
+    "reason": "The fresh browser automation session did not retain the previously published sessionStorage entry, so the already accepted same-parameter local cache replay was used once before Stage47 UI validation.",
+    "contentMatchesPublishedStage45": true,
+    "analysisIdRestoredOnlyWhenPublishedFingerprintAndCountsMatch": true,
+    "Isochrones": {"attemptedLocal": 1, "cacheHits": 1, "upstreamRequests": 0},
+    "OpenPOIService": {"attemptedLocal": 1, "cacheHits": 1, "upstreamRequests": 0},
+    "Matrix": {"attemptedLocal": 1, "cacheHits": 1, "upstreamRequests": 0},
+    "Geocoder": {"attemptedLocal": 0, "cacheHits": 0, "upstreamRequests": 0},
+    "Directions": {"attemptedLocal": 0, "cacheHits": 0, "upstreamRequests": 0},
+    "poiCoverageCache": {"requests": 1, "cacheHits": 1},
+    "matrixCache": "hit",
+    "matrixUpstreamRequestCount": 0,
+    "matrixFingerprint": "c4a00b9309bdd758ad6313c068a3321151e6576079c78fa97cc78db75c67578f"
+  },
+  "stage47ModeValidation": {
+    "pageLoadedFromSessionCache": true,
+    "switchCount": 20,
+    "browserPerformanceBusinessResourcesObserved": 0,
+    "businessRequestDelta": {
+      "Isochrones": 0,
+      "OpenPOIService": 0,
+      "Matrix": 0,
+      "Geocoder": 0,
+      "Directions": 0
+    },
+    "networkCallsInModeStateModule": 0,
+    "networkCallsInResearchVisibilityHandler": 0
+  },
+  "actualUpstreamRequests": {
+    "Isochrones": 0,
+    "OpenPOIService": 0,
+    "Matrix": 0,
+    "Geocoder": 0,
+    "Directions": 0
+  },
+  "withinBudget": true
+}

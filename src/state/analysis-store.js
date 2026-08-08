@@ -22,6 +22,8 @@
       status: 'idle',
       requestStatus: 'idle',
       error: null,
+      resultStale: false,
+      staleReason: null,
       activeProfile: 'driving-car',
       resultsByProfile: {},
       jobsByProfile: {},
@@ -48,6 +50,12 @@
   function clone(value) {
     if (value === undefined || value === null) return value;
     return JSON.parse(JSON.stringify(value));
+  }
+
+  function sameCenter(left, right) {
+    return Boolean(left && right
+      && Math.abs(Number(left.lon) - Number(right.lon)) < 1e-9
+      && Math.abs(Number(left.lat) - Number(right.lat)) < 1e-9);
   }
 
   function createAnalysisStore() {
@@ -114,6 +122,8 @@
             status: 'success',
             requestStatus: 'success',
             error: null,
+            resultStale: false,
+            staleReason: null,
           },
           interaction: {
             ...current.interaction,
@@ -163,6 +173,7 @@
         if (!supportedProfiles.has(profile)) throw new Error('当前数据源不支持');
         return update((current) => {
           const result = current.data.resultsByProfile[profile] || null;
+          const previousResult = current.data.lastSuccessfulResult || current.data.result || null;
           const job = current.data.jobsByProfile[profile] || null;
           const poiIds = new Set((result?.pois || []).map((poi) => poi.poiId));
           return {
@@ -171,11 +182,13 @@
               ...current.data,
               activeProfile: profile,
               parameterDraft: { ...current.data.parameterDraft, profile },
-              result: clone(result),
-              lastSuccessfulResult: clone(result),
+              result: clone(result || previousResult),
+              lastSuccessfulResult: clone(result || previousResult),
               status: result ? 'success' : (job?.status === 'partial' ? 'partial' : 'idle'),
               requestStatus: result ? 'success' : 'idle',
               error: null,
+              resultStale: !result && Boolean(previousResult),
+              staleReason: !result && previousResult ? 'profile-changed' : null,
             },
             interaction: {
               ...current.interaction,
@@ -229,6 +242,7 @@
               ...(active ? {
                 result: clone(result), lastSuccessfulResult: clone(result),
                 status: 'success', requestStatus: 'success', error: null,
+                resultStale: false, staleReason: null,
               } : {}),
             },
           };
@@ -249,11 +263,17 @@
         }));
       },
       setDraftCenter(center, source = 'map') {
-        const normalizedSource = source === 'map' ? 'map-click' : source;
+        const normalizedSource = ['map', 'map-click', 'map-pick'].includes(source) ? 'map-pick' : source;
         return update((current) => ({
           ...current,
           data: {
             ...current.data,
+            resultStale: Boolean(current.data.lastSuccessfulResult
+              && !sameCenter(current.data.lastSuccessfulResult.center, center)),
+            staleReason: current.data.lastSuccessfulResult
+              && !sameCenter(current.data.lastSuccessfulResult.center, center)
+              ? 'center-changed'
+              : null,
             parameterDraft: {
               ...current.data.parameterDraft,
               center: { ...clone(center), source: normalizedSource },
@@ -338,4 +358,5 @@
 
   app.analysisStore = createAnalysisStore();
   app.createAnalysisStore = createAnalysisStore;
+  app.analysisStoreHelpers = Object.freeze({ sameCenter });
 })(window);

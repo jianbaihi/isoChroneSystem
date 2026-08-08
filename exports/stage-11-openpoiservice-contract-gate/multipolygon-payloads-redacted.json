@@ -1,0 +1,152 @@
+{
+  "stage": 59,
+  "count": 5,
+  "payloads": [
+    {
+      "pieceId": "v2-piece-007-34f5a73d000034ed",
+      "geometryType": "MultiPolygon",
+      "partCount": 5,
+      "areaKm2": 44.261534,
+      "vertexCount": 183,
+      "geometryBytes": 7278,
+      "payloadBytes": 7353,
+      "payloadSha256": "e875cdf1fd95df5014446ff4fdffbd3acd2b51ad4bfb57f37ace9230cbbf3bde",
+      "schemaValid": true,
+      "withinAreaLimit": true,
+      "withinComplexityLimit": true,
+      "usesProductionUnfilteredContract": true,
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinateCount": 183
+      },
+      "payload": {
+        "request": "pois",
+        "geometry": {
+          "geojson": {
+            "type": "MultiPolygon",
+            "coordinates": "<redacted-coordinate-array>"
+          }
+        },
+        "limit": 2000,
+        "sortby": "category"
+      }
+    },
+    {
+      "pieceId": "v2-piece-017-6ea053fb7b6b71ce",
+      "geometryType": "MultiPolygon",
+      "partCount": 2,
+      "areaKm2": 44.261534,
+      "vertexCount": 32,
+      "geometryBytes": 1311,
+      "payloadBytes": 1386,
+      "payloadSha256": "1a5fda2d974eb0a34c745b711b62dc42ad8254ea7a34b9a1fbd8e4c7ee3af4c5",
+      "schemaValid": true,
+      "withinAreaLimit": true,
+      "withinComplexityLimit": true,
+      "usesProductionUnfilteredContract": true,
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinateCount": 32
+      },
+      "payload": {
+        "request": "pois",
+        "geometry": {
+          "geojson": {
+            "type": "MultiPolygon",
+            "coordinates": "<redacted-coordinate-array>"
+          }
+        },
+        "limit": 2000,
+        "sortby": "category"
+      }
+    },
+    {
+      "pieceId": "v2-piece-032-c9c87148dafa0c3a",
+      "geometryType": "MultiPolygon",
+      "partCount": 2,
+      "areaKm2": 44.261534,
+      "vertexCount": 236,
+      "geometryBytes": 9370,
+      "payloadBytes": 9445,
+      "payloadSha256": "bf5cdf2b3dfc437314fba1ad3f48fdeafc13f098d4f9208255375234d71ba5b7",
+      "schemaValid": true,
+      "withinAreaLimit": true,
+      "withinComplexityLimit": true,
+      "usesProductionUnfilteredContract": true,
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinateCount": 236
+      },
+      "payload": {
+        "request": "pois",
+        "geometry": {
+          "geojson": {
+            "type": "MultiPolygon",
+            "coordinates": "<redacted-coordinate-array>"
+          }
+        },
+        "limit": 2000,
+        "sortby": "category"
+      }
+    },
+    {
+      "pieceId": "v2-piece-034-d21991729bd10cb5",
+      "geometryType": "MultiPolygon",
+      "partCount": 2,
+      "areaKm2": 44.261534,
+      "vertexCount": 117,
+      "geometryBytes": 4660,
+      "payloadBytes": 4735,
+      "payloadSha256": "f22c5c5c039aa0d258f63e8ac25a3cfd4ffb66afbd907a69ba828eae431b2d7c",
+      "schemaValid": true,
+      "withinAreaLimit": true,
+      "withinComplexityLimit": true,
+      "usesProductionUnfilteredContract": true,
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinateCount": 117
+      },
+      "payload": {
+        "request": "pois",
+        "geometry": {
+          "geojson": {
+            "type": "MultiPolygon",
+            "coordinates": "<redacted-coordinate-array>"
+          }
+        },
+        "limit": 2000,
+        "sortby": "category"
+      }
+    },
+    {
+      "pieceId": "v2-piece-041-fa22a1c714bc7af2",
+      "geometryType": "MultiPolygon",
+      "partCount": 4,
+      "areaKm2": 44.261534,
+      "vertexCount": 135,
+      "geometryBytes": 5378,
+      "payloadBytes": 5453,
+      "payloadSha256": "c667b465566d9d87b261110f133dba9e4b22e36265c789ca4ea7b7cc6f88bcaf",
+      "schemaValid": true,
+      "withinAreaLimit": true,
+      "withinComplexityLimit": true,
+      "usesProductionUnfilteredContract": true,
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinateCount": 135
+      },
+      "payload": {
+        "request": "pois",
+        "geometry": {
+          "geojson": {
+            "type": "MultiPolygon",
+            "coordinates": "<redacted-coordinate-array>"
+          }
+        },
+        "limit": 2000,
+        "sortby": "category"
+      }
+    }
+  ],
+  "note": "Coordinates are intentionally redacted here; the full selected plan retains the frozen geometry. No Authorization or Key field is present."
+}

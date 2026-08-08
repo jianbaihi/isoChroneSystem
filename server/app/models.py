@@ -136,8 +136,22 @@ class Poi(BaseModel):
     location: Location
     categoryId: Optional[str] = None
     category: Optional[dict[str, Any]] = None
-    travelTimeSeconds: Optional[int] = None
+    # Published results carry the Matrix fields on the POI itself.  The
+    # accessibility array remains an audit trail, but consumers must not have
+    # to perform a second join merely to show time, distance, or ring.
+    travelTimeSeconds: Optional[float] = Field(default=None, ge=0)
+    networkDistanceMeters: Optional[float] = Field(default=None, ge=0)
     ringId: str
+    matrixBandId: Optional[str] = None
+    spatialBandId: Optional[str] = None
+    bandAssignmentMethod: Optional[Literal["matrix-duration"]] = None
+    reachable: Optional[bool] = None
+    matrixStatus: Optional[Literal["ok", "null", "unreachable", "invalid"]] = None
+    routingProvider: Optional[Literal["ors-public-api"]] = None
+    routingGraphDate: Optional[str] = None
+    calculatedAt: Optional[str] = None
+    snappedDistanceMeters: Optional[float] = Field(default=None, ge=0)
+    matrixBatchId: Optional[str] = None
     confidence: Optional[float] = Field(default=None, ge=0, le=1)
     address: Optional[str] = None
     importance: Optional[float] = None
@@ -160,7 +174,7 @@ class PoiAccessibility(BaseModel):
     calculatedAt: str
     snappedDistanceMeters: Optional[float] = Field(default=None, ge=0)
     matrixBatchId: str
-    matrixStatus: Literal["ok", "unreachable", "invalid"]
+    matrixStatus: Literal["ok", "null", "unreachable", "invalid"]
 
 
 class AnalysisSources(BaseModel):
@@ -194,6 +208,7 @@ class AnalysisMetadata(BaseModel):
 
 class AnalysisResult(BaseModel):
     schemaVersion: Literal["1.0"] = SCHEMA_VERSION
+    publishedResultSchemaVersion: str = "1.0"
     analysisId: str
     status: Literal["completed"] = "completed"
     center: Center

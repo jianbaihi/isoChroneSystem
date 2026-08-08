@@ -1,0 +1,22 @@
+{
+  "auditLayer": "provider-payload-roundtrip",
+  "coordinateDecimals": null,
+  "outerAreaKm2": 1903.2459628579993,
+  "plannedAreaKm2": 1903.2459700671411,
+  "uncoveredAreaKm2": 2.1412463007026268e-05,
+  "outsideAreaKm2": 2.862149947358502e-05,
+  "overlapAreaKm2": 1.07775122160092e-10,
+  "areaDifferenceKm2": 7.209141813291353e-06,
+  "toleranceKm2": 1.9032459628579994,
+  "withinTolerance": true,
+  "displayScientific": {
+    "outerAreaKm2": "1.903245962858e+03",
+    "plannedAreaKm2": "1.903245970067e+03",
+    "uncoveredAreaKm2": "2.141246300703e-05",
+    "outsideAreaKm2": "2.862149947359e-05",
+    "overlapAreaKm2": "1.077751221601e-10",
+    "areaDifferenceKm2": "7.209141813291e-06"
+  },
+  "selectedPlanFingerprint": "633aa700d21cc7582b77dea610a5e43a2bf35c7b382df6bbb48a6b90a941efd0",
+  "upstreamRequestCount": 0
+}

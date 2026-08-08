@@ -101,40 +101,42 @@
 
   function buildTimeVisualModel(result) {
     const pois = Array.isArray(result?.pois) ? result.pois : [];
-    const poiById = new Map(pois.map((poi) => [String(poi.poiId), poi]));
-    const accessibility = Array.isArray(result?.accessibility) ? result.accessibility : [];
-    const eligible = accessibility
-      .filter((item) => item?.matrixStatus === 'ok'
-        && Number.isFinite(Number(item.travelTimeSeconds))
-        && Number(item.travelTimeSeconds) >= 0
-        && Number(item.travelTimeSeconds) <= 1800
-        && RING_TOKENS[item.matrixBandId]
-        && poiById.get(String(item.poiId))?.name)
-      .map((item) => ({ item, poi: poiById.get(String(item.poiId)) }))
-      .sort((left, right) => Number(left.item.travelTimeSeconds) - Number(right.item.travelTimeSeconds)
-        || String(left.item.poiId).localeCompare(String(right.item.poiId)));
+    // Published-result v2 carries the Matrix contract on each POI.  The
+    // accessibility array is retained solely for audit/export, never joined in
+    // a view or layout path.
+    const eligible = pois
+      .filter((poi) => poi?.matrixStatus === 'ok'
+        && Number.isFinite(Number(poi.travelTimeSeconds))
+        && Number(poi.travelTimeSeconds) > 0
+        && Number(poi.travelTimeSeconds) <= 1800
+        && poi.ringId === poi.matrixBandId
+        && RING_TOKENS[poi.ringId]
+        && poi.name)
+      .sort((left, right) => Number(left.travelTimeSeconds) - Number(right.travelTimeSeconds)
+        || String(left.poiId).localeCompare(String(right.poiId)));
     const denominator = Math.max(eligible.length - 1, 1);
-    const globalRank = new Map(eligible.map(({ item }, index) => [String(item.poiId), {
+    const globalRank = new Map(eligible.map((poi, index) => [String(poi.poiId), {
       rank: index,
       fontSize: Number((12 + 14 * ((1 - index / denominator) ** 0.75)).toFixed(2)),
     }]));
     const perBand = new Map();
-    eligible.forEach(({ item }) => {
-      if (!perBand.has(item.matrixBandId)) perBand.set(item.matrixBandId, []);
-      perBand.get(item.matrixBandId).push(item);
+    eligible.forEach((poi) => {
+      if (!perBand.has(poi.ringId)) perBand.set(poi.ringId, []);
+      perBand.get(poi.ringId).push(poi);
     });
     const bandRank = new Map();
-    perBand.forEach((items) => items.forEach((item, index) => {
-      bandRank.set(String(item.poiId), { index, denominator: Math.max(items.length - 1, 1) });
+    perBand.forEach((items) => items.forEach((poi, index) => {
+      bandRank.set(String(poi.poiId), { index, denominator: Math.max(items.length - 1, 1) });
     }));
-    return eligible.map(({ item, poi }) => {
-      const token = RING_TOKENS[item.matrixBandId];
-      const rank = globalRank.get(String(item.poiId));
-      const local = bandRank.get(String(item.poiId));
+    return eligible.map((poi) => {
+      const token = RING_TOKENS[poi.ringId];
+      const rank = globalRank.get(String(poi.poiId));
+      const local = bandRank.get(String(poi.poiId));
       const opacity = token.lightAlphaNear + (token.lightAlphaFar - token.lightAlphaNear) * (local.index / local.denominator);
       return {
-        label: String(poi.name), poiId: String(item.poiId), ringId: item.matrixBandId, source: poi.source,
-        travelTimeSeconds: Number(item.travelTimeSeconds), networkDistanceMeters: Number(item.networkDistanceMeters),
+        label: String(poi.name), poiId: String(poi.poiId), ringId: poi.ringId, source: poi.source,
+        longitude: Number(poi.location?.lon), latitude: Number(poi.location?.lat),
+        travelTimeSeconds: Number(poi.travelTimeSeconds), networkDistanceMeters: Number(poi.networkDistanceMeters),
         rank: rank.rank, fontSize: rank.fontSize, fontWeight: 600, rotation: 0,
         opacity: Number(opacity.toFixed(4)), color: token.text,
       };

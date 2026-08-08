@@ -1,0 +1,50 @@
+{
+  "sameInputFingerprint": true,
+  "sameAnalysisId": true,
+  "sameMatrixFingerprint": true,
+  "sameCounts": {
+    "total": 2413,
+    "eligible": 1800,
+    "outOfRange": 613,
+    "rings": [
+      127,
+      433,
+      1240
+    ]
+  },
+  "sameLayoutFingerprint": "fnv1a-9a1fe12a",
+  "jobId": "4178245e-fbf4-4648-b960-a5bacf1876c2",
+  "services": {
+    "isochrones": {
+      "attempted": 1,
+      "cacheHits": 1,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "pois": {
+      "attempted": 10,
+      "cacheHits": 10,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "matrix": {
+      "attempted": 5,
+      "cacheHits": 5,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "geocoder": {
+      "attempted": 0,
+      "cacheHits": 0,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "directions": {
+      "attempted": 0,
+      "cacheHits": 0,
+      "upstreamRequests": 0,
+      "retries": 0
+    }
+  },
+  "passed": true
+}

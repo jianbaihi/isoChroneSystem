@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 37,
+  "algorithm": "old-stage33-geographic-radial",
+  "readOnly": true,
+  "algorithmVersion": "stage33-dual-radial-v1",
+  "placed": 252,
+  "unplaced": 0,
+  "placedByRing": {
+    "ring-0-10": 39,
+    "ring-10-20": 83,
+    "ring-20-30": 130
+  },
+  "constraints": {
+    "overlapCount": 0,
+    "outsideOwnRingCount": 0,
+    "centerCollisionCount": 0,
+    "timeLabelCollisionCount": 0
+  },
+  "canvasLogicalWidth": 2324,
+  "canvasLogicalHeight": 2324,
+  "fitScale": 0.4058,
+  "semanticFontPx": {
+    "min": 14.8,
+    "max": 23.2,
+    "mean": 19
+  },
+  "finalScreenFontPx": {
+    "min": 6.01,
+    "max": 9.41,
+    "readableMinimum": 8
+  },
+  "layoutDurationMs": 610,
+  "candidateChecks": 53825,
+  "layoutFingerprint": "fnv1a-c715b7de",
+  "ringRadii": [
+    {
+      "inner": 90,
+      "outer": 448
+    },
+    {
+      "inner": 460,
+      "outer": 790
+    },
+    {
+      "inner": 802,
+      "outer": 1142
+    }
+  ],
+  "ringMetrics": [
+    {
+      "ringId": "ring-0-10",
+      "count": 39,
+      "innerRadiusPx": 90,
+      "outerRadiusPx": 448,
+      "bandWidthPx": 358,
+      "unusedInnerBandPx": 37.28,
+      "outerSlackPx": 4.55,
+      "gapFromPreviousRingPx": 28,
+      "bandUtilization": 0.2608,
+      "voidAreaRatio": 0.7392,
+      "nearestGapPx": {
+        "min": 2.35,
+        "median": 3.58,
+        "p95": 15.15
+      }
+    },
+    {
+      "ringId": "ring-10-20",
+      "count": 83,
+      "innerRadiusPx": 460,
+      "outerRadiusPx": 790,
+      "bandWidthPx": 330,
+      "unusedInnerBandPx": 4.86,
+      "outerSlackPx": 4.48,
+      "gapFromPreviousRingPx": 12,
+      "bandUtilization": 0.2715,
+      "voidAreaRatio": 0.7285,
+      "nearestGapPx": {
+        "min": 0.9,
+        "median": 3.61,
+        "p95": 6.89
+      }
+    },
+    {
+      "ringId": "ring-20-30",
+      "count": 130,
+      "innerRadiusPx": 802,
+      "outerRadiusPx": 1142,
+      "bandWidthPx": 340,
+      "unusedInnerBandPx": 8.71,
+      "outerSlackPx": 11.25,
+      "gapFromPreviousRingPx": 12,
+      "bandUtilization": 0.2022,
+      "voidAreaRatio": 0.7978,
+      "nearestGapPx": {
+        "min": 1.04,
+        "median": 3.64,
+        "p95": 13.05
+      }
+    }
+  ],
+  "effectiveCanvasUtilization": 0.1721,
+  "geographicBearingError": {
+    "mean": 2.37,
+    "median": 0,
+    "p95": 13.75,
+    "max": 57.5
+  },
+  "source": "exports/stage-7-radial/stage33-geographic-layout.json"
+}

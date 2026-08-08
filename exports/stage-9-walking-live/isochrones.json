@@ -1,0 +1,18 @@
+{
+  "center": [114.296944, 30.546944],
+  "profile": "foot-walking",
+  "rangesSeconds": [600, 1200, 1800],
+  "featureCount": 3,
+  "rangeType": "time",
+  "locationType": "start",
+  "provider": "ors-public-api",
+  "firstRunCache": "hit",
+  "firstRunUpstreamRequests": 0,
+  "outerAreaKm2": 9.7695,
+  "browserEvidence": {
+    "buttonState": "可达域生成完毕",
+    "exploreEnabled": true,
+    "mapPolygonVisible": true,
+    "screenshot": "stage45-walking-isochrones.png"
+  }
+}

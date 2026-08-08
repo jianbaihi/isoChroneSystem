@@ -1,0 +1,24 @@
+{
+  "stage": 45,
+  "budgets": {"Isochrones": 1, "OpenPOIService": 2, "Matrix": 2, "Geocoder": 0, "Directions": 0},
+  "initialPageLoad": {"Isochrones": 0, "OpenPOIService": 0, "Matrix": 0, "Geocoder": 0, "Directions": 0},
+  "firstCompletedRun": {
+    "Isochrones": {"attempted": 1, "cacheHits": 1, "upstreamRequests": 0, "retries": 0},
+    "OpenPOIService": {"attempted": 1, "cacheHits": 0, "upstreamRequests": 1, "retries": 0},
+    "Matrix": {"attempted": 1, "cacheHits": 0, "upstreamRequests": 1, "retries": 0},
+    "Geocoder": {"attempted": 0, "cacheHits": 0, "upstreamRequests": 0, "retries": 0},
+    "Directions": {"attempted": 0, "cacheHits": 0, "upstreamRequests": 0, "retries": 0}
+  },
+  "sameParameterReplay": {
+    "jobId": "f0dbb825-55d6-40c0-b676-5e0503b96697",
+    "inputFingerprint": "9579b48f9570c9ba340c98a22b1562703134012469b7199785fc5367f94b9525",
+    "status": "completed",
+    "Isochrones": {"attempted": 1, "cacheHits": 1, "upstreamRequests": 0, "retries": 0},
+    "OpenPOIService": {"attempted": 1, "cacheHits": 1, "upstreamRequests": 0, "retries": 0},
+    "Matrix": {"attempted": 1, "cacheHits": 1, "upstreamRequests": 0, "retries": 0},
+    "Geocoder": {"attempted": 0, "cacheHits": 0, "upstreamRequests": 0, "retries": 0},
+    "Directions": {"attempted": 0, "cacheHits": 0, "upstreamRequests": 0, "retries": 0}
+  },
+  "quotaObservation": {"displayedRemaining": 495, "observedAfterLiveCompletion": true},
+  "withinApprovedBudget": true
+}

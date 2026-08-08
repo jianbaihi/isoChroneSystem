@@ -1,0 +1,16 @@
+{
+  "stage": 59,
+  "status": "blocked-needs-decision",
+  "maximumAllowedRequests": 3,
+  "attemptedRequests": 0,
+  "automaticRetries": 0,
+  "minimumRequiredRemainingQuota": 10,
+  "quotaBeforeCanary": {
+    "status": "unknown",
+    "remaining": null,
+    "source": "GET /api/v1/quota local snapshot; no upstream probe"
+  },
+  "reason": "The local observer has no fresh POI remaining value; Stage59 prohibits sending a Canary unless remaining quota is confirmed at least 10.",
+  "matrixRequests": 0,
+  "analysisIdsCreated": 0
+}

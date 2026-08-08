@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 41,
+  "status": "complete",
+  "files": {
+    "stage41-normal-mode.png": {
+      "name": "stage41-normal-mode.png",
+      "bytes": 934157,
+      "width": 1126,
+      "height": 943,
+      "sha256": "68ea2a6f6374bc82462051b28c3342b8b3b6cd7e5fce8906da174de5ac811446"
+    },
+    "stage41-directional-research-mode.png": {
+      "name": "stage41-directional-research-mode.png",
+      "bytes": 850811,
+      "width": 1126,
+      "height": 943,
+      "sha256": "5168f98ad757dc87aaf31b0ae45bfa856eef14d8d670da8bd43cf919bd8c7d8f"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "stage": 55,
+  "profile": "driving-car",
+  "status": "not-planned-blocked-before-poi",
+  "destinationCount": null,
+  "batchSize": 500,
+  "estimatedBatches": null,
+  "approvedMaximumBatches": 40,
+  "concurrency": 1,
+  "reason": "Candidate POIs cannot be obtained until the POI planning budget gate is resolved."
+}

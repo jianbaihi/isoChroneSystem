@@ -1,0 +1,37 @@
+{
+  "stage": 55,
+  "status": "preflight-only",
+  "checks": [
+    {
+      "name": "cached-driving-isochrone-parse",
+      "status": "passed"
+    },
+    {
+      "name": "current-45km2-polygon-plan-and-coverage-audit",
+      "status": "passed"
+    },
+    {
+      "name": "stage55-budget-gate",
+      "status": "blocked-as-designed"
+    },
+    {
+      "name": "node --check app.js",
+      "status": "passed"
+    },
+    {
+      "name": "PYTHONPATH=server server/.venv/bin/python -m unittest server.tests.test_poi_batch_planner",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "name": "git diff --check",
+      "status": "passed"
+    }
+  ],
+  "notRun": [
+    "node --test src/**/*.test.js",
+    "PYTHONPATH=server server/.venv/bin/python -m unittest discover -s server/tests -p test_*.py",
+    "browser acceptance"
+  ],
+  "reason": "The Stage 55 document requires stopping before any POI request when the estimated plan exceeds the approved 48-request limit; no Stage 55 implementation was authorized after that gate failed."
+}

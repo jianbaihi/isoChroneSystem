@@ -1,0 +1,50 @@
+{
+  "stage": 47,
+  "browser": "Codex in-app browser",
+  "baseUrl": "http://127.0.0.1:5500/",
+  "cacheUrl": "http://127.0.0.1:5500/?stage45Cache=1",
+  "legacyResearchUrl": "http://127.0.0.1:5500/?stage45Cache=1&research=1",
+  "ordinary": {
+    "selected": true,
+    "sharedWorkspaceVisible": true,
+    "researchMetricsVisible": false,
+    "researchParametersVisible": false,
+    "totalPoi": 284,
+    "eligible": 254,
+    "rings": [39, 85, 130],
+    "labelDomNodes": 254,
+    "badge": "254/254"
+  },
+  "research": {
+    "selected": true,
+    "sharedWorkspaceVisible": true,
+    "researchMetricsVisible": true,
+    "comparisonEntryVisible": true,
+    "algorithmParameterSchema": "balanced",
+    "experimentExportVisible": true,
+    "dataSource": "当前在线任务缓存（与普通模式同一结果）",
+    "frozenCopy": "当前在线结果 254 个；第43号 252 基线实验保持冻结，未重算",
+    "stage43ResearchLayoutRuns": 0
+  },
+  "urlCompatibility": {
+    "legacyResearchQueryMode": "research",
+    "legacyResearchQueryLabelCount": 254,
+    "invalidModeQuery": "?stage45Cache=1&mode=invalid&research=1",
+    "invalidModeObserved": "ordinary",
+    "invalidModeLabelCount": 254
+  },
+  "statePreservation": {
+    "zoomAndPanAdjustedBeforeSwitch": true,
+    "switchCount": 20,
+    "sameAnalysisId": true,
+    "sameLabelCoordinates": true,
+    "sameViewBox": true,
+    "samePresetAndDensity": true
+  },
+  "consoleErrors": [],
+  "screenshots": [
+    {"file": "stage47-ordinary-unified-workspace.png", "dimensions": "1280x720", "actualFormat": "PNG"},
+    {"file": "stage47-research-unified-workspace.png", "dimensions": "1367x897", "actualFormat": "PNG"},
+    {"file": "stage47-mode-switch-preserved-state.png", "dimensions": "1367x897", "actualFormat": "PNG"}
+  ]
+}

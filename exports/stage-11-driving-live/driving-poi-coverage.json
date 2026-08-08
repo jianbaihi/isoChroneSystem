@@ -1,0 +1,24 @@
+{
+  "stage": 55,
+  "status": "not-executed-blocked-before-poi",
+  "outerGeometryHash": "ac5d6fe70567e744bcad2fb4241c7bec57af6d8aeeb326bb5eb2ff7a48127177",
+  "coverage": {
+    "outerGeometryValid": true,
+    "plannedAreaKm2": 1903.24597,
+    "uncoveredAreaKm2": 2.1412e-05,
+    "outsideAreaKm2": 2.8621e-05,
+    "overlapAreaKm2": 0.0,
+    "areaDifferenceKm2": 7.209e-06,
+    "toleranceKm2": 1.903246,
+    "areaConserved": true
+  },
+  "pieces": 93,
+  "raw": 0,
+  "parsed": 0,
+  "named": 0,
+  "missingName": 0,
+  "invalid": 0,
+  "outside": 0,
+  "deduplicated": 0,
+  "reason": "POI plan requires 93 initial Polygon pieces at the frozen <=45 km² safety limit; Stage 55 authorizes at most 48 POI upstream requests."
+}

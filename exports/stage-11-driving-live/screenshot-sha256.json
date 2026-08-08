@@ -1,0 +1,6 @@
+{
+  "stage": 55,
+  "status": "not-captured-blocked-before-browser-acceptance",
+  "screenshots": [],
+  "reason": "No unpublished driving data is shown as a browser acceptance result. Stage 53 archived PNG verification is recorded separately in stage53-screenshot-hash-correction.md."
+}

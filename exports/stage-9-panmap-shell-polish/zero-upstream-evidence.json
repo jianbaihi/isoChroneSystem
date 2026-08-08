@@ -1,0 +1,43 @@
+{
+  "stage": 49,
+  "status": "passed",
+  "budget": {
+    "Isochrones": 0,
+    "OpenPOIService": 0,
+    "Matrix": 0,
+    "Geocoder": 0,
+    "Directions": 0
+  },
+  "baselineCacheReplay": {
+    "jobId": "a087d3ed-6d21-4329-89b0-a1f70795f4ff",
+    "status": "completed",
+    "published": true,
+    "services": {
+      "Isochrones": {"attempted": 1, "cacheHits": 1, "upstreamRequests": 0, "retries": 0},
+      "OpenPOIService": {"attempted": 1, "cacheHits": 1, "upstreamRequests": 0, "retries": 0},
+      "Matrix": {"attempted": 1, "cacheHits": 1, "upstreamRequests": 0, "retries": 0},
+      "Geocoder": {"attempted": 0, "cacheHits": 0, "upstreamRequests": 0, "retries": 0},
+      "Directions": {"attempted": 0, "cacheHits": 0, "upstreamRequests": 0, "retries": 0}
+    }
+  },
+  "stage49InteractionDelta": {
+    "Isochrones": 0,
+    "OpenPOIService": 0,
+    "Matrix": 0,
+    "Geocoder": 0,
+    "Directions": 0
+  },
+  "interactionsCovered": [
+    "20 ordinary/research switches",
+    "legacy research query load",
+    "panmap enter and return transitions",
+    "threshold add/delete/recolor",
+    "active ring selection",
+    "map hover coordinate feedback",
+    "map click selection",
+    "Esc pick cancellation",
+    "favicon load"
+  ],
+  "ordinaryBasemapTilesExcluded": true,
+  "ledgerReadAt": "2026-08-06T12:22:37+08:00"
+}

@@ -8,7 +8,7 @@ from shapely.geometry import shape
 
 from app.adapters.ors import IsochronesProvider, OrsAdapter
 from app.config import Settings
-from app.errors import InvalidProviderParameterError, PoiCoverageAreaExceededError
+from app.errors import InvalidProviderParameterError, PoiCoverageAreaExceededError, PoiUpstreamTruncatedError
 from app.models import AnalysisMetadata, AnalysisRequest, AnalysisResult, NameCloudRequest, Ring, RingStatistics
 from app.providers.poi.ors_remote import OrsRemotePoiProvider
 from app.repositories.local_poi import LocalPoiRepository
@@ -158,6 +158,8 @@ async def create_name_cloud(
     )
     remote_provider = poi_provider or OrsRemotePoiProvider(settings, quota_observer=quota_observer)
     selection = await remote_provider.fetch(analysis_request, outer_geometry, ring_geometries, single_polygon=True)
+    if selection.get("truncated"):
+        raise PoiUpstreamTruncatedError()
     rings = [
         Ring(
             ringId=ring["ringId"],

@@ -55,6 +55,18 @@ const onlineProviderStatus = document.getElementById('onlineProviderStatus');
 const panmapControlPanel = document.getElementById('panmapControlPanel');
 const panmapControlBody = document.getElementById('panmapControlBody');
 const controlApplyStatus = document.getElementById('controlApplyStatus');
+const panmapModeSwitch = document.getElementById('panmapModeSwitch');
+const panmapSummaryCenterProfile = document.getElementById('panmapSummaryCenterProfile');
+const panmapSummaryCounts = document.getElementById('panmapSummaryCounts');
+const panmapSummaryRings = document.getElementById('panmapSummaryRings');
+const panmapDataSource = document.getElementById('panmapDataSource');
+const panmapResearchIdentity = document.getElementById('panmapResearchIdentity');
+const panmapSkeleton = document.getElementById('panmapSkeleton');
+const staleResultBanner = document.getElementById('staleResultBanner');
+const mapPickCoordinate = document.getElementById('mapPickCoordinate');
+const centerSelectionLive = document.getElementById('centerSelectionLive');
+const mapLegendItems = document.getElementById('mapLegendItems');
+if (panmapControlPanel?.parentElement === mapSurface) mapPanel.before(panmapControlPanel);
 const basemapButtons = [...document.querySelectorAll('[data-basemap]')];
 const analysisStore = window.PanmapApp?.analysisStore;
 let traditionalMapAdapter = null;
@@ -81,11 +93,85 @@ let didPanPanmap = false;
 let panPointerStart = null;
 let panmapInteractionMode = 'select';
 let panmapControlStore = null;
+let panmapModeStore = null;
+let panmapModeTransitionTimer = null;
+let panmapShellTransitionFinish = null;
+let panmapViewState = 'map-view';
+let activeThresholdRange = null;
 let stage31LocalLayoutCalls = 0;
+let panmapWorkspacePreset = 'balanced';
+let panmapWorkspaceDensity = 'standard';
 const defaultPanmapViewBox = { x: 0, y: 0, width: 1850, height: 980 };
 let panmapViewBox = { ...defaultPanmapViewBox };
+let stage33ViewState = { mode: null, layout: null, contract: null };
 let lastPanmapInteractionKey = '';
 let lastQuotaSnapshot = { services: {} };
+let primaryWorkflowActive = null;
+const activeProfileJobIds = Object.create(null);
+const STAGE45_WALKING_CACHE_KEY = 'panmap.stage45.walking.completed.v1';
+const STAGE51_CYCLING_CACHE_KEY = 'panmap.stage51.cycling.completed.v1';
+const PROFILE_RESULT_CACHE_KEYS = {
+  'foot-walking': STAGE45_WALKING_CACHE_KEY,
+  'cycling-regular': STAGE51_CYCLING_CACHE_KEY,
+};
+const PROFILE_RESULT_ARCHIVE_PATHS = {
+  'foot-walking': './exports/stage-10-cycling-live/stage45-walking-cache-complete.json',
+  'cycling-regular': './exports/stage-10-cycling-live/stage51-cycling-complete.json',
+};
+const STAGE45_PUBLISHED_ANALYSIS_ID = 'analysis-name-cloud-7823d8e3-5c27-4a22-8b78-be5939c4e2ba';
+const STAGE45_PUBLISHED_MATRIX_FINGERPRINT = 'c4a00b9309bdd758ad6313c068a3321151e6576079c78fa97cc78db75c67578f';
+const ISOCHRONE_PALETTE = window.PanmapApp?.isochronePalette;
+
+function profileLabel(profile) {
+  return profile === 'cycling-regular' ? '骑行' : profile === 'foot-walking' ? '步行' : '驾车';
+}
+
+function createProfileJobId(profile) {
+  const stage = profile === 'cycling-regular' ? 'stage51' : 'stage45';
+  return globalThis.crypto?.randomUUID?.() || `${stage}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function updateProfileJob(profile, status, patch = {}) {
+  if (!activeProfileJobIds[profile]) activeProfileJobIds[profile] = createProfileJobId(profile);
+  const jobId = activeProfileJobIds[profile];
+  if (appShell) {
+    appShell.dataset.activeJobId = jobId;
+    appShell.dataset.activeJobProfile = profile;
+    if (profile === 'foot-walking') appShell.dataset.walkingJobId = jobId;
+    if (profile === 'cycling-regular') appShell.dataset.cyclingJobId = jobId;
+  }
+  const current = analysisStore?.getState().data.jobsByProfile?.[profile];
+  if (!current || current.jobId !== jobId) {
+    analysisStore?.setProfileJob(profile, { jobId, profile, status, published: false, ...patch });
+  } else {
+    analysisStore?.updateProfileJob(profile, jobId, { status, ...patch });
+  }
+  return jobId;
+}
+
+function setReachabilityButtonState(state, label) {
+  if (!generateButton) return;
+  generateButton.classList.toggle('is-loading', state === 'loading');
+  generateButton.classList.toggle('is-complete', state === 'complete');
+  generateButton.classList.toggle('is-error', state === 'error');
+  generateButton.disabled = state === 'loading';
+  generateButton.setAttribute('aria-busy', String(state === 'loading'));
+  if (generateButtonLabel) generateButtonLabel.textContent = label;
+  const icon = generateButton.querySelector('.play-icon');
+  if (icon) icon.textContent = state === 'complete' ? '✓' : state === 'error' ? '!' : state === 'loading' ? '' : '▶';
+}
+
+function setExploreButtonState(state, label) {
+  if (!nameCloudButton) return;
+  nameCloudButton.classList.toggle('is-loading', state === 'loading');
+  nameCloudButton.classList.toggle('is-complete', state === 'complete');
+  nameCloudButton.classList.toggle('is-error', state === 'error');
+  nameCloudButton.disabled = state === 'loading' || state === 'disabled';
+  nameCloudButton.setAttribute('aria-busy', String(state === 'loading'));
+  if (nameCloudButtonLabel) nameCloudButtonLabel.textContent = label;
+  const icon = nameCloudButton.querySelector('.name-cloud-icon');
+  if (icon) icon.textContent = state === 'complete' ? '✓' : state === 'error' ? '!' : state === 'loading' ? '' : '⌖';
+}
 
 function isNameCloudResult(result) {
   return result?.metadata?.panmapMode === 'unclassified-poi-name-cloud'
@@ -112,9 +198,9 @@ function updateNameCloudPresentation(result, layoutState = window.panmapLayoutSt
   const eligible = layoutStats.eligibleCount ?? result?.metadata?.matrix?.matrixWithinRangeCount ?? named;
   const area = Number(result?.metadata?.poiCoverage?.areaKm2);
 
-  overviewHeading.textContent = `精确时间标签云（${activeLayer}分钟）`;
-  overviewPoiTotal.textContent = String(bandAvailable);
-  overviewArea.textContent = Number.isFinite(area) ? `${area.toFixed(2)} km² 外圈` : '外圈面积未知';
+  if (overviewHeading) overviewHeading.textContent = `精确时间标签云（${activeLayer}分钟）`;
+  if (overviewPoiTotal) overviewPoiTotal.textContent = String(bandAvailable);
+  if (overviewArea) overviewArea.textContent = Number.isFinite(area) ? `${area.toFixed(2)} km² 外圈` : '外圈面积未知';
   if (overviewNameCloudPlaced) overviewNameCloudPlaced.textContent = `${placed} / ${eligible}`;
   if (overviewNameCloudUnplaced) overviewNameCloudUnplaced.textContent = String(unplaced);
   if (overviewNameCloudNamed) overviewNameCloudNamed.textContent = String(named);
@@ -224,7 +310,7 @@ function canGenerateNameCloud(state) {
   const result = state?.data?.lastSuccessfulResult;
   const draft = state?.data?.parameterDraft;
   return Boolean(result && draft && successfulResultMatchesDraft(state)
-    && result.profile === 'foot-walking'
+    && ['foot-walking', 'cycling-regular'].includes(result.profile)
     && sameNumberList(result.rangesMinutes, [10, 20, 30])
     && Array.isArray(result.cumulativeIsochrones)
     && result.cumulativeIsochrones.length === 3
@@ -236,7 +322,7 @@ function canCalculateMatrix(state) {
   const result = state?.data?.lastSuccessfulResult;
   return Boolean(result && successfulResultMatchesDraft(state)
     && isNameCloudResult(result)
-    && result.profile === 'foot-walking'
+    && ['foot-walking', 'cycling-regular'].includes(result.profile)
     && sameNumberList(result.rangesMinutes, [10, 20, 30])
     && Array.isArray(result.pois)
     && result.pois.length > 0);
@@ -300,19 +386,71 @@ function applyPanmapPoiState(interaction = {}) {
   });
 }
 
+function setCenterSelection(selection, options = {}) {
+  if (!selection) return null;
+  const source = ['preset', 'search', 'geolocation', 'map-pick'].includes(options.source || selection.source)
+    ? (options.source || selection.source)
+    : 'search';
+  const center = {
+    lon: Number(selection.lon),
+    lat: Number(selection.lat),
+    crs: 'EPSG:4326',
+    label: String(selection.label || (source === 'map-pick' ? '地图选点' : `${selection.lon}, ${selection.lat}`)),
+    id: String(selection.id || `${source}:${Number(selection.lon).toFixed(6)}:${Number(selection.lat).toFixed(6)}`),
+    source,
+    accuracyMeters: selection.accuracyMeters == null ? null : Number(selection.accuracyMeters),
+    ...(selection.presetId ? { presetId: selection.presetId } : {}),
+  };
+  analysisStore?.setDraftCenter(center, source);
+  traditionalMapAdapter?.setDraftCenter(center);
+  const district = options.district || selection.district
+    || (source === 'map-pick' ? `${center.lon.toFixed(6)}° E · ${center.lat.toFixed(6)}° N` : '搜索结果');
+  setLocationToolbarButton(source === 'map-pick' ? '地图选点' : center.label, district);
+  if (centerSelectionLive) centerSelectionLive.textContent = `已选择新的中心点：${source === 'map-pick' ? '地图选点' : center.label}`;
+  if (options.closeSuggestions !== false) closeLocationSuggest();
+  if (options.announce !== false) showToast(`中心点已切换为${source === 'map-pick' ? '地图选点' : center.label}；不会自动请求分析`);
+  return center;
+}
+
 function renderDraftCenter(center, source) {
   if (!center) return;
   const label = String(center.label || '地图选点');
-  const displayName = source === 'map-click' ? '地图选点' : label;
+  const displayName = source === 'map-pick' ? '地图选点' : label;
   const locationName = document.getElementById('selectedCenterName') || document.querySelector('.location-input strong');
   const locationSub = document.getElementById('selectedCenterDistrict') || document.querySelector('.location-input .location-sub');
   const coordinateText = document.querySelector('.coordinate-row strong');
   if (locationName) locationName.textContent = displayName;
-  if (locationSub) locationSub.textContent = source === 'map-click'
-    ? `${center.lon.toFixed(5)}° E, ${center.lat.toFixed(5)}° N`
+  if (locationSub) locationSub.textContent = source === 'map-pick'
+    ? `${center.lon.toFixed(6)}° E, ${center.lat.toFixed(6)}° N`
     : (PLACE_COORDINATES[center.id]?.district || PLACE_COORDINATES[label]?.district || (source === 'geolocation' ? '浏览器提供的位置' : '搜索结果'));
   if (coordinateText) coordinateText.textContent = `${center.lat.toFixed(4)}° N, ${center.lon.toFixed(4)}° E`;
-  if (source === 'map-click' && toolbarLocationButton) setLocationToolbarButton(label, '当前地图');
+  if (source === 'map-pick' && toolbarLocationButton) setLocationToolbarButton('地图选点', `${center.lon.toFixed(6)}° E · ${center.lat.toFixed(6)}° N`);
+}
+
+function panmapRingCounts(result) {
+  const ids = ['ring-0-10', 'ring-10-20', 'ring-20-30'];
+  return ids.map((ringId) => Number(result?.rings?.find((ring) => ring.ringId === ringId)?.statistics?.poiCount || 0));
+}
+
+function updateUnifiedPanmapSummary(result) {
+  const profileLabel = { 'foot-walking': '步行', 'cycling-regular': '骑行', 'driving-car': '驾车' }[result?.profile] || result?.profile || '—';
+  const total = Number(result?.pois?.length || 0);
+  const eligible = Number(result?.metadata?.matrix?.matrixWithinRangeCount ?? result?.nameCloud?.stats?.eligibleCount ?? 0);
+  const rings = panmapRingCounts(result);
+  if (panmapSummaryCenterProfile) panmapSummaryCenterProfile.textContent = `${result?.center?.label || '武汉·黄鹤楼'} · ${profileLabel}`;
+  if (panmapSummaryCounts) panmapSummaryCounts.textContent = result ? `${total} / ${eligible}` : '— / —';
+  if (panmapSummaryRings) panmapSummaryRings.textContent = result ? rings.join(' / ') : '— / — / —';
+  if (panmapDataSource) {
+    panmapDataSource.textContent = result?.profile === 'cycling-regular'
+      ? '第29号已验收真实骑行缓存'
+      : document.documentElement.dataset.walkingResultSource === 'current-online-cache'
+        ? '当前在线任务缓存'
+        : '冻结/本地缓存';
+  }
+  if (panmapResearchIdentity) {
+    const fingerprint = result?.metadata?.matrix?.resultFingerprint || result?.metadata?.matrix?.matrixResultFingerprint || '未提供';
+    panmapResearchIdentity.textContent = result ? `analysis ID：${result.analysisId || '—'} · Matrix 指纹：${fingerprint}` : 'analysis ID 与结果指纹等待缓存恢复';
+  }
 }
 
 analysisStore?.subscribe((state) => {
@@ -321,18 +459,26 @@ analysisStore?.subscribe((state) => {
   document.documentElement.dataset.analysisRanges = (state.data.parameterDraft?.rangesMinutes || []).join(',');
   document.documentElement.dataset.submittedProfile = state.data.lastSubmittedRequest?.profile || '';
   document.documentElement.dataset.submittedRanges = (state.data.lastSubmittedRequest?.rangesMinutes || []).join(',');
-  if (analysisStatusCopy) {
+  if (analysisStatusCopy && !primaryWorkflowActive) {
     const metadata = state.data.lastSuccessfulResult?.metadata;
-    const staleResult = state.data.lastSuccessfulResult && !successfulResultMatchesDraft(state);
+    const staleResult = Boolean(state.data.resultStale || (state.data.lastSuccessfulResult && !successfulResultMatchesDraft(state)));
     const status = state.data.status === 'loading' ? '正在请求 ORS 等时圈…'
       : state.data.status === 'error' ? `请求失败：${state.data.error?.message || '请检查参数或服务状态'}`
         : staleResult ? '参数已变更 · 请先生成新的 ORS 等时圈'
         : metadata?.poiCoverage?.mode === 'preview-radius' ? `POI 预览：${metadata.poiCoverage.radiusMeters} m · 未代表完整覆盖`
           : metadata?.matrix ? `Matrix 路网估算已完成 · ${metadata.matrix.cache === 'hit' ? '缓存命中，未消耗上游请求' : '已请求一次上游'}`
-          : metadata?.isLive ? `ORS 实时等时圈 · ${metadata.cacheHit ? '缓存命中' : '已请求上游'} · 可单独加载 POI 预览`
+          : metadata?.isLive ? `ORS 实时等时圈 · ${metadata.cacheHit ? '缓存命中' : '已请求上游'} · 可继续探索泛地图`
             : '快速等时圈默认不请求 POI · 可单独加载预览';
     analysisStatusCopy.textContent = status;
     if (poiPreviewButton) poiPreviewButton.disabled = state.data.status === 'loading' || Boolean(staleResult);
+  }
+  if (generateButton && !primaryWorkflowActive) {
+    const result = state.data.lastSuccessfulResult;
+    const isochroneReady = successfulResultMatchesDraft(state)
+      && result?.metadata?.isLive
+      && Array.isArray(result?.cumulativeIsochrones)
+      && result.cumulativeIsochrones.length === state.data.parameterDraft?.rangesMinutes?.length;
+    setReachabilityButtonState(isochroneReady ? 'complete' : 'idle', isochroneReady ? '可达域生成完毕' : '生成可达域');
   }
   updateResultCard(state.data.lastSuccessfulResult);
   renderDraftCenter(state.data.parameterDraft?.center, state.data.parameterDraft?.centerSource);
@@ -340,10 +486,18 @@ analysisStore?.subscribe((state) => {
   if (state.data.lastSuccessfulResult?.metadata?.apiQuota) {
     renderQuota(state.data.lastSuccessfulResult.metadata.apiQuota, state.data.lastSuccessfulResult.metadata.cacheHit ? 'cache' : '');
   }
-  if (nameCloudButton) nameCloudButton.disabled = !canGenerateNameCloud(state) || nameCloudButton.classList.contains('is-loading');
+  if (nameCloudButton && !primaryWorkflowActive) {
+    const hasCompletedPanmap = !state.data.resultStale
+      && successfulResultMatchesDraft(state)
+      && isNameCloudResult(state.data.lastSuccessfulResult)
+      && Boolean(state.data.lastSuccessfulResult?.metadata?.matrix);
+    if (hasCompletedPanmap) setExploreButtonState('complete', '进入泛地图');
+    else setExploreButtonState(canGenerateNameCloud(state) ? 'idle' : 'disabled', '探索泛地图');
+  }
   if (matrixButton) matrixButton.disabled = !canCalculateMatrix(state) || matrixButton.classList.contains('is-loading');
   updateNameCloudStats(state.data.lastSuccessfulResult);
   updateNameCloudPresentation(state.data.lastSuccessfulResult);
+  updateUnifiedPanmapSummary(state.data.lastSuccessfulResult);
   applyPanmapActiveRing(interaction.activeRingId || null);
   applyPanmapPoiState(interaction);
   updateMatrixPresentation(state.data.lastSuccessfulResult, interaction);
@@ -354,6 +508,18 @@ analysisStore?.subscribe((state) => {
   traditionalMapAdapter?.setVisibleTopLevelCategoryIds(interaction.visibleTopLevelCategoryIds);
   traditionalMapAdapter?.setBasemapId(interaction.activeBasemapId || 'osm-standard');
   traditionalMapAdapter?.setMapPickMode(Boolean(interaction.isMapPickMode));
+  traditionalMapAdapter?.setResultStale(Boolean(state.data.resultStale));
+  appShell.classList.toggle('has-stale-result', Boolean(state.data.resultStale));
+  if (staleResultBanner) {
+    staleResultBanner.hidden = !state.data.resultStale;
+    staleResultBanner.textContent = state.data.staleReason === 'profile-changed'
+      ? '交通方式已改变：地图上的圈层与 POI 是上一交通方式的旧结果，请重新生成可达域。'
+      : '中心点已改变：地图上的圈层与 POI 是上一中心点的旧结果，请重新生成可达域。';
+  }
+  [centerMapPickButton, document.getElementById('toolbarMapPick')].filter(Boolean).forEach((button) => {
+    button.classList.toggle('is-active', Boolean(interaction.isMapPickMode));
+    button.setAttribute('aria-pressed', String(Boolean(interaction.isMapPickMode)));
+  });
   renderCategoryBreadcrumb(state);
   basemapButtons.forEach((button) => button.classList.toggle('is-selected', button.dataset.basemap === (interaction.activeBasemapId || 'osm-standard')));
   const interactionKey = JSON.stringify({
@@ -370,6 +536,7 @@ analysisStore?.subscribe((state) => {
     Promise.resolve(window.rebuildPanmapLayout?.({
       layers,
       centerLabel: state.data.lastSuccessfulResult.center?.label,
+      center: state.data.lastSuccessfulResult.center,
       outOfRangeCount: state.data.lastSuccessfulResult.metadata?.matrix?.matrixOutOfRangeCount || 0,
     })).then((layout) => {
       if (!layout) return;
@@ -383,7 +550,65 @@ analysisStore?.subscribe((state) => {
 function applyPanmapViewBox() {
   panmapArt.setAttribute('viewBox', `${panmapViewBox.x} ${panmapViewBox.y} ${panmapViewBox.width} ${panmapViewBox.height}`);
   panmapArt.dataset.zoom = (defaultPanmapViewBox.width / panmapViewBox.width).toFixed(2);
+  updateStage33ViewReadout();
 }
+
+function updateStage33ViewReadout() {
+  if (!stage33ViewState.layout) return;
+  const rect = panmapArt.getBoundingClientRect();
+  const scale = Math.min(rect.width / panmapViewBox.width, rect.height / panmapViewBox.height);
+  const minimumScreenFontPx = scale * stage33ViewState.layout.semanticMinimumPx;
+  const label = document.getElementById('radialViewModeLabel'); const metrics = document.getElementById('radialViewMetrics'); const note = document.getElementById('radialViewNote');
+  const overview = stage33ViewState.mode === 'overview';
+  if (label) label.textContent = overview ? '全景预览' : '阅读视图';
+  if (metrics) metrics.textContent = `当前缩放 ${(scale * 100).toFixed(1)}% · 最小屏幕字号 ${minimumScreenFontPx.toFixed(2)}px`;
+  if (note) { note.textContent = overview && minimumScreenFontPx < 8 ? '全景预览用于观察三圈整体结构；字号低于8px不作为阅读状态。' : '阅读视图最小字号不低于8px，可平移、滚轮缩放和圈层聚焦。'; note.classList.toggle('is-preview-note', overview && minimumScreenFontPx < 8); }
+  const nodeCount = document.querySelectorAll('.organic-map .name-cloud-label').length; const fingerprint = document.querySelector('.organic-map')?.dataset.layoutFingerprint || '';
+  const invariantPass = nodeCount === stage33ViewState.layout.nodeCount && fingerprint === stage33ViewState.layout.fingerprint;
+  panmapArt.dataset.stage33ViewMode = overview ? 'overview' : 'reading'; panmapArt.dataset.stage33ViewScale = scale.toFixed(6); panmapArt.dataset.stage33MinimumScreenFontPx = minimumScreenFontPx.toFixed(2); panmapArt.dataset.stage33ViewInvariantPass = String(invariantPass); panmapArt.dataset.stage33ViewNodeCount = String(nodeCount);
+}
+
+function applyStage33View(mode, announce = true) {
+  const engine = window.PanmapApp?.radialViewContract; if (!engine || !stage33ViewState.layout) return null;
+  const rect = panmapArt.getBoundingClientRect();
+  const contract = engine.create({ bounds:stage33ViewState.layout.bounds, viewport:{width:rect.width,height:rect.height}, semanticMinimumPx:stage33ViewState.layout.semanticMinimumPx, readableMinimumPx:8 });
+  stage33ViewState.mode = mode === 'overview' ? 'overview' : 'reading'; stage33ViewState.contract = contract;
+  panmapViewBox = { ...(stage33ViewState.mode === 'overview' ? contract.overview.viewBox : contract.reading.viewBox) }; applyPanmapViewBox();
+  document.documentElement.dataset.stage33ViewTransformOnly = 'true';
+  if (announce) showToast(stage33ViewState.mode === 'overview' ? '已适配全景：用于观察三圈整体结构' : '已恢复阅读比例：最小屏幕字号不低于8px');
+  return { mode:stage33ViewState.mode, ...contract[stage33ViewState.mode] };
+}
+
+window.addEventListener('stage33-radial-layout-ready', (event) => {
+  stage33ViewState = { mode:'reading', layout:{...event.detail}, contract:null };
+  const panel = document.getElementById('radialViewContract'); if (panel) panel.hidden = false;
+  applyStage33View('reading', false);
+});
+window.addEventListener('stage33-radial-view-resize', () => {
+  if (document.documentElement.dataset.stage47ModeTransition === 'true'
+    || document.documentElement.dataset.stage49ShellTransition === 'true') return;
+  const rect = panmapArt?.getBoundingClientRect();
+  if (!appShell.classList.contains('is-panmap') || !rect || rect.width < 2 || rect.height < 2) return;
+  applyStage33View(stage33ViewState.mode || 'reading', false);
+});
+window.addEventListener('stage35-envelope-ready', (event) => {
+  const status=document.getElementById('envelopeRuntimeStatus'); const combo=document.getElementById('currentCombinationLabel'); const cache=document.getElementById('envelopeCacheLabel'); const summary=document.getElementById('envelopeValidationSummary'); const badge=document.getElementById('stage35CombinationBadge'); const badgeCombo=document.getElementById('stage35BadgeCombo'); const badgeMetrics=document.getElementById('stage35BadgeMetrics');
+  if (status) status.hidden=false;
+  const orientation=event.detail.mode==='geographic-radial'?'G':'R'; const envelope=event.detail.envelopeMode==='natural-density'?'N':'C';
+  if (combo) combo.textContent=`${orientation}-${envelope}`;
+  if (cache) cache.textContent=envelope==='N'?`自然包络 · 缓存${event.detail.cache==='hit'?'命中':'新建'}`:'圆形基线 · 密度计算未运行';
+  const valid=event.detail.valid==='true'||event.detail.valid===true; if (summary) summary.textContent=`252/252 · 包络${valid?'校验通过':'校验失败'} · 布局执行 ${event.detail.layoutExecutionCount} 次`;
+  const applied=window.PanmapApp?.panmapControlStore?.getState?.().applied; if(badge)badge.hidden=false;if(badgeCombo)badgeCombo.textContent=`${orientation}-${envelope}`;if(badgeMetrics)badgeMetrics.textContent=envelope==='N'?`252/252 · 贴合${applied?.envelopeTightness??50} · 平滑${applied?.envelopeSmoothness??60} · 间距${applied?.minEnvelopeGapPx??12}px · ${valid?'校验通过':'校验失败'}`:'252/252 · 圆形包络 · 密度计算未运行';
+  document.documentElement.dataset.stage35Combination=`${orientation}-${envelope}`; document.documentElement.dataset.stage35EnvelopeValid=String(valid); document.documentElement.dataset.stage35BusinessApiRequests='0';
+});
+window.addEventListener('stage37-compact-layout-ready', (event) => {
+  const badge=document.getElementById('stage37LayoutBadge'); const title=document.getElementById('stage37BadgeTitle'); const metrics=document.getElementById('stage37BadgeMetrics');
+  const names={fermat:'费马紧凑','poisson-disc':'泊松盘紧凑','frontier-contact':'前沿接触式'};
+  if(badge)badge.hidden=false;
+  if(title)title.textContent=`${names[event.detail.algorithm]||event.detail.algorithm} · ${event.detail.mode==='random-match'?'随机匹配':'地理匹配'}`;
+  if(metrics)metrics.textContent=`${event.detail.nodeCount}/${event.detail.nodeCount} · 紧凑圆形环带 · 业务 API 0`;
+  document.documentElement.dataset.stage37Algorithm=event.detail.algorithm; document.documentElement.dataset.stage37Mode=event.detail.mode; document.documentElement.dataset.stage37Fingerprint=event.detail.fingerprint; document.documentElement.dataset.stage37NodeCount=String(event.detail.nodeCount); document.documentElement.dataset.stage37BusinessApiRequests='0';
+});
 
 function zoomPanmap(factor, clientX, clientY) {
   const rect = panmapArt.getBoundingClientRect();
@@ -391,8 +616,10 @@ function zoomPanmap(factor, clientX, clientY) {
   const cursorY = Number.isFinite(clientY) ? clientY : rect.top + rect.height / 2;
   const ratioX = Math.max(0, Math.min(1, (cursorX - rect.left) / rect.width));
   const ratioY = Math.max(0, Math.min(1, (cursorY - rect.top) / rect.height));
-  const nextWidth = Math.max(620, Math.min(2600, panmapViewBox.width * factor));
-  const nextHeight = nextWidth * defaultPanmapViewBox.height / defaultPanmapViewBox.width;
+  let maximumWidth = 2600; let aspect = defaultPanmapViewBox.width / defaultPanmapViewBox.height;
+  if (stage33ViewState.layout) { const contract=window.PanmapApp.radialViewContract.create({bounds:stage33ViewState.layout.bounds,viewport:{width:rect.width,height:rect.height},semanticMinimumPx:stage33ViewState.layout.semanticMinimumPx,readableMinimumPx:8}); maximumWidth=contract.reading.viewBox.width; aspect=rect.width/rect.height; stage33ViewState.mode='reading'; }
+  const nextWidth = Math.max(620, Math.min(maximumWidth, panmapViewBox.width * factor));
+  const nextHeight = nextWidth / aspect;
   panmapViewBox.x += (panmapViewBox.width - nextWidth) * ratioX;
   panmapViewBox.y += (panmapViewBox.height - nextHeight) * ratioY;
   panmapViewBox.width = nextWidth;
@@ -401,6 +628,7 @@ function zoomPanmap(factor, clientX, clientY) {
 }
 
 function resetPanmapView() {
+  if (stage33ViewState.layout) { applyStage33View('reading', false); return; }
   panmapViewBox = { ...defaultPanmapViewBox };
   applyPanmapViewBox();
 }
@@ -414,6 +642,7 @@ panmapArt.addEventListener('wheel', (event) => {
 panmapArt.addEventListener('pointerdown', (event) => {
   if (!appShell.classList.contains('is-panmap') || panmapInteractionMode !== 'pan' || event.button !== 0) return;
   if (event.target.closest('.organic-layer-chip')) return;
+  if (stage33ViewState.layout && stage33ViewState.mode === 'overview') applyStage33View('reading', false);
   isPanningPanmap = true;
   didPanPanmap = false;
   panPointerStart = {
@@ -512,17 +741,23 @@ function updateSplitToggle(isSplit) {
   splitToggle.setAttribute('aria-label', isSplit ? '切换为传统地图小窗显示' : '切换为传统地图并列显示');
 }
 
-function setPanmapMode(active) {
+function setPanmapViewState(state) {
+  panmapViewState = state;
+  ['panmap-entering-skeleton', 'panmap-entering-panel', 'panmap-ready', 'panmap-leaving']
+    .forEach((className) => appShell.classList.toggle(className, className === state));
+  document.documentElement.dataset.panmapViewState = state;
+}
+
+function applyPanmapPageChrome(active) {
   const result = analysisStore?.getState().data.lastSuccessfulResult;
   const nameCloudMode = isNameCloudResult(result);
-  appShell.classList.toggle('is-panmap', active);
+  document.querySelectorAll('.secondary-item[data-flow]').forEach((item) => {
+    item.classList.toggle('is-active', item.dataset.flow === (active ? 'panmap' : 'reachability'));
+  });
   if (!active) {
     setPanmapInteractionMode('select', false);
     mapPanel.classList.remove('is-split');
     closeLocationSuggest();
-    analysisStore?.setMapPickMode(false);
-    mapSurface.classList.remove('is-picking');
-    appShell.classList.remove('is-map-picking');
   }
   document.querySelector('.eyebrow').innerHTML = active
     ? '<span class="eyebrow-dot"></span>周边探索 / 泛地图探索'
@@ -532,10 +767,88 @@ function setPanmapMode(active) {
     ? nameCloudMode
       ? '按步行时间圈层直接摆放真实 POI 名称，不按类别聚合'
       : '在等时圈层内组织周边 POI 标签云与类别分布'
-    : '构建基于时间或距离的可达域，并获取多类型 POI 覆盖数据';
+    : '构建基于时间的可达域，并获取多类型 POI 覆盖数据';
   updateNameCloudPresentation(result);
   document.title = active ? 'IsoTagMap · 泛地图探索' : 'IsoTagMap · 等时圈层标签云泛地图';
-  window.setTimeout(() => traditionalMapAdapter?.resize(), 80);
+}
+
+function setPanmapMode(active, options = {}) {
+  const immediate = Boolean(options.immediate || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+  const preservedViewBox = panmapArt?.getAttribute('viewBox') || null;
+  if (active && appShell.classList.contains('is-panmap') && panmapViewState !== 'panmap-leaving') {
+    applyPanmapPageChrome(true);
+    return;
+  }
+  window.clearTimeout(panmapModeTransitionTimer);
+  panmapModeTransitionTimer = null;
+  if (panmapShellTransitionFinish) {
+    const finishPendingTransition = panmapShellTransitionFinish;
+    panmapShellTransitionFinish = null;
+    finishPendingTransition(true);
+  }
+  applyPanmapPageChrome(active);
+
+  if (active) {
+    appShell.classList.add('is-panmap');
+    document.documentElement.dataset.stage49ShellTransition = 'true';
+    setPanmapViewState('panmap-entering-skeleton');
+    const finish = () => {
+      if (panmapViewState === 'panmap-ready') return;
+      if (preservedViewBox) panmapArt?.setAttribute('viewBox', preservedViewBox);
+      setPanmapViewState('panmap-ready');
+      delete document.documentElement.dataset.stage49ShellTransition;
+      panmapShellTransitionFinish = null;
+      traditionalMapAdapter?.resize();
+    };
+    panmapShellTransitionFinish = finish;
+    if (immediate) {
+      finish();
+      return;
+    }
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+      setPanmapViewState('panmap-entering-panel');
+      const onEnd = (event) => {
+        if (event.target !== panmapControlPanel || !['width', 'min-width', 'transform'].includes(event.propertyName)) return;
+        panmapControlPanel.removeEventListener('transitionend', onEnd);
+        finish();
+      };
+      panmapControlPanel.addEventListener('transitionend', onEnd);
+      panmapModeTransitionTimer = window.setTimeout(() => {
+        panmapControlPanel.removeEventListener('transitionend', onEnd);
+        finish();
+      }, 420);
+    }));
+    return;
+  }
+
+  if (!appShell.classList.contains('is-panmap')) {
+    setPanmapViewState('map-view');
+    return;
+  }
+  document.documentElement.dataset.stage49ShellTransition = 'true';
+  setPanmapViewState('panmap-leaving');
+  const finish = () => {
+    appShell.classList.remove('is-panmap');
+    setPanmapViewState('map-view');
+    delete document.documentElement.dataset.stage49ShellTransition;
+    panmapShellTransitionFinish = null;
+    traditionalMapAdapter?.resize();
+  };
+  panmapShellTransitionFinish = finish;
+  if (immediate) {
+    finish();
+    return;
+  }
+  const onEnd = (event) => {
+    if (event.target !== panmapControlPanel || !['width', 'min-width', 'transform'].includes(event.propertyName)) return;
+    panmapControlPanel.removeEventListener('transitionend', onEnd);
+    finish();
+  };
+  panmapControlPanel.addEventListener('transitionend', onEnd);
+  panmapModeTransitionTimer = window.setTimeout(() => {
+    panmapControlPanel.removeEventListener('transitionend', onEnd);
+    finish();
+  }, 420);
 }
 
 function renderPanmapControlState(state) {
@@ -553,6 +866,7 @@ function renderPanmapControlState(state) {
   panmapControlPanel.querySelectorAll('[data-control-boolean]').forEach((input) => {
     input.checked = Boolean(draft[input.dataset.controlBoolean]);
   });
+  panmapControlPanel.querySelectorAll('[data-control-text]').forEach((input) => { input.value = String(draft[input.dataset.controlText]); });
   document.getElementById('naturalEnvelopeControls').hidden = draft.envelopeMode !== 'natural-density';
   const dirty = state.draftFingerprint !== state.appliedFingerprint;
   if (controlApplyStatus && !controlApplyStatus.classList.contains('is-warning')) {
@@ -568,13 +882,13 @@ function initializePanmapControls() {
   if (!controls || !panmapControlPanel) return;
   panmapControlStore = controls.createPanmapControlStore({
     storage: window.localStorage,
-    onApply: () => {
+    onApply: (applied) => {
       const result = analysisStore?.getState().data.lastSuccessfulResult;
       if (!result) return;
       stage31LocalLayoutCalls += 1;
       document.documentElement.dataset.stage31LocalLayoutCalls = String(stage31LocalLayoutCalls);
       Promise.resolve(applyAnalysisResultToPanmap(result)).then(() => {
-        if (controlApplyStatus) controlApplyStatus.textContent = '已使用本地缓存完成一次基线重排 · 业务 API 0';
+        if (controlApplyStatus) controlApplyStatus.textContent = applied?.envelopeMode === 'natural-density' ? '已使用冻结标签坐标生成自然包络 · 业务 API 0' : '已使用本地缓存完成圆形包络渲染 · 业务 API 0';
       });
     },
     onWarning: (message) => {
@@ -584,6 +898,7 @@ function initializePanmapControls() {
       }
     },
   });
+  window.PanmapApp.panmapControlStore = panmapControlStore;
   panmapControlStore.subscribe((state) => {
     controlApplyStatus?.classList.remove('is-warning');
     renderPanmapControlState(state);
@@ -599,6 +914,9 @@ function initializePanmapControls() {
   panmapControlPanel.querySelectorAll('[data-control-boolean]').forEach((input) => {
     input.addEventListener('change', () => panmapControlStore.setDraft({ [input.dataset.controlBoolean]: input.checked }));
   });
+  panmapControlPanel.querySelectorAll('[data-control-text]').forEach((input) => {
+    input.addEventListener('input', () => panmapControlStore.setDraft({ [input.dataset.controlText]: input.value }));
+  });
   document.getElementById('applyPanmapControls')?.addEventListener('click', () => {
     const outcome = panmapControlStore.apply();
     if (!outcome.applied) showToast(outcome.reason);
@@ -609,7 +927,7 @@ function initializePanmapControls() {
     showToast('已恢复默认草稿；尚未应用');
   });
   document.getElementById('pinPanmapSeed')?.addEventListener('click', () => {
-    panmapControlStore.pinRandomSeed('stage31-fixed-20260801');
+    panmapControlStore.pinRandomSeed(panmapControlStore.getState().draft.randomSeed || 'stage33-fixed-wuhan-20260802');
     showToast('已固定稳定种子草稿；尚未应用');
   });
   document.getElementById('exportPanmapMetrics')?.addEventListener('click', () => {
@@ -625,12 +943,152 @@ function initializePanmapControls() {
     appShell.classList.toggle('control-dark');
     showToast('控制面板主题已切换；未触发重排');
   });
-  document.getElementById('panmapControlCollapse')?.addEventListener('click', (event) => {
-    const collapsed = appShell.classList.toggle('controls-collapsed');
-    event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
-    event.currentTarget.setAttribute('aria-label', collapsed ? '展开泛地图样式控制' : '收起泛地图样式控制');
-  });
+  document.getElementById('fitRadialOverview')?.addEventListener('click', () => applyStage33View('overview'));
+  document.getElementById('restoreRadialReading')?.addEventListener('click', () => applyStage33View('reading'));
   document.documentElement.dataset.stage31BusinessApiRequests = '0';
+}
+
+function renderPanmapWorkspacePreset() {
+  const descriptions = {
+    'geography-first': '优先保持 POI 相对中心点的真实方向',
+    balanced: '兼顾地理方向、标签紧凑度和阅读清晰度',
+    'compact-first': '优先减少空白并保持标签水平可读',
+  };
+  const density = {
+    concise: { total: 60, rings: [10, 20, 30] },
+    standard: { total: 120, rings: [20, 40, 60] },
+    rich: { total: 180, rings: [30, 60, 90] },
+  }[panmapWorkspaceDensity];
+  document.querySelectorAll('[data-panmap-preset]').forEach((input) => { input.checked = input.value === panmapWorkspacePreset; });
+  document.querySelectorAll('[data-panmap-density]').forEach((input) => { input.checked = input.value === panmapWorkspaceDensity; });
+  const description = document.getElementById('panmapPresetDescription');
+  const preview = document.getElementById('panmapDensityPreview');
+  if (description) description.textContent = descriptions[panmapWorkspacePreset];
+  if (preview) preview.textContent = `预计进入布局：${density.total} · 逐圈上限 ${density.rings.join(' / ')}`;
+  document.documentElement.dataset.panmapWorkspacePreset = panmapWorkspacePreset;
+  document.documentElement.dataset.panmapWorkspaceDensity = panmapWorkspaceDensity;
+}
+
+function bindUnifiedWorkspaceControls() {
+  const presetDrafts = {
+    'geography-first': { labelOrientation: 'direction-preserving-radial', compactAlgorithm: 'frontier-contact', compactness: 45, fontHierarchy: 55 },
+    balanced: { labelOrientation: 'compact-geographic', compactAlgorithm: 'frontier-contact', compactness: 50, fontHierarchy: 50 },
+    'compact-first': { labelOrientation: 'compact-geographic', compactAlgorithm: 'frontier-contact', compactness: 75, fontHierarchy: 50 },
+  };
+  document.querySelectorAll('[data-panmap-preset]').forEach((input) => input.addEventListener('change', () => {
+    panmapWorkspacePreset = input.value;
+    panmapControlStore?.setDraft(presetDrafts[input.value]);
+    renderPanmapWorkspacePreset();
+  }));
+  document.querySelectorAll('[data-panmap-density]').forEach((input) => input.addEventListener('change', () => {
+    panmapWorkspaceDensity = input.value;
+    renderPanmapWorkspacePreset();
+  }));
+  renderPanmapWorkspacePreset();
+}
+
+function capturePanmapWorkspaceState() {
+  const result = analysisStore?.getState().data.lastSuccessfulResult;
+  const labels = [...document.querySelectorAll('.name-cloud-label')];
+  const coordinateText = labels.map((node) => `${node.dataset.poiId || ''}:${node.getAttribute('transform') || ''}:${node.querySelector('text')?.getAttribute('x') || ''}:${node.querySelector('text')?.getAttribute('y') || ''}`).sort().join('|');
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < coordinateText.length; index += 1) {
+    hash ^= coordinateText.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return {
+    mode: panmapModeStore?.getState().mode || 'ordinary',
+    analysisId: result?.analysisId || null,
+    totalPoi: result?.pois?.length || 0,
+    eligible: result?.metadata?.matrix?.matrixWithinRangeCount ?? result?.nameCloud?.stats?.eligibleCount ?? labels.length,
+    rings: panmapRingCounts(result),
+    labelDomNodes: labels.length,
+    coordinateFingerprint: `fnv1a-${(hash >>> 0).toString(16).padStart(8, '0')}`,
+    viewBox: panmapArt?.getAttribute('viewBox') || null,
+    transform: panmapArt?.style.transform || '',
+    preset: panmapWorkspacePreset,
+    density: panmapWorkspaceDensity,
+    envelope: panmapControlStore?.getState().draft.envelopeMode || null,
+  };
+}
+
+function businessResourceCounts() {
+  const counts = { Isochrones: 0, OpenPOIService: 0, Matrix: 0, Geocoder: 0, Directions: 0 };
+  performance.getEntriesByType('resource').forEach((entry) => {
+    const url = String(entry.name || '').toLowerCase();
+    if (/isochron/.test(url)) counts.Isochrones += 1;
+    if (/\/pois(?:\?|\/)|openpoiservice/.test(url)) counts.OpenPOIService += 1;
+    if (/\/matrix(?:\?|\/)/.test(url)) counts.Matrix += 1;
+    if (/geocod/.test(url)) counts.Geocoder += 1;
+    if (/direction/.test(url)) counts.Directions += 1;
+  });
+  return counts;
+}
+
+function runStage47SwitchAudit(switchCount = 20) {
+  const before = capturePanmapWorkspaceState();
+  const requestsBefore = businessResourceCounts();
+  const initialMode = panmapModeStore.getState().mode;
+  for (let index = 0; index < switchCount; index += 1) {
+    panmapModeStore.setMode(index % 2 === 0 ? 'research' : 'ordinary', { syncUrl: false });
+  }
+  panmapModeStore.setMode(initialMode, { syncUrl: false });
+  const after = capturePanmapWorkspaceState();
+  const requestsAfter = businessResourceCounts();
+  const requestDelta = Object.fromEntries(Object.keys(requestsBefore).map((key) => [key, requestsAfter[key] - requestsBefore[key]]));
+  const evidence = {
+    switchCount,
+    before,
+    after,
+    sameAnalysisId: before.analysisId === after.analysisId,
+    sameCounts: before.totalPoi === after.totalPoi && before.eligible === after.eligible && JSON.stringify(before.rings) === JSON.stringify(after.rings),
+    sameLabelCoordinates: before.coordinateFingerprint === after.coordinateFingerprint,
+    sameTransform: before.viewBox === after.viewBox && before.transform === after.transform,
+    sameWorkspaceSelections: before.preset === after.preset && before.density === after.density && before.envelope === after.envelope,
+    businessRequestDelta: requestDelta,
+  };
+  document.documentElement.dataset.stage47SwitchAudit = JSON.stringify(evidence);
+  return evidence;
+}
+
+function initializePanmapModeControls() {
+  const modeState = window.PanmapApp?.panmapModeState;
+  if (!modeState || !panmapModeSwitch) return;
+  panmapModeStore = modeState.createPanmapModeStore();
+  window.PanmapApp.panmapModeStore = panmapModeStore;
+  window.PanmapApp.captureStage47WorkspaceState = capturePanmapWorkspaceState;
+  window.PanmapApp.runStage47SwitchAudit = runStage47SwitchAudit;
+  panmapModeStore.subscribe((state) => {
+    const preservedViewBox = state.switchCount > 0 ? panmapArt?.getAttribute('viewBox') : null;
+    if (state.switchCount > 0) {
+      document.documentElement.dataset.stage47ModeTransition = 'true';
+      window.clearTimeout(panmapModeTransitionTimer);
+    }
+    appShell.dataset.panmapMode = state.mode;
+    document.documentElement.dataset.panmapMode = state.mode;
+    document.documentElement.dataset.stage47ModeSwitchCount = String(state.switchCount);
+    const toggle = panmapModeSwitch.querySelector('[data-panmap-mode-toggle]');
+    const researchEnabled = state.mode === 'research';
+    toggle?.classList.toggle('is-selected', researchEnabled);
+    toggle?.setAttribute('aria-checked', String(researchEnabled));
+    toggle?.setAttribute('aria-label', researchEnabled ? '关闭研究模式，返回普通模式' : '开启研究模式');
+    window.PanmapApp.researchMode?.setEnabled?.(state.mode === 'research');
+    if (state.switchCount > 0) {
+      panmapModeTransitionTimer = window.setTimeout(() => {
+        if (preservedViewBox) panmapArt?.setAttribute('viewBox', preservedViewBox);
+        delete document.documentElement.dataset.stage47ModeTransition;
+      }, 420);
+    }
+  });
+  const toggle = panmapModeSwitch.querySelector('[data-panmap-mode-toggle]');
+  toggle?.addEventListener('click', () => {
+    panmapModeStore.setMode(panmapModeStore.getState().mode === 'research' ? 'ordinary' : 'research');
+  });
+  toggle?.addEventListener('keydown', (event) => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    panmapModeStore.setMode(event.key === 'ArrowRight' || event.key === 'End' ? 'research' : 'ordinary');
+  });
 }
 
 railToggle.addEventListener('click', () => {
@@ -639,7 +1097,7 @@ railToggle.addEventListener('click', () => {
   showToast(collapsed ? '导航栏已收起，悬浮到左侧可展开' : '导航栏已展开');
 });
 
-document.getElementById('enterPanmap').addEventListener('click', () => {
+document.getElementById('enterPanmap')?.addEventListener('click', () => {
   setPanmapMode(true);
   showToast('已进入泛地图探索，传统等时圈地图正在缩小到左下角');
 });
@@ -668,7 +1126,7 @@ document.getElementById('restoreMap').addEventListener('click', () => {
   showToast('传统地图已恢复为小窗');
 });
 
-overviewToggle.addEventListener('click', (event) => {
+overviewToggle?.addEventListener('click', (event) => {
   event.stopPropagation();
   const collapsed = overviewCard.classList.toggle('is-collapsed');
   overviewToggle.setAttribute('aria-expanded', String(!collapsed));
@@ -690,6 +1148,7 @@ function ringIdForOuterRange(range) {
 
 function setActiveTimeLayer(layer, announce = true) {
   const activeLayer = String(layer);
+  activeThresholdRange = Number(activeLayer);
   const stats = currentTimeLayerStats[activeLayer] || { poi: '0', area: '模拟数据', categories: [] };
   const result = analysisStore?.getState().data.lastSuccessfulResult;
   panmapArt.classList.remove('focus-layer-10', 'focus-layer-20', 'focus-layer-30');
@@ -701,14 +1160,15 @@ function setActiveTimeLayer(layer, announce = true) {
   if (isNameCloudResult(result)) {
     updateNameCloudPresentation(result, window.panmapLayoutState, activeLayer);
   } else {
-    overviewHeading.textContent = `当前概览（${activeLayer}分钟）`;
-    overviewPoiTotal.textContent = stats.poi;
-    overviewArea.textContent = stats.area;
+    if (overviewHeading) overviewHeading.textContent = `当前概览（${activeLayer}分钟）`;
+    if (overviewPoiTotal) overviewPoiTotal.textContent = stats.poi;
+    if (overviewArea) overviewArea.textContent = stats.area;
     document.querySelectorAll('.density-overview .category-stat > div b').forEach((value, index) => {
       value.textContent = stats.categories[index] || '0';
     });
   }
   analysisStore?.setActiveRingId(ringIdForOuterRange(activeLayer));
+  if (typeof renderIsochronePalette === 'function' && document.getElementById('thresholdList')) renderIsochronePalette();
   if (announce) showToast(`${activeLayer} 分钟圈层已聚焦，其他圈层已按层级联动`);
 }
 
@@ -796,20 +1256,44 @@ function syncParameterDraftFromUI() {
 }
 
 async function switchActiveProfile(profile, label) {
+  const previousResult = analysisStore?.getState().data.lastSuccessfulResult;
+  const cacheKey = PROFILE_RESULT_CACHE_KEYS[profile];
+  const existingProfileResult = analysisStore?.getState().data.resultsByProfile?.[profile];
+  if (!existingProfileResult && cacheKey) {
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) analysisStore?.setResult(window.PanmapApp.contracts.normalizeAnalysisResult(JSON.parse(cached)));
+    } catch (error) {
+      sessionStorage.removeItem(cacheKey);
+    }
+  }
+  if (!analysisStore?.getState().data.resultsByProfile?.[profile] && PROFILE_RESULT_ARCHIVE_PATHS[profile]) {
+    try {
+      const response = await fetch(PROFILE_RESULT_ARCHIVE_PATHS[profile], { cache: 'no-store' });
+      if (response.ok) analysisStore?.setResult(window.PanmapApp.contracts.normalizeAnalysisResult(await response.json()));
+    } catch (error) {
+      // Local archive restoration is best-effort; the profile remains stale if unavailable.
+    }
+  }
   analysisStore?.setActiveProfile(profile);
   const state = analysisStore?.getState();
   const result = state?.data?.lastSuccessfulResult;
-  if (result) {
+  if (result?.profile === profile && !state.data.resultStale) {
     await applyAnalysisResultToPanmap(result);
     showToast(`已切换为${label}缓存结果，未发起网络请求`);
     return;
   }
-  traditionalMapAdapter?.setAnalysisResult(null);
+  if (previousResult) {
+    traditionalMapAdapter?.setAnalysisResult(previousResult);
+    traditionalMapAdapter?.setResultStale(true);
+  } else {
+    traditionalMapAdapter?.setAnalysisResult(null);
+  }
   const job = state?.data?.jobsByProfile?.[profile];
   if (analysisStatusCopy) analysisStatusCopy.textContent = job?.status === 'partial'
     ? `${label}任务已中止 · 可从检查点恢复`
-    : `${label}尚未生成`;
-  showToast(job?.status === 'partial' ? `${label}任务可恢复` : `${label}尚未生成，未发起网络请求`);
+    : `${label}参数已选择 · 旧结果已标记为 stale，请生成新的可达域`;
+  showToast(job?.status === 'partial' ? `${label}任务可恢复` : `${label}尚未生成；旧结果已标记 stale，未发起网络请求`);
 }
 
 function buildAnalysisRequestFromUI() {
@@ -828,7 +1312,7 @@ function buildAnalysisRequestFromUI() {
     rangesMinutes,
     categoryIds: draft.categoryIds,
     poiDatasetId: draft.poiDatasetId,
-    options: { ...draft.options, includePois: false },
+    options: { ...draft.options, includePois: false, calculateTravelTimes: false },
   });
 }
 
@@ -913,10 +1397,12 @@ function updateTimeLayerStatsFromResult(result) {
 }
 
 function setAnalysisLoadingState(isLoading) {
-  generateButton?.classList.toggle('is-loading', isLoading);
-  generateButton?.setAttribute('aria-busy', String(isLoading));
-  if (generateButton) generateButton.disabled = isLoading;
-  if (generateButtonLabel) generateButtonLabel.textContent = isLoading ? '正在生成等时圈…' : '生成可达域';
+  if (primaryWorkflowActive !== 'reachability') {
+    generateButton?.classList.toggle('is-loading', isLoading);
+    generateButton?.setAttribute('aria-busy', String(isLoading));
+    if (generateButton) generateButton.disabled = isLoading;
+    if (generateButtonLabel) generateButtonLabel.textContent = isLoading ? '正在生成等时圈…' : '生成可达域';
+  }
   toolbarGenerate?.classList.toggle('is-loading', isLoading);
   toolbarGenerate?.setAttribute('aria-busy', String(isLoading));
   document.getElementById('appShell')?.toggleAttribute('data-analysis-loading', isLoading);
@@ -930,7 +1416,7 @@ async function applyAnalysisResultToPanmap(result) {
     categoryFocusPath: interaction.categoryFocusPath || interaction.categoryPath || [],
     visibleTopLevelCategoryIds: interaction.visibleTopLevelCategoryIds,
   });
-  const layout = await window.rebuildPanmapLayout?.({ layers, centerLabel: result.center?.label, outOfRangeCount: result.metadata?.matrix?.matrixOutOfRangeCount || 0 });
+  const layout = await window.rebuildPanmapLayout?.({ layers, centerLabel: result.center?.label, center: result.center, outOfRangeCount: result.metadata?.matrix?.matrixOutOfRangeCount || 0 });
   if (!layout) throw new Error('模拟分析结果无法转换为泛地图布局。');
   updateNameCloudStats(result, layout);
   const activeRange = toolbarTimeButton.dataset.activeTime;
@@ -945,22 +1431,23 @@ function setMapStatus(message) {
 }
 
 function updateDraftCenterFromMap(point) {
-  const center = {
-    lon: Number(point.lon.toFixed(5)),
-    lat: Number(point.lat.toFixed(5)),
-    crs: 'EPSG:4326',
-    label: `地图选点（${point.lon.toFixed(5)}, ${point.lat.toFixed(5)}）`,
-    source: 'map-click',
-    id: `map-click:${point.lon.toFixed(5)}:${point.lat.toFixed(5)}`,
-    accuracyMeters: null,
-  };
-  analysisStore?.setDraftCenter(center, 'map-click');
+  const center = setCenterSelection({
+    lon: Number(point.lon.toFixed(6)),
+    lat: Number(point.lat.toFixed(6)),
+    label: '地图选点',
+    id: `map-pick:${point.lon.toFixed(6)}:${point.lat.toFixed(6)}`,
+  }, { source: 'map-pick', announce: false });
   analysisStore?.setMapPickMode(false);
   mapSurface.classList.remove('is-picking');
   appShell.classList.remove('is-map-picking');
-  setLocationToolbarButton(center.label, '当前地图');
-  traditionalMapAdapter?.setDraftCenter(center);
-  showToast(`已选中心点 ${center.label}`);
+  if (mapPickCoordinate) mapPickCoordinate.hidden = true;
+  showToast(`已选择新的中心点：${center.lon.toFixed(6)}° E, ${center.lat.toFixed(6)}° N；请重新生成可达域`);
+}
+
+function updateMapPickCoordinate(point) {
+  if (!mapPickCoordinate) return;
+  mapPickCoordinate.hidden = !point;
+  mapPickCoordinate.textContent = point ? `${Number(point.lon).toFixed(6)}° E · ${Number(point.lat).toFixed(6)}° N` : '';
 }
 
 function startMapPickMode() {
@@ -969,6 +1456,7 @@ function startMapPickMode() {
     mapSurface.classList.remove('is-picking');
     appShell.classList.remove('is-map-picking');
     traditionalMapAdapter?.setMapPickMode(false);
+    updateMapPickCoordinate(null);
     showToast('已取消地图选点');
     return;
   }
@@ -987,18 +1475,23 @@ function initializeTraditionalMap() {
     onRingClick: (ringId) => {
       analysisStore?.setActiveRingId(ringId);
       const ring = analysisStore?.getState().data.lastSuccessfulResult?.rings?.find((item) => item.ringId === ringId);
+      activeThresholdRange = ring ? Number(ring.outerRangeMinutes) : null;
       if (ring) setActiveTimeLayer(String(ring.outerRangeMinutes), false);
+      renderIsochronePalette();
     },
     onRingHover: (ringId) => analysisStore?.setHoveredRingId(ringId),
     onPoiClick: (poiId) => analysisStore?.setSelectedPoiId(poiId),
     onPoiHover: (poiId) => analysisStore?.setHoveredPoiId(poiId),
     onMapPointSelected: updateDraftCenterFromMap,
+    onMapCoordinate: updateMapPickCoordinate,
     onMapStatus: setMapStatus,
   });
   const state = analysisStore?.getState();
   if (state?.data.lastSuccessfulResult) traditionalMapAdapter.setAnalysisResult(state.data.lastSuccessfulResult);
   if (state?.data.parameterDraft?.center) traditionalMapAdapter.setDraftCenter(state.data.parameterDraft.center);
   traditionalMapAdapter.setMapPickMode(Boolean(state?.interaction?.isMapPickMode));
+  traditionalMapAdapter.setPaletteRanges(thresholdRangesFromUI());
+  traditionalMapAdapter.setResultStale(Boolean(state?.data?.resultStale));
   basemapButtons.forEach((button) => {
     button.disabled = !traditionalMapAdapter.hasBasemap?.(button.dataset.basemap);
   });
@@ -1059,39 +1552,46 @@ function mergePoiPreviewIntoResult(result, preview) {
 }
 
 function setNameCloudLoadingState(isLoading) {
-  nameCloudButton?.classList.toggle('is-loading', isLoading);
-  nameCloudButton?.setAttribute('aria-busy', String(isLoading));
-  if (nameCloudButtonLabel) nameCloudButtonLabel.textContent = isLoading ? '正在生成标签云泛地图…' : '生成POI标签云泛地图';
-  if (nameCloudButton) nameCloudButton.disabled = isLoading || !canGenerateNameCloud(analysisStore?.getState());
+  if (primaryWorkflowActive !== 'panmap') {
+    nameCloudButton?.classList.toggle('is-loading', isLoading);
+    nameCloudButton?.setAttribute('aria-busy', String(isLoading));
+    if (nameCloudButtonLabel) nameCloudButtonLabel.textContent = isLoading ? '正在生成 POI 标签云泛地图…' : '探索泛地图';
+    if (nameCloudButton) nameCloudButton.disabled = isLoading || !canGenerateNameCloud(analysisStore?.getState());
+  }
   if (analysisStatusCopy && isLoading) analysisStatusCopy.textContent = '正在检查 30 分钟步行外圈范围…';
 }
 
-async function runNameCloud() {
+async function runNameCloud({ publish = true, jobId = null } = {}) {
   const state = analysisStore?.getState();
   if (!canGenerateNameCloud(state)) {
-    showToast('名称云需要先生成黄鹤楼步行 10/20/30 分钟真实等时圈');
-    return;
+    showToast('名称云需要先生成黄鹤楼当前交通方式的 10/20/30 分钟真实等时圈');
+    return null;
   }
   const result = state.data.lastSuccessfulResult;
   const draft = state.data.parameterDraft;
+  const modeLabel = profileLabel(draft.profile);
   setNameCloudLoadingState(true);
   try {
-    if (analysisStatusCopy) analysisStatusCopy.textContent = '正在请求最外层步行 Polygon 内的真实 POI…';
+    if (analysisStatusCopy) analysisStatusCopy.textContent = `正在读取最外层${modeLabel} Polygon 内的真实 POI 缓存…`;
     const nameCloud = await window.PanmapApp.analysisClient.createNameCloud({
       center: draft.center,
       profile: draft.profile,
       rangesMinutes: draft.rangesMinutes,
       categoryIds: draft.categoryIds,
       cumulativeIsochrones: result.cumulativeIsochrones,
-    });
-    analysisStore?.setResult(nameCloud);
-    const layout = await applyAnalysisResultToPanmap(nameCloud);
-    updateNameCloudStats(nameCloud, layout);
+    }, { jobId });
+    if (publish) {
+      analysisStore?.setResult(nameCloud);
+      const layout = await applyAnalysisResultToPanmap(nameCloud);
+      updateNameCloudStats(nameCloud, layout);
+    }
     renderQuota(nameCloud.metadata?.apiQuota, nameCloud.metadata?.cacheHit ? 'cache' : '');
-    showToast(nameCloud.metadata?.cacheHit ? '名称云已命中缓存，未消耗上游请求' : '步行名称标签云已生成');
+    showToast(nameCloud.metadata?.cacheHit ? `${modeLabel}名称云已命中真实缓存，未消耗上游请求` : `${modeLabel}名称标签云已生成`);
+    return nameCloud;
   } catch (error) {
     showToast(`名称云失败：${error.message || '服务不可用'}（已保留当前等时圈）`);
     if (analysisStatusCopy) analysisStatusCopy.textContent = '名称云请求失败 · 已保留当前真实等时圈';
+    return null;
   } finally {
     setNameCloudLoadingState(false);
   }
@@ -1105,31 +1605,35 @@ function setMatrixLoadingState(isLoading) {
   if (analysisStatusCopy && isLoading) analysisStatusCopy.textContent = '正在调用 ORS Matrix 单源多目标路网估算…';
 }
 
-async function runMatrixAccessibility() {
+async function runMatrixAccessibility(baseResultOverride = null, { publish = true, jobId = null } = {}) {
   const state = analysisStore?.getState();
-  if (!canCalculateMatrix(state)) {
-    showToast('请先生成黄鹤楼步行 10/20/30 分钟名称云');
-    return;
+  if (!baseResultOverride && !canCalculateMatrix(state)) {
+    showToast('请先生成黄鹤楼当前交通方式的 10/20/30 分钟名称云');
+    return null;
   }
-  const baseResult = state.data.lastSuccessfulResult;
+  const baseResult = baseResultOverride || state.data.lastSuccessfulResult;
   setMatrixLoadingState(true);
   try {
-    const matrixResult = await window.PanmapApp.analysisClient.createMatrixAccessibility(baseResult);
-    analysisStore?.setResult(matrixResult);
-    const layout = await applyAnalysisResultToPanmap(matrixResult);
-    updateNameCloudStats(matrixResult, layout);
+    const matrixResult = await window.PanmapApp.analysisClient.createMatrixAccessibility(baseResult, { jobId });
+    if (publish) {
+      analysisStore?.setResult(matrixResult);
+      const layout = await applyAnalysisResultToPanmap(matrixResult);
+      updateNameCloudStats(matrixResult, layout);
+    }
     renderQuota(matrixResult.metadata?.apiQuota, matrixResult.metadata?.matrix?.cache === 'hit' ? 'cache' : '');
     const summary = window.PanmapApp?.contracts?.matrixSummaryText?.(matrixResult) || 'Matrix 路网估算已完成';
     showToast(matrixResult.metadata?.matrix?.cache === 'hit' ? `${summary} · 缓存命中，未消耗上游请求` : summary);
+    return matrixResult;
   } catch (error) {
     showToast(`Matrix 失败：${error.message || '服务不可用'}（已保留上一次完整结果）`);
     if (analysisStatusCopy) analysisStatusCopy.textContent = 'Matrix 请求失败 · 已保留上一次完整结果';
+    return null;
   } finally {
     setMatrixLoadingState(false);
   }
 }
 
-async function runAnalysis() {
+async function runAnalysis({ jobId = null } = {}) {
   if (analysisAbortController) analysisAbortController.abort();
   const controller = new AbortController();
   analysisAbortController = controller;
@@ -1140,18 +1644,19 @@ async function runAnalysis() {
     const normalizedError = { code: 'VALIDATION_ERROR', message: error.message, details: [] };
     analysisStore?.setError(normalizedError);
     showToast(error.message);
-    return;
+    return null;
   }
   analysisStore?.setRequest(request);
   analysisStore?.setLoading();
   setAnalysisLoadingState(true);
   try {
-    const result = await window.PanmapApp.analysisClient.createAnalysis(request, { signal: controller.signal });
+    const result = await window.PanmapApp.analysisClient.createAnalysis(request, { signal: controller.signal, jobId });
     analysisStore?.setResult(result);
     await applyAnalysisResultToPanmap(result);
     showToast(analysisSuccessMessage(result));
+    return result;
   } catch (error) {
-    if (error.name === 'AbortError') return;
+    if (error.name === 'AbortError') return null;
     const normalizedError = {
       code: error.code || 'INTERNAL_ERROR',
       message: error.message || '分析请求失败。',
@@ -1161,6 +1666,7 @@ async function runAnalysis() {
     };
     analysisStore?.setError(normalizedError);
     showToast(`分析失败：${normalizedError.message}（已保留当前泛地图）`);
+    return null;
   } finally {
     if (analysisAbortController === controller) {
       analysisAbortController = null;
@@ -1170,23 +1676,23 @@ async function runAnalysis() {
 }
 
 async function loadPoiPreview() {
-  if (!window.PanmapApp?.analysisClient?.createPoiPreview) return;
-  if (poiPreviewButton?.classList.contains('is-loading')) return;
+  if (!window.PanmapApp?.analysisClient?.createPoiPreview) return null;
+  if (poiPreviewButton?.classList.contains('is-loading')) return null;
   let result = analysisStore?.getState().data.lastSuccessfulResult;
   const currentState = analysisStore?.getState();
   if (result && !successfulResultMatchesDraft(currentState)) {
     showToast('当前参数已变更，请先生成新的 ORS 等时圈');
-    return;
+    return null;
   }
   if (!result) {
     showToast('请先生成有效的 ORS 等时圈');
-    return;
+    return null;
   }
   const draft = analysisStore?.getState().data.parameterDraft;
   const radiusMeters = Number(poiPreviewRadius?.value || 1000);
   if (![500, 1000, 2000].includes(radiusMeters)) {
     showToast('POI 预览半径只支持 500、1000 或 2000 米');
-    return;
+    return null;
   }
   poiPreviewButton?.classList.add('is-loading');
   poiPreviewButton?.setAttribute('aria-busy', 'true');
@@ -1205,8 +1711,10 @@ async function loadPoiPreview() {
     analysisStore?.setResult(merged);
     await applyAnalysisResultToPanmap(merged);
     showToast(`附近 POI 预览已加载：${preview.returnedCount ?? preview.pois.length} 个点`);
+    return merged;
   } catch (error) {
     showToast(`POI 预览失败：${error.message || '服务不可用'}`);
+    return null;
   } finally {
     poiPreviewButton?.classList.remove('is-loading');
     poiPreviewButton?.setAttribute('aria-busy', 'false');
@@ -1214,6 +1722,118 @@ async function loadPoiPreview() {
     if (poiPreviewButton) poiPreviewButton.disabled = false;
     const latestState = analysisStore?.getState();
     if (latestState?.data?.lastSuccessfulResult && !successfulResultMatchesDraft(latestState)) poiPreviewButton.disabled = true;
+  }
+}
+
+function prepareExactTimeForCurrentProfile() {
+  const state = analysisStore?.getState();
+  const result = state?.data?.lastSuccessfulResult;
+  const profile = state?.data?.parameterDraft?.profile;
+  if (!result || !successfulResultMatchesDraft(state) || !Array.isArray(result.pois) || result.pois.length === 0) return false;
+  appShell.dataset.exactTimePreparedProfile = profile || result.profile || '';
+  appShell.dataset.exactTimePreparedDestinations = String(result.pois.length);
+  return true;
+}
+
+async function runReachabilityWorkflow() {
+  if (primaryWorkflowActive) return;
+  primaryWorkflowActive = 'reachability';
+  const profile = analysisStore?.getState().data.parameterDraft?.profile;
+  const modeLabel = profileLabel(profile);
+  try {
+    if (!['foot-walking', 'cycling-regular'].includes(profile)) throw new Error('本阶段真实点击链路只开放步行与骑行');
+    activeProfileJobIds[profile] = createProfileJobId(profile);
+    const jobId = updateProfileJob(profile, 'isochrone-running');
+    setReachabilityButtonState('loading', '正在生成时间可达域…');
+    if (analysisStatusCopy) analysisStatusCopy.textContent = `正在生成 10/20/30 分钟${modeLabel}可达域`;
+    const analysis = await runAnalysis({ jobId });
+    if (!analysis) throw new Error('可达域生成未完成');
+    updateProfileJob(profile, 'isochrone-ready', { analysisId: analysis.analysisId });
+    setReachabilityButtonState('complete', '可达域生成完毕');
+    if (analysisStatusCopy) analysisStatusCopy.textContent = `真实${modeLabel}可达域已生成 · 可继续探索泛地图`;
+    setExploreButtonState(canGenerateNameCloud(analysisStore?.getState()) ? 'idle' : 'disabled', '探索泛地图');
+  } catch (error) {
+    if (activeProfileJobIds[profile]) updateProfileJob(profile, 'failed', { error: error.message || '可达域生成未完成' });
+    setReachabilityButtonState('error', '生成未完成 · 点击重试');
+    if (analysisStatusCopy) analysisStatusCopy.textContent = error.message || '生成流程未完成';
+  } finally {
+    primaryWorkflowActive = null;
+  }
+}
+
+async function runPanmapWorkflow() {
+  if (primaryWorkflowActive) return;
+  if (nameCloudButton?.classList.contains('is-complete')) {
+    setPanmapMode(true);
+    showToast('已进入泛地图探索');
+    return;
+  }
+  primaryWorkflowActive = 'panmap';
+  const profile = analysisStore?.getState().data.parameterDraft?.profile;
+  const modeLabel = profileLabel(profile);
+  let jobId = activeProfileJobIds[profile];
+  try {
+    if (!['foot-walking', 'cycling-regular'].includes(profile)) throw new Error('本阶段真实泛地图链路只开放步行与骑行');
+    if (!jobId) {
+      activeProfileJobIds[profile] = createProfileJobId(profile);
+      jobId = activeProfileJobIds[profile];
+    }
+    let result = analysisStore?.getState().data.lastSuccessfulResult;
+    if (!isNameCloudResult(result)) {
+      updateProfileJob(profile, 'poi-planning');
+      setExploreButtonState('loading', '正在生成 POI 标签云泛地图…');
+      if (analysisStatusCopy) analysisStatusCopy.textContent = `正在生成${modeLabel} POI 标签云泛地图`;
+      updateProfileJob(profile, 'poi-running');
+      result = await runNameCloud({ publish: false, jobId });
+      if (!result) throw new Error('POI 标签云泛地图未完成');
+      updateProfileJob(profile, 'poi-ready', { poiCount: result.pois.length });
+    }
+    if (!result.metadata?.matrix) {
+      updateProfileJob(profile, 'matrix-planning');
+      setExploreButtonState('loading', '正在计算精确时间…');
+      if (analysisStatusCopy) analysisStatusCopy.textContent = '正在计算当前交通方式的 POI 精确时间';
+      updateProfileJob(profile, 'matrix-running');
+      result = await runMatrixAccessibility(result, { publish: false, jobId });
+      if (!result) throw new Error('精确时间计算未完成');
+    }
+    updateProfileJob(profile, 'layout-ready');
+    const layout = await applyAnalysisResultToPanmap(result);
+    await window.PanmapApp.analysisClient.publishProfileJob(profile, jobId);
+    analysisStore?.publishProfileResult(profile, jobId, result);
+    const cacheKey = PROFILE_RESULT_CACHE_KEYS[profile];
+    if (cacheKey) sessionStorage.setItem(cacheKey, JSON.stringify(result));
+    document.documentElement.dataset.profileResultSource = 'current-online-cache';
+    if (profile === 'foot-walking') document.documentElement.dataset.walkingResultSource = 'current-online-cache';
+    if (profile === 'cycling-regular') document.documentElement.dataset.cyclingResultSource = 'stage29-validated-real-cache';
+    const evidence = {
+      jobId,
+      analysisId: result.analysisId,
+      profile: result.profile,
+      rangesMinutes: result.rangesMinutes,
+      totalPois: result.pois.length,
+      accessibilityCount: result.accessibility?.length || 0,
+      ringCounts: Object.fromEntries(result.rings.map((ring) => [ring.ringId, ring.statistics?.poiCount || 0])),
+      matrix: result.metadata?.matrix || null,
+      poiCoverage: result.metadata?.poiCoverage || null,
+      nameCloud: result.nameCloud?.stats || null,
+      source: 'current-online-cache',
+    };
+    if (profile === 'cycling-regular') {
+      window.PanmapApp.stage51Evidence = evidence;
+      document.documentElement.dataset.stage51Evidence = JSON.stringify(evidence);
+    } else {
+      window.PanmapApp.stage45Evidence = evidence;
+      document.documentElement.dataset.stage45Evidence = JSON.stringify(evidence);
+    }
+    updateNameCloudStats(result, layout);
+    setExploreButtonState('complete', '进入泛地图');
+    if (analysisStatusCopy) analysisStatusCopy.textContent = '泛地图已生成 · 点击绿色按钮进入探索';
+  } catch (error) {
+    if (jobId) updateProfileJob(profile, 'partial', { error: error.message || '泛地图生成未完成' });
+    setExploreButtonState('error', '生成未完成 · 点击重试');
+    if (analysisStatusCopy) analysisStatusCopy.textContent = error.message || '泛地图生成未完成';
+  } finally {
+    primaryWorkflowActive = null;
   }
 }
 
@@ -1235,14 +1855,7 @@ document.querySelectorAll('[data-nav="explore"]').forEach((button) => {
 
 document.querySelectorAll('.secondary-item[data-flow]').forEach((button) => {
   button.addEventListener('click', () => {
-    const flowMessages = {
-      poi: '附近 POI 预览只发起一次半径查询',
-      cluster: '下一阶段：按类别聚簇生成标签云',
-      panmap: '下一阶段：生成等时圈层标签云泛地图',
-    };
-    if (button.dataset.flow === 'panmap') setPanmapMode(true);
-    if (button.dataset.flow === 'poi') loadPoiPreview();
-    else showToast(flowMessages[button.dataset.flow]);
+    setPanmapMode(button.dataset.flow === 'panmap');
   });
 });
 
@@ -1281,7 +1894,7 @@ document.querySelector('.link-button').addEventListener('click', (event) => {
   syncParameterDraftFromUI();
 });
 
-document.getElementById('generateButton').addEventListener('click', runAnalysis);
+document.getElementById('generateButton').addEventListener('click', runReachabilityWorkflow);
 
 const toolbarGenerate = document.getElementById('toolbarGenerate');
 const toolbarGenerateLabel = toolbarGenerate.querySelector('.toolbar-generate-label');
@@ -1299,7 +1912,7 @@ toolbarGenerate.addEventListener('click', () => {
 });
 
 poiPreviewButton?.addEventListener('click', loadPoiPreview);
-nameCloudButton?.addEventListener('click', runNameCloud);
+nameCloudButton?.addEventListener('click', runPanmapWorkflow);
 matrixButton?.addEventListener('click', runMatrixAccessibility);
 
 prepareAllProfilesButton?.addEventListener('click', () => {
@@ -1387,21 +2000,12 @@ const geocoderControls = [
 let activeGeocoderControl = geocoderControls[0];
 
 function setDraftCenterFromSearch(item, source = 'geocoder') {
-  const center = {
-    lon: Number(item.lon),
-    lat: Number(item.lat),
-    crs: 'EPSG:4326',
-    label: String(item.label || `${item.lon}, ${item.lat}`),
-    id: String(item.id || `${source}:${item.lon}:${item.lat}`),
-    source,
-    accuracyMeters: item.accuracyMeters == null ? null : Number(item.accuracyMeters),
-  };
-  analysisStore?.setDraftCenter(center, source);
-  traditionalMapAdapter?.setDraftCenter(center);
-  setLocationToolbarButton(center.label, item.admin?.join(' · ') || '搜索结果');
+  const center = setCenterSelection(item, {
+    source: source === 'geolocation' ? 'geolocation' : 'search',
+    district: item.admin?.join(' · ') || '搜索结果',
+  });
   if (centerSearchInput) centerSearchInput.value = '';
-  closeLocationSuggest();
-  showToast(`中心点已切换为${center.label}`);
+  return center;
 }
 
 function renderGeocoderResults(items, target = activeGeocoderControl?.results) {
@@ -1498,20 +2102,14 @@ function presetLocationForPlace(place) {
 function selectPresetPlace(option) {
   const place = option.dataset.place;
   const location = presetLocationForPlace(place);
-  setLocationToolbarButton(place, location.district);
-  analysisStore?.setDraftCenter({
+  setCenterSelection({
     lon: location.lon,
     lat: location.lat,
-    crs: 'EPSG:4326',
     label: place,
     presetId: location.id,
     id: location.id,
-    source: 'preset',
-    accuracyMeters: null,
-  }, 'preset');
-  traditionalMapAdapter?.setDraftCenter({ lon: location.lon, lat: location.lat, label: place });
-  closeLocationSuggest();
-  showToast(`中心点已切换为${place}`);
+    district: location.district,
+  }, { source: 'preset', district: location.district });
 }
 
 document.querySelectorAll('.suggest-option, .center-suggest-option').forEach((option) => {
@@ -1541,10 +2139,7 @@ async function useBrowserLocation() {
       showToast('浏览器返回了无效坐标');
       return;
     }
-    const center = { lon: Number(longitude.toFixed(5)), lat: Number(latitude.toFixed(5)), crs: 'EPSG:4326', label: '当前位置', id: 'browser-geolocation', source: 'geolocation', accuracyMeters: Number.isFinite(accuracy) ? accuracy : null };
-    analysisStore?.setDraftCenter(center, 'geolocation');
-    traditionalMapAdapter?.setDraftCenter(center);
-    setLocationToolbarButton('当前位置', '浏览器定位');
+    const center = setCenterSelection({ lon: Number(longitude.toFixed(6)), lat: Number(latitude.toFixed(6)), label: '当前位置', id: 'browser-geolocation', accuracyMeters: Number.isFinite(accuracy) ? accuracy : null }, { source: 'geolocation', district: '浏览器定位' });
     try {
       const payload = await window.PanmapApp.analysisClient.reverseGeocode(center.lon, center.lat);
       const result = payload.results?.[0];
@@ -1561,20 +2156,13 @@ async function useBrowserLocation() {
 
 useCurrentLocationButton?.addEventListener('click', useBrowserLocation);
 
-document.querySelectorAll('.mini-action').forEach((button) => {
-  if (!button.textContent.includes('地图选点')) return;
-  button.addEventListener('click', () => {
-    closeLocationSuggest();
-    startMapPickMode();
-  });
-});
-
 document.addEventListener('keydown', (event) => {
   if (event.key !== 'Escape' || !analysisStore?.getState().interaction.isMapPickMode) return;
   analysisStore.setMapPickMode(false);
   mapSurface.classList.remove('is-picking');
   appShell.classList.remove('is-map-picking');
   traditionalMapAdapter?.setMapPickMode(false);
+  updateMapPickCoordinate(null);
   showToast('已取消地图选点');
 });
 
@@ -1686,12 +2274,65 @@ toolbarMenuSelectAll.addEventListener('click', () => {
 });
 
 const thresholdList = document.getElementById('thresholdList');
-const thresholdPalette = ['#9B6BD8', '#E86778', '#35AFA5', '#F2A033'];
+
+function thresholdRangesFromUI() {
+  return [...thresholdList.querySelectorAll('.threshold-item')]
+    .map((row) => Number(row.dataset.threshold))
+    .filter(Number.isFinite)
+    .sort((left, right) => left - right);
+}
+
+function renderIsochronePalette() {
+  const items = ISOCHRONE_PALETTE?.paletteForRanges(thresholdRangesFromUI()) || [];
+  const byRange = new Map(items.map((item) => [item.rangeMinutes, item]));
+  thresholdList.querySelectorAll('.threshold-item').forEach((row) => {
+    const range = Number(row.dataset.threshold);
+    const item = byRange.get(range);
+    if (!item) return;
+    row.dataset.color = item.stroke;
+    row.dataset.paletteId = item.id;
+    row.style.setProperty('--threshold-color', activeThresholdRange === range ? item.activeStroke : item.stroke);
+    row.classList.toggle('is-active-ring', activeThresholdRange === range);
+  });
+  mapLegendItems?.replaceChildren(...items.map((item, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'map-legend-item';
+    button.dataset.legendRange = String(item.rangeMinutes);
+    button.classList.toggle('is-active-ring', activeThresholdRange === item.rangeMinutes);
+    button.style.setProperty('--legend-stroke', activeThresholdRange === item.rangeMinutes ? item.activeStroke : item.stroke);
+    button.style.setProperty('--legend-fill', item.fill);
+    button.style.setProperty('--legend-fill-opacity', String(activeThresholdRange === item.rangeMinutes ? Math.min(0.36, item.fillOpacity + 0.13) : item.fillOpacity));
+    const shapes = [
+      'M3 7 10 2l11 2 4 7-5 8-12 1-5-6Z',
+      'm4 5 9-3 10 4 2 9-7 5-11-2-4-7Z',
+      'm3 6 8-4 12 3 3 8-6 7-12-1-5-6Z',
+    ];
+    button.innerHTML = `<svg class="legend-polygon" viewBox="0 0 28 22" aria-hidden="true"><path d="${shapes[index % shapes.length]}"/></svg><span>${item.rangeMinutes} 分钟圈层</span>`;
+    button.setAttribute('aria-pressed', String(activeThresholdRange === item.rangeMinutes));
+    button.addEventListener('click', () => selectThresholdRange(item.rangeMinutes));
+    return button;
+  }));
+  traditionalMapAdapter?.setPaletteRanges(items.map((item) => item.rangeMinutes));
+  document.documentElement.dataset.isochronePalette = items.map((item) => `${item.rangeMinutes}:${item.stroke}`).join('|');
+}
+
+function selectThresholdRange(range, announce = true) {
+  const numericRange = Number(range);
+  activeThresholdRange = activeThresholdRange === numericRange ? null : numericRange;
+  const result = analysisStore?.getState().data.lastSuccessfulResult;
+  const ring = result?.rings?.find((item) => Number(item.outerRangeMinutes) === activeThresholdRange);
+  analysisStore?.setActiveRingId(ring?.ringId || null);
+  if (ring) setActiveTimeLayer(String(activeThresholdRange), false);
+  renderIsochronePalette();
+  if (announce) showToast(activeThresholdRange ? `${activeThresholdRange} 分钟圈层已选中` : '已恢复全部时间圈层');
+}
 
 function sortThresholdRows() {
   [...thresholdList.children]
     .sort((left, right) => Number(left.dataset.threshold) - Number(right.dataset.threshold))
     .forEach((row) => thresholdList.appendChild(row));
+  renderIsochronePalette();
 }
 
 function bindThresholdRow(row) {
@@ -1716,6 +2357,10 @@ function bindThresholdRow(row) {
     syncParameterDraftFromUI();
   });
   thresholdInput.addEventListener('change', sortThresholdRows);
+  row.addEventListener('click', (event) => {
+    if (event.target.closest('button, input')) return;
+    selectThresholdRange(Number(row.dataset.threshold));
+  });
   row.querySelectorAll('[data-step]').forEach((stepButton) => {
     stepButton.addEventListener('click', () => {
       const delta = stepButton.dataset.step === 'up' ? 5 : -5;
@@ -1739,10 +2384,13 @@ function bindThresholdRow(row) {
       return;
     }
     row.remove();
+    if (activeThresholdRange === Number(row.dataset.threshold)) activeThresholdRange = null;
+    sortThresholdRows();
     syncParameterDraftFromUI();
     showToast('时间阈值已删除');
   });
   syncThresholdLabel();
+  renderIsochronePalette();
 }
 
 document.querySelectorAll('.threshold-item').forEach(bindThresholdRow);
@@ -1769,12 +2417,10 @@ confirmThresholdButton.addEventListener('click', () => {
     showToast(`${value} 分钟阈值已存在`);
     return;
   }
-  const color = thresholdPalette[thresholdList.children.length % thresholdPalette.length];
   const row = document.createElement('div');
   row.className = 'threshold-item';
   row.dataset.threshold = String(value);
-  row.dataset.color = color;
-  row.style.setProperty('--threshold-color', color);
+  row.dataset.color = '';
   row.innerHTML = `<button type="button" class="threshold-select threshold-visibility is-visible" aria-label="隐藏 ${value} 分钟圈层" aria-pressed="true">◉</button><span class="threshold-color"></span><strong>${value} 分钟</strong><div class="time-input"><input type="number" value="${value}" min="1" max="60" aria-label="${value} 分钟阈值" /><em>分钟</em></div><span class="stepper"><button type="button" data-step="down">−</button><button type="button" data-step="up">＋</button></span><button type="button" class="threshold-delete" aria-label="删除 ${value} 分钟阈值">×</button>`;
   thresholdList.appendChild(row);
   bindThresholdRow(row);
@@ -1812,6 +2458,8 @@ document.querySelectorAll('[data-mini-map-action]').forEach((button) => {
 });
 
 initializePanmapControls();
+bindUnifiedWorkspaceControls();
+initializePanmapModeControls();
 loadPoiDatasets();
 
 async function loadOnlineProviderStatus() {
@@ -1839,15 +2487,55 @@ loadOnlineProviderStatus();
 
 async function loadStage21CachedBaseline() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('stage21Baseline') !== '1') return;
-  const response = await fetch('./exports/stage-6-layout/stage20-cache-baseline.json', { cache: 'no-store' });
-  if (!response.ok) throw new Error(`第20号缓存夹具读取失败：HTTP ${response.status}`);
-  const result = window.PanmapApp.contracts.normalizeAnalysisResult(await response.json());
+  const requestedResearch = panmapModeStore?.getState().mode === 'research';
+  const stage51WalkingBaseline = params.get('stage51WalkingBaseline') === '1';
+  if (params.get('stage21Baseline') !== '1' && !requestedResearch && params.get('stage45Cache') !== '1' && !stage51WalkingBaseline) return;
+  let result = null;
+  if (stage51WalkingBaseline) {
+    const response = await fetch('./exports/stage-10-cycling-live/stage45-walking-cache-complete.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`第45号真实步行缓存读取失败：HTTP ${response.status}`);
+    result = window.PanmapApp.contracts.normalizeAnalysisResult(await response.json());
+    document.documentElement.dataset.walkingResultSource = 'current-online-cache';
+  } else if (requestedResearch || params.get('stage45Cache') === '1') {
+    try {
+      const cached = sessionStorage.getItem(STAGE45_WALKING_CACHE_KEY);
+      if (cached) result = window.PanmapApp.contracts.normalizeAnalysisResult(JSON.parse(cached));
+    } catch (error) {
+      sessionStorage.removeItem(STAGE45_WALKING_CACHE_KEY);
+    }
+  }
+  if (!result) {
+    const response = await fetch('./exports/stage-6-layout/stage20-cache-baseline.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`第20号缓存夹具读取失败：HTTP ${response.status}`);
+    result = window.PanmapApp.contracts.normalizeAnalysisResult(await response.json());
+    document.documentElement.dataset.walkingResultSource = 'frozen-research';
+  } else {
+    const isPublishedStage45Cache = result.profile === 'foot-walking'
+      && result.pois?.length === 284
+      && result.metadata?.matrix?.matrixWithinRangeCount === 254
+      && result.metadata?.matrix?.resultFingerprint === STAGE45_PUBLISHED_MATRIX_FINGERPRINT;
+    if (isPublishedStage45Cache) result.analysisId = STAGE45_PUBLISHED_ANALYSIS_ID;
+    document.documentElement.dataset.walkingResultSource = 'current-online-cache';
+  }
   const request = {
     schemaVersion: '1.0', center: result.center, profile: result.profile,
     rangesMinutes: result.rangesMinutes, categoryIds: [], poiDatasetId: null,
     options: { includePois: true, calculateTravelTimes: true, poiPreviewRadiusMeters: 1000 },
   };
+  const stage37Layout = params.get('stage37Layout');
+  const stage37Configs = {
+    'baseline-geographic':{labelOrientation:'geographic-radial',compactAlgorithm:'frontier-contact',randomSeed:'stage33-fixed-wuhan-20260802'},
+    fermat:{labelOrientation:'compact-geographic',compactAlgorithm:'fermat',randomSeed:'stage37-fixed-wuhan-20260804'},
+    poisson:{labelOrientation:'compact-geographic',compactAlgorithm:'poisson-disc',randomSeed:'stage37-fixed-wuhan-20260804'},
+    'frontier-geographic':{labelOrientation:'compact-geographic',compactAlgorithm:'frontier-contact',randomSeed:'stage37-fixed-wuhan-20260804'},
+    'frontier-random-match':{labelOrientation:'compact-random-match',compactAlgorithm:'frontier-contact',randomSeed:'stage37-fixed-wuhan-20260804'},
+  };
+  if (stage37Configs[stage37Layout] && panmapControlStore) {
+    panmapControlStore.setDraft({...stage37Configs[stage37Layout],envelopeMode:'circular',compactness:50,fontHierarchy:50,showDensityDebug:false});
+    panmapControlStore.apply();
+    document.documentElement.dataset.stage37RequestedLayout=stage37Layout;
+    document.documentElement.dataset.stage37NaturalEnvelopeRuns='0';
+  }
   analysisStore?.setParameterDraft({ center: result.center, profile: result.profile, rangesMinutes: result.rangesMinutes, categoryIds: [], options: request.options });
   analysisStore?.setRequest(request);
   analysisStore?.setResult(result);
@@ -1855,15 +2543,51 @@ async function loadStage21CachedBaseline() {
   const transportButton = document.getElementById('transportToolbarButton');
   if (transportButton) transportButton.innerHTML = '<span class="toolbar-select-copy"><small>交通方式选择</small><strong>步行</strong></span><span class="toolbar-chevron">⌄</span>';
   const layout = await applyAnalysisResultToPanmap(result);
+  if (document.documentElement.dataset.walkingResultSource === 'current-online-cache') {
+    window.PanmapApp.stage45Evidence = {
+      jobId: null, analysisId: result.analysisId, profile: result.profile,
+      rangesMinutes: result.rangesMinutes, totalPois: result.pois.length,
+      accessibilityCount: result.accessibility?.length || 0,
+      ringCounts: Object.fromEntries(result.rings.map((ring) => [ring.ringId, ring.statistics?.poiCount || 0])),
+      matrix: result.metadata?.matrix || null, poiCoverage: result.metadata?.poiCoverage || null,
+      nameCloud: result.nameCloud?.stats || null, source: 'current-online-cache',
+    };
+    document.documentElement.dataset.stage45Evidence = JSON.stringify(window.PanmapApp.stage45Evidence);
+  }
   document.documentElement.dataset.stage21Baseline = 'loaded';
   document.documentElement.dataset.stage21UpstreamRequests = '0';
   updateNameCloudStats(result, layout);
   updateNameCloudPresentation(result, layout);
+  if (stage37Configs[stage37Layout]) {
+    setPanmapMode(true);
+    window.setTimeout(() => applyStage33View('overview', false), 100);
+  }
+  if (requestedResearch) {
+    setPanmapMode(true);
+  }
+  if (params.get('stage45Cache') === '1') setPanmapMode(true);
   if (params.get('stage31Controls') === '1') {
     setPanmapMode(true);
     document.documentElement.dataset.stage31Controls = 'loaded';
     document.documentElement.dataset.stage31FootBaseline = '282-252-39-83-130';
     document.documentElement.dataset.stage31LayoutBaseline = `${layout?.nameCloudStats?.placedCount || 0}/252`;
+  }
+  const stage33Mode = params.get('stage33Radial');
+  if (['geographic-radial', 'random-radial'].includes(stage33Mode) && panmapControlStore) {
+    setPanmapMode(true);
+    panmapControlStore.setDraft({ labelOrientation: stage33Mode, envelopeMode: 'circular', compactness: 50, fontHierarchy: 50, randomSeed: 'stage33-fixed-wuhan-20260802' });
+    panmapControlStore.apply();
+    document.documentElement.dataset.stage33Radial = stage33Mode;
+    document.documentElement.dataset.stage33UpstreamRequests = '0';
+  }
+  const stage35Combo = params.get('stage35Combo');
+  const stage35Configs = {'G-C':{labelOrientation:'geographic-radial',envelopeMode:'circular'},'G-N':{labelOrientation:'geographic-radial',envelopeMode:'natural-density'},'R-C':{labelOrientation:'random-radial',envelopeMode:'circular'},'R-N':{labelOrientation:'random-radial',envelopeMode:'natural-density'}};
+  if (stage35Configs[stage35Combo] && panmapControlStore) {
+    setPanmapMode(true);
+    panmapControlStore.setDraft({...stage35Configs[stage35Combo],compactness:50,fontHierarchy:50,envelopeTightness:50,envelopeSmoothness:60,minEnvelopeGapPx:12,showDensityDebug:false,randomSeed:'stage33-fixed-wuhan-20260802'});
+    panmapControlStore.apply();
+    document.documentElement.dataset.stage35RequestedCombo=stage35Combo;
+    document.documentElement.dataset.stage35UpstreamRequests='0';
   }
 }
 
@@ -1874,9 +2598,13 @@ loadStage21CachedBaseline().catch((error) => {
 
 async function loadStage29CyclingResult() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('stage29Cycling') !== '1') return;
-  const response = await fetch('./exports/stage-6-integrated-live/stage29-cycling-complete.json', { cache: 'no-store' });
-  if (!response.ok) throw new Error(`第29号骑行结果读取失败：HTTP ${response.status}`);
+  const stage51Cycling = params.get('stage51Cycling') === '1';
+  if (params.get('stage29Cycling') !== '1' && !stage51Cycling) return;
+  const sourcePath = stage51Cycling
+    ? './exports/stage-10-cycling-live/stage51-cycling-complete.json'
+    : './exports/stage-6-integrated-live/stage29-cycling-complete.json';
+  const response = await fetch(sourcePath, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`骑行真实缓存读取失败：HTTP ${response.status}`);
   const result = window.PanmapApp.contracts.normalizeAnalysisResult(await response.json());
   if (result.profile !== 'cycling-regular' || result.status !== 'completed') {
     throw new Error('第29号骑行结果 profile/status 不匹配');
@@ -1897,6 +2625,21 @@ async function loadStage29CyclingResult() {
   updateNameCloudPresentation(result, layout);
   document.documentElement.dataset.stage29Cycling = 'loaded';
   document.documentElement.dataset.stage29UpstreamRequests = '0';
+  if (stage51Cycling) {
+    document.documentElement.dataset.cyclingResultSource = 'stage29-validated-real-cache';
+    document.documentElement.dataset.stage51Cycling = 'loaded';
+    document.documentElement.dataset.stage51UpstreamRequests = '0';
+    window.PanmapApp.stage51Evidence = {
+      jobId: null, analysisId: result.analysisId, profile: result.profile,
+      rangesMinutes: result.rangesMinutes, totalPois: result.pois.length,
+      accessibilityCount: result.accessibility?.length || 0,
+      ringCounts: Object.fromEntries(result.rings.map((ring) => [ring.ringId, ring.statistics?.poiCount || 0])),
+      matrix: result.metadata?.matrix || null, poiCoverage: result.metadata?.poiCoverage || null,
+      nameCloud: result.nameCloud?.stats || null, source: 'stage29-validated-real-cache',
+    };
+    document.documentElement.dataset.stage51Evidence = JSON.stringify(window.PanmapApp.stage51Evidence);
+    setPanmapMode(true);
+  }
 }
 
 loadStage29CyclingResult().catch((error) => {

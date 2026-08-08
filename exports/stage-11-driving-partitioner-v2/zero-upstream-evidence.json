@@ -1,0 +1,26 @@
+{
+  "stage": 57,
+  "services": {
+    "isochrones": {
+      "upstreamRequests": 0,
+      "cacheWrites": 0
+    },
+    "pois": {
+      "upstreamRequests": 0,
+      "cacheWrites": 0
+    },
+    "matrix": {
+      "upstreamRequests": 0,
+      "cacheWrites": 0
+    },
+    "geocoder": {
+      "upstreamRequests": 0,
+      "cacheWrites": 0
+    },
+    "directions": {
+      "upstreamRequests": 0,
+      "cacheWrites": 0
+    }
+  },
+  "evidence": "The builder imports only local cache parsing and geometry planning modules. It has no provider client invocation path."
+}
