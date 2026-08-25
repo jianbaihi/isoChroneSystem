@@ -1,0 +1,161 @@
+{
+  "executionOrder": [
+    "profile-specific isochrone",
+    "profile-specific outer geometry",
+    "POI query plan",
+    "POI leaf-piece acquisition",
+    "POI merge and deduplication",
+    "same-profile Matrix batches",
+    "matrix-based ring assignment",
+    "profile layout-ready"
+  ],
+  "generatedAt": "2026-08-01",
+  "matrixBoundaryBatchCounts": {
+    "0": 0,
+    "1": 1,
+    "1000": 2,
+    "3501": 8,
+    "499": 1,
+    "500": 1,
+    "501": 2
+  },
+  "mode": "offline-cache-and-fixture-only",
+  "prepareAll": {
+    "approved": false,
+    "executed": false,
+    "fingerprint": "38c29d6093fd81d4e30eb5a289099d3e270f529ad2e58cbde9c28d2331f70d05",
+    "mode": "prepare-only",
+    "profileOrder": [
+      "foot-walking",
+      "cycling-regular",
+      "driving-car"
+    ],
+    "profiles": [
+      {
+        "executable": false,
+        "label": "步行",
+        "matrixRequests": 1,
+        "planFingerprint": "8e38cc4f5da176d8e55001020b49df2d2ff1a87ec210106e3f013b58b68d2e9c",
+        "poiRequestUpperBound": 2,
+        "poiRequests": 1,
+        "profile": "foot-walking",
+        "status": "awaiting-approval"
+      },
+      {
+        "executable": false,
+        "label": "骑行",
+        "matrixRequests": 0,
+        "poiRequests": 0,
+        "profile": "cycling-regular",
+        "reason": "No matching real cache; no network retrieval.",
+        "status": "N/A"
+      },
+      {
+        "executable": false,
+        "label": "驾车",
+        "matrixRequests": 0,
+        "planFingerprint": "4870cae7fde62285229e22fe35b13af21f794e4d40ed27fdccc7cb8b01030031",
+        "poiRequestUpperBound": 135,
+        "poiRequests": 108,
+        "profile": "driving-car",
+        "status": "awaiting-approval"
+      }
+    ],
+    "totals": {
+      "matrixMinimumRequests": 1,
+      "poiMinimumRequests": 109
+    },
+    "upstreamRequestCount": 0
+  },
+  "profileFixtures": {
+    "cycling-regular": {
+      "batchCount": 1,
+      "planFingerprint": "7c1f7a8d69bd6d1d04181d24f87488ab8957c26e1b8d093270a45b3497835e0c",
+      "publishable": true,
+      "sourceType": "synthetic-orchestration-fixture-not-wuhan-live-data",
+      "summary": {
+        "countConserved": true,
+        "destinationCount": 3,
+        "matrixInvalidCount": 0,
+        "matrixOkCount": 2,
+        "matrixOutOfRangeCount": 0,
+        "matrixUnreachableCount": 1,
+        "ringCounts": {
+          "ring-0-10": 1,
+          "ring-10-20": 1
+        }
+      },
+      "upstreamRequestCount": 0
+    },
+    "driving-car": {
+      "batchCount": 1,
+      "planFingerprint": "41a26e925aada1bac9bbc639688ad37d267fe3a5036951261a880e995adfd245",
+      "publishable": true,
+      "sourceType": "synthetic-orchestration-fixture-not-wuhan-live-data",
+      "summary": {
+        "countConserved": true,
+        "destinationCount": 3,
+        "matrixInvalidCount": 0,
+        "matrixOkCount": 3,
+        "matrixOutOfRangeCount": 1,
+        "matrixUnreachableCount": 0,
+        "ringCounts": {
+          "ring-10-20": 1,
+          "ring-20-30": 1
+        }
+      },
+      "upstreamRequestCount": 0
+    }
+  },
+  "realCacheBaseline": {
+    "destinationCount": 282,
+    "matrixBatchCount": 1,
+    "matrixPlanFingerprint": "29983c70c9055d8d6b90c8c405fb93a45f9ba577fb37ef1736a4607a2012902e",
+    "profile": "foot-walking",
+    "sourcePath": "exports/stage-6-layout/stage20-cache-baseline.json",
+    "sourceSha256": "c1ac3a837cf96bd576ad5ed6ac228be78d88da706c0c5db04d35194f14e4d51b",
+    "sourceType": "existing-real-cache-derived-stage20-baseline",
+    "upstreamRequestCount": 0
+  },
+  "sourceDisclosure": {
+    "driving": "Existing real cached outer geometry is plan-only; 108/135 POI budget remains approval-required and unexecuted.",
+    "fixtures": "Cycling and driving Matrix summaries are synthetic orchestration fixtures and are not Wuhan live results.",
+    "realCache": "Only the persisted Stage 20 walking baseline is real cached Wuhan-derived data."
+  },
+  "stage": 25,
+  "unsupportedModes": {
+    "airplane": {
+      "enabled": false,
+      "reason": "当前数据源不支持"
+    },
+    "bus": {
+      "enabled": false,
+      "reason": "当前数据源不支持"
+    },
+    "high-speed-rail": {
+      "enabled": false,
+      "reason": "当前数据源不支持"
+    },
+    "subway": {
+      "enabled": false,
+      "reason": "当前数据源不支持"
+    },
+    "train": {
+      "enabled": false,
+      "reason": "当前数据源不支持"
+    }
+  },
+  "upstreamApiBudget": {
+    "geocoder": 0,
+    "isochrones": 0,
+    "matrix": 0,
+    "pois": 0
+  },
+  "upstreamRequestCount": {
+    "geocoder": 0,
+    "isochrones": 0,
+    "matrix": 0,
+    "pois": 0,
+    "total": 0
+  }
+}

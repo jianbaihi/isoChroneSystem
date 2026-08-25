@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 27,
+  "capturedAt": "2026-08-01",
+  "scope": "online-startup-local-only",
+  "configuration": {
+    "environment": "development",
+    "providers": {
+      "isochrones": "configured",
+      "matrix": "configured",
+      "geocoder": "configured",
+      "pois": "configured"
+    },
+    "mockFallback": false,
+    "networkProbePerformed": false,
+    "secretValuesRecorded": false
+  },
+  "homepage": {
+    "url": "http://127.0.0.1:5500/",
+    "statusText": "在线服务：已配置",
+    "localBackendGets": [
+      "/api/v1/health",
+      "/api/v1/poi-datasets"
+    ],
+    "generationButtonsActivated": false,
+    "businessUpstreamRequests": {
+      "isochrones": 0,
+      "openPoiService": 0,
+      "matrix": 0,
+      "geocoder": 0
+    }
+  },
+  "startup": {
+    "command": "scripts/dev-online.sh",
+    "frontend": "http://127.0.0.1:5500",
+    "backend": "http://127.0.0.1:8000",
+    "frontendListening": true,
+    "backendListening": true,
+    "ctrlCStoppedOwnedChildren": true,
+    "portsFreeAfterStop": [5500, 8000],
+    "occupiedPortBehavior": {
+      "reportedOwnerSummary": true,
+      "exitCode": 2,
+      "unknownProcessKilled": false
+    }
+  },
+  "screenshot": "exports/stage-6-online-startup/stage27-online-startup.png"
+}

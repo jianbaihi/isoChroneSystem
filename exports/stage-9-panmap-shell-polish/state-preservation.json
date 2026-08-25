@@ -1,0 +1,31 @@
+{
+  "stage": 49,
+  "status": "passed",
+  "stage45PublishedResult": {
+    "analysisId": "analysis-name-cloud-7823d8e3-5c27-4a22-8b78-be5939c4e2ba",
+    "profile": "foot-walking",
+    "totalPois": 284,
+    "eligiblePois": 254,
+    "outOfRangePois": 30,
+    "ringCounts": [39, 85, 130],
+    "matrixFingerprint": "c4a00b9309bdd758ad6313c068a3321151e6576079c78fa97cc78db75c67578f"
+  },
+  "stage43FrozenExperiment": {
+    "eligiblePois": 252,
+    "ringCounts": [39, 83, 130],
+    "recomputed": false
+  },
+  "uiTransitions": {
+    "labelDomNodesBefore": 254,
+    "labelDomNodesAfter": 254,
+    "coordinateFingerprintBefore": "fnv1a-0bd70523",
+    "coordinateFingerprintAfter": "fnv1a-0bd70523",
+    "stableViewBoxBefore": "-22.334581772784077 70.97378277153553 1544.6691635455682 1358.052434456929",
+    "stableViewBoxAfter": "-22.334581772784077 70.97378277153553 1544.6691635455682 1358.052434456929",
+    "layoutRerunTriggered": false,
+    "labelDomRebuiltForModeSwitch": false,
+    "resizeWhileHiddenIgnored": true
+  },
+  "frozenAlgorithmsModified": false,
+  "browserConsoleErrors": 0
+}

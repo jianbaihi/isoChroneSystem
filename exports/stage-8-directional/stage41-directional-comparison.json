@@ -1,0 +1,410 @@
+{
+  "schemaVersion": "directional-layout-comparison/v1",
+  "stage": 41,
+  "status": "completed-with-tradeoff",
+  "dataRef": {
+    "centerId": "wuhan-huanghelou",
+    "centerLabel": "武汉·黄鹤楼",
+    "profile": "foot-walking",
+    "rangesSeconds": [
+      600,
+      1200,
+      1800
+    ],
+    "eligibleCount": 252
+  },
+  "baseline": {
+    "id": "stage37-frontier-contact-geographic",
+    "layoutFingerprint": "fnv1a-59ce1506",
+    "evaluationFingerprint": "fnv1a-08447985",
+    "layout": {
+      "placed": 252,
+      "unplaced": 0,
+      "canvasLogicalWidth": 1510,
+      "candidateChecks": 89546,
+      "layoutDurationMs": 317
+    },
+    "metrics": {
+      "completeness": {
+        "inputCount": 252,
+        "placedCount": 252,
+        "unplacedCount": 0,
+        "placementRate": 1,
+        "placedByRing": {
+          "ring-0-10": 39,
+          "ring-10-20": 83,
+          "ring-20-30": 130
+        }
+      },
+      "constraints": {
+        "overlapCount": 0,
+        "overlapRate": 0,
+        "outsideOwnRingCount": 0,
+        "outsideOwnRingRate": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "direction": {
+        "meanAngularErrorDeg": 46.897918,
+        "medianAngularErrorDeg": 35.997913,
+        "p95AngularErrorDeg": 131.254149,
+        "maxAngularErrorDeg": 170.790469,
+        "angularDenominator": 252,
+        "angularExcluded": 0,
+        "eastWestFlipRate": 0.299595,
+        "northSouthFlipRate": 0.190476,
+        "sectorRetentionRate4": 0.484127,
+        "sectorRetentionRate8": 0.34127,
+        "sectorRetentionRate12": 0.253968,
+        "denominators": {
+          "eastWest": {
+            "rate": 0.299595,
+            "flipped": 74,
+            "denominator": 247,
+            "boundaryExcluded": 5
+          },
+          "northSouth": {
+            "rate": 0.190476,
+            "flipped": 48,
+            "denominator": 252,
+            "boundaryExcluded": 0
+          },
+          "sector4": {
+            "rate": 0.484127,
+            "retained": 122,
+            "denominator": 252,
+            "boundaryExcluded": 0,
+            "sectors": 4
+          },
+          "sector8": {
+            "rate": 0.34127,
+            "retained": 86,
+            "denominator": 252,
+            "boundaryExcluded": 0,
+            "sectors": 8
+          },
+          "sector12": {
+            "rate": 0.253968,
+            "retained": 64,
+            "denominator": 252,
+            "boundaryExcluded": 0,
+            "sectors": 12
+          }
+        }
+      },
+      "pairwiseRelations": {
+        "pairwiseLeftRightRetentionRate": 0.691213,
+        "pairwiseUpDownRetentionRate": 0.740894,
+        "pairCountEvaluatedLR": 31478,
+        "pairCountEvaluatedUD": 31435,
+        "exclusions": {
+          "leftRight": {
+            "rate": 0.691213,
+            "retained": 21758,
+            "denominator": 31478,
+            "sourceExcluded": 34,
+            "layoutExcluded": 114
+          },
+          "upDown": {
+            "rate": 0.740894,
+            "retained": 23290,
+            "denominator": 31435,
+            "sourceExcluded": 27,
+            "layoutExcluded": 164
+          }
+        },
+        "epsilon": {
+          "sourceMeters": 1,
+          "layoutPx": 0.5
+        }
+      },
+      "performance": {
+        "layoutDurationMs": 317,
+        "evaluationDurationMs": 10,
+        "candidateChecks": 89546,
+        "layoutFingerprint": "fnv1a-59ce1506",
+        "evaluationFingerprint": "fnv1a-08447985"
+      }
+    }
+  },
+  "experiment": {
+    "id": "direction-preserving-radial",
+    "layoutFingerprint": "fnv1a-19b5d803",
+    "evaluationFingerprint": "fnv1a-ea59dcc4",
+    "layout": {
+      "placed": 252,
+      "unplaced": 0,
+      "canvasLogicalWidth": 2444,
+      "candidateChecks": 957781,
+      "finalIterationCandidateChecks": 206037,
+      "layoutDurationMs": 1275,
+      "ringRadii": [
+        {
+          "ringId": "ring-0-10",
+          "inner": 76,
+          "outer": 462
+        },
+        {
+          "ringId": "ring-10-20",
+          "inner": 474,
+          "outer": 826
+        },
+        {
+          "ringId": "ring-20-30",
+          "inner": 838,
+          "outer": 1198
+        }
+      ],
+      "effectiveCanvasUtilization": 0.155622
+    },
+    "metrics": {
+      "completeness": {
+        "inputCount": 252,
+        "placedCount": 252,
+        "unplacedCount": 0,
+        "placementRate": 1,
+        "placedByRing": {
+          "ring-0-10": 39,
+          "ring-10-20": 83,
+          "ring-20-30": 130
+        }
+      },
+      "constraints": {
+        "overlapCount": 0,
+        "overlapRate": 0,
+        "outsideOwnRingCount": 0,
+        "outsideOwnRingRate": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "direction": {
+        "meanAngularErrorDeg": 2.003173,
+        "medianAngularErrorDeg": 0.002616,
+        "p95AngularErrorDeg": 9.999418,
+        "maxAngularErrorDeg": 62.080071,
+        "angularDenominator": 252,
+        "angularExcluded": 0,
+        "eastWestFlipRate": 0,
+        "northSouthFlipRate": 0,
+        "sectorRetentionRate4": 0.948413,
+        "sectorRetentionRate8": 0.968254,
+        "sectorRetentionRate12": 0.93254,
+        "denominators": {
+          "eastWest": {
+            "rate": 0,
+            "flipped": 0,
+            "denominator": 252,
+            "boundaryExcluded": 0
+          },
+          "northSouth": {
+            "rate": 0,
+            "flipped": 0,
+            "denominator": 252,
+            "boundaryExcluded": 0
+          },
+          "sector4": {
+            "rate": 0.948413,
+            "retained": 239,
+            "denominator": 252,
+            "boundaryExcluded": 0,
+            "sectors": 4
+          },
+          "sector8": {
+            "rate": 0.968254,
+            "retained": 244,
+            "denominator": 252,
+            "boundaryExcluded": 0,
+            "sectors": 8
+          },
+          "sector12": {
+            "rate": 0.93254,
+            "retained": 235,
+            "denominator": 252,
+            "boundaryExcluded": 0,
+            "sectors": 12
+          }
+        }
+      },
+      "pairwiseRelations": {
+        "pairwiseLeftRightRetentionRate": 0.93362,
+        "pairwiseUpDownRetentionRate": 0.944847,
+        "pairCountEvaluatedLR": 31576,
+        "pairCountEvaluatedUD": 31567,
+        "exclusions": {
+          "leftRight": {
+            "rate": 0.93362,
+            "retained": 29480,
+            "denominator": 31576,
+            "sourceExcluded": 34,
+            "layoutExcluded": 16
+          },
+          "upDown": {
+            "rate": 0.944847,
+            "retained": 29826,
+            "denominator": 31567,
+            "sourceExcluded": 27,
+            "layoutExcluded": 32
+          }
+        },
+        "epsilon": {
+          "sourceMeters": 1,
+          "layoutPx": 0.5
+        }
+      },
+      "performance": {
+        "layoutDurationMs": 1275,
+        "evaluationDurationMs": 24,
+        "candidateChecks": 957781,
+        "layoutFingerprint": "fnv1a-19b5d803",
+        "evaluationFingerprint": "fnv1a-ea59dcc4"
+      }
+    },
+    "preferredWindowPlacedCount": 247,
+    "preferredWindowExceededCount": 5,
+    "relaxationLevelCounts": {
+      "0": 215,
+      "1": 32,
+      "2": 5
+    }
+  },
+  "stage33Reference": {
+    "layoutFingerprint": "fnv1a-c715b7de",
+    "canvasLogicalWidth": 2324,
+    "metrics": {
+      "completeness": {
+        "inputCount": 252,
+        "placedCount": 252,
+        "unplacedCount": 0,
+        "placementRate": 1,
+        "placedByRing": {
+          "ring-0-10": 39,
+          "ring-10-20": 83,
+          "ring-20-30": 130
+        }
+      },
+      "constraints": {
+        "overlapCount": 0,
+        "overlapRate": 0,
+        "outsideOwnRingCount": 0,
+        "outsideOwnRingRate": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "direction": {
+        "meanAngularErrorDeg": 2.367839,
+        "medianAngularErrorDeg": 0.002782,
+        "p95AngularErrorDeg": 13.753179,
+        "maxAngularErrorDeg": 57.500867,
+        "angularDenominator": 252,
+        "angularExcluded": 0,
+        "eastWestFlipRate": 0.011905,
+        "northSouthFlipRate": 0.027778,
+        "sectorRetentionRate4": 0.948413,
+        "sectorRetentionRate8": 0.960317,
+        "sectorRetentionRate12": 0.924603,
+        "denominators": {
+          "eastWest": {
+            "rate": 0.011905,
+            "flipped": 3,
+            "denominator": 252,
+            "boundaryExcluded": 0
+          },
+          "northSouth": {
+            "rate": 0.027778,
+            "flipped": 7,
+            "denominator": 252,
+            "boundaryExcluded": 0
+          },
+          "sector4": {
+            "rate": 0.948413,
+            "retained": 239,
+            "denominator": 252,
+            "boundaryExcluded": 0,
+            "sectors": 4
+          },
+          "sector8": {
+            "rate": 0.960317,
+            "retained": 242,
+            "denominator": 252,
+            "boundaryExcluded": 0,
+            "sectors": 8
+          },
+          "sector12": {
+            "rate": 0.924603,
+            "retained": 233,
+            "denominator": 252,
+            "boundaryExcluded": 0,
+            "sectors": 12
+          }
+        }
+      },
+      "pairwiseRelations": {
+        "pairwiseLeftRightRetentionRate": 0.931581,
+        "pairwiseUpDownRetentionRate": 0.939949,
+        "pairCountEvaluatedLR": 31570,
+        "pairCountEvaluatedUD": 31573,
+        "exclusions": {
+          "leftRight": {
+            "rate": 0.931581,
+            "retained": 29410,
+            "denominator": 31570,
+            "sourceExcluded": 34,
+            "layoutExcluded": 22
+          },
+          "upDown": {
+            "rate": 0.939949,
+            "retained": 29677,
+            "denominator": 31573,
+            "sourceExcluded": 27,
+            "layoutExcluded": 26
+          }
+        },
+        "epsilon": {
+          "sourceMeters": 1,
+          "layoutPx": 0.5
+        }
+      },
+      "performance": {
+        "layoutDurationMs": 610,
+        "evaluationDurationMs": 18,
+        "candidateChecks": 53825,
+        "layoutFingerprint": "fnv1a-c715b7de",
+        "evaluationFingerprint": "fnv1a-ea8b1991"
+      }
+    }
+  },
+  "hardGate": {
+    "placed252": true,
+    "unplaced0": true,
+    "ringsConserved": true,
+    "overlap0": true,
+    "outside0": true,
+    "centerCollision0": true,
+    "timeLabelCollision0": true,
+    "eastWestHardViolation0": true,
+    "northSouthHardViolation0": true,
+    "inputUnchanged": true,
+    "fiveRunStable": true,
+    "passed": true
+  },
+  "improvement": {
+    "eastWestFlipZero": true,
+    "northSouthFlipZero": true,
+    "meanImproved": true,
+    "p95Improved": true,
+    "passed": true
+  },
+  "tradeoff": {
+    "canvasIncreaseVsStage37": 0.6185,
+    "canvasIncreaseVsStage33": 0.0516,
+    "candidateChecksMultiplierVsStage37": 10.7,
+    "note": "零翻转和低角度误差通过更大的视觉画布与更多候选检查获得。"
+  },
+  "browserPipeline": {
+    "baselineLayoutFingerprint": "fnv1a-ac6abd7a",
+    "baselineEvaluationFingerprint": "fnv1a-1f4a7d7b",
+    "directionalLayoutFingerprint": "fnv1a-19b5d803",
+    "directionalEvaluationFingerprint": "fnv1a-ea59dcc4",
+    "note": "浏览器字体/渲染管线与冻结证据脚本分别记录。"
+  }
+}

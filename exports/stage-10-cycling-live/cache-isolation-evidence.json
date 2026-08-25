@@ -1,0 +1,21 @@
+{
+  "version": "stage51-profile-cache-v1",
+  "requiredFields": [
+    "version",
+    "center",
+    "profile",
+    "rangesSeconds",
+    "rangeType",
+    "poiProvider",
+    "outerGeometryHash",
+    "matrixSource",
+    "matrixDestinationFingerprint",
+    "cacheFingerprint"
+  ],
+  "cyclingFingerprint": "681898bd116cdbf51f747e09bc7d4d0d9c9f6374b9f25ab3077e2868f962f3e3",
+  "walkingFingerprintForSameGeometry": "f2e0de8e49ceaf47fbe28a4301042e89d86e29e871922317414b1f6144a8ba68",
+  "different": true,
+  "isochroneIsolation": "profile is part of ORS endpoint/cache identity",
+  "matrixIsolation": "profile and ordered destinations are part of identity",
+  "poiArchiveIsolation": "stage51 cycling archive is profile-fixed and rejects non-cycling requests"
+}

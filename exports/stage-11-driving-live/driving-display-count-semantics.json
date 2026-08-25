@@ -1,0 +1,13 @@
+{
+  "stage": 55,
+  "profile": "driving-car",
+  "status": "not-available-not-published",
+  "totalPois": 0,
+  "eligiblePois": 0,
+  "selectedForLayout": 0,
+  "renderedLabelDomNodes": 0,
+  "statusBadgeNumerator": 0,
+  "statusBadgeDenominator": 0,
+  "statusBadgeMeaning": "No driving result was published.",
+  "displayDensityPreset": "not-applicable"
+}

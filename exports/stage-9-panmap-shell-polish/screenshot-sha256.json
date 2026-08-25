@@ -1,0 +1,14 @@
+{
+  "stage": 49,
+  "status": "passed",
+  "formatValidation": "all files are PNG image data",
+  "screenshots": [
+    {"file": "stage49-browser-favicon.png", "dimensions": [360, 150], "sha256": "d38390d7f4675d449bfff5f71a5c55778608ea29091f9f9a289e5acb3a73c999"},
+    {"file": "stage49-compact-mode-switch-research.png", "dimensions": [1367, 897], "sha256": "2aa6d81ee65291c8620ac43bbcd91b968495e37752a8737b9ea13141b864c335"},
+    {"file": "stage49-isochrone-palette-map.png", "dimensions": [1367, 897], "sha256": "2931b05e120d8a84f4ab0439c580f68c2f32d6a8c7853f6d07b3864f94386dd9"},
+    {"file": "stage49-map-picked-new-center.png", "dimensions": [1367, 897], "sha256": "9014eb70d591749db5babcc714a105e316ede37dd4e8135b80bb9aac27d6bc13"},
+    {"file": "stage49-map-picking-cursor.png", "dimensions": [1367, 897], "sha256": "c67d04c9463c46d88bf17526a9f9a2563bec249bfab1ab63b6f1dd05e3f2a92d"},
+    {"file": "stage49-panmap-skeleton-full-canvas.png", "dimensions": [1367, 897], "sha256": "7f001506c3245b4308e3ad8200faa77030a2338a5bb8b05a9b96918c00287c61"},
+    {"file": "stage49-panmap-workbench-slid-in.png", "dimensions": [1367, 897], "sha256": "db3dd4193ba97a84c6071521776be7789a37e52c1df2218878285cb7bd3e8da8"}
+  ]
+}

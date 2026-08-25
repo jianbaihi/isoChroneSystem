@@ -1,0 +1,49 @@
+{
+  "stage": 45,
+  "capturedAt": "2026-08-05T08:40:00Z",
+  "repository": {
+    "root": "/Users/zhangzhihan/Desktop/项目的UI界面",
+    "branch": "main",
+    "head": "6379d19b644d44d471c7ad3ed29c4e3e558928c3",
+    "dirtyWorktreePreserved": true,
+    "priorStagesRecognizedAsFrozenBaseline": [33, 35, 37, 39, 41, 43]
+  },
+  "runtime": {
+    "frontend": "http://127.0.0.1:5500/",
+    "backend": "http://127.0.0.1:8000/",
+    "healthStatus": "ready",
+    "analysisProvider": "ors",
+    "mockFallback": false,
+    "networkProbePerformed": false,
+    "keyLocation": "server environment only",
+    "keyExposed": false
+  },
+  "input": {
+    "centerId": "wuhan-huanghelou",
+    "center": [114.296944, 30.546944],
+    "profile": "foot-walking",
+    "rangesSeconds": [600, 1200, 1800]
+  },
+  "initialPageLoadBusinessRequests": {
+    "Isochrones": 0,
+    "OpenPOIService": 0,
+    "Matrix": 0,
+    "Geocoder": 0,
+    "Directions": 0
+  },
+  "fixedRadiusAudit": {
+    "finding": "500/1000/2000 m remains an optional legacy preview only",
+    "primaryGenerateWorkflowUsesFixedRadius": false,
+    "poiCoverageSource": "30-minute cumulative isochrone outer Polygon",
+    "locations": [
+      "app.js:loadPoiPreview",
+      "src/api/analysis-client.js:createPoiPreview",
+      "server/app/providers/poi/ors_remote.py:preview"
+    ]
+  },
+  "offlineGate": {
+    "nodeTests": {"passed": 91, "failed": 0},
+    "pythonTests": {"passed": 88, "failed": 0},
+    "realBusinessRequests": 0
+  }
+}

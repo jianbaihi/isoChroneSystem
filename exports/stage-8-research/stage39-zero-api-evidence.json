@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "stage39-zero-api/v1",
+  "stage": 39,
+  "status": "passed",
+  "budget": {
+    "isochrones": 0,
+    "openPoiService": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "actual": {
+    "isochrones": 0,
+    "openPoiService": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "dataSources": [
+    "exports/stage-6-layout/stage20-cache-baseline.json",
+    "exports/stage-7-compact-annular/stage37-frontier-geographic.json"
+  ],
+  "browserEvidence": {
+    "normalMode": {
+      "urlContract": "stage21Baseline=1&stage37Layout=frontier-geographic (no research parameter)",
+      "researchMode": "inactive",
+      "panelDomCount": 0,
+      "evaluationRuns": 0,
+      "nodeCount": 252,
+      "layoutFingerprint": "fnv1a-ac6abd7a",
+      "businessUpstreamRequests": 0
+    },
+    "researchMode": {
+      "urlContract": "stage21Baseline=1&stage37Layout=frontier-geographic&research=1",
+      "panelDomCount": 1,
+      "nodeCount": 252,
+      "layoutFingerprint": "fnv1a-ac6abd7a",
+      "evaluationFingerprint": "fnv1a-1f4a7d7b",
+      "placement": "252/252",
+      "rings": [
+        39,
+        83,
+        130
+      ],
+      "collisions": {
+        "overlap": 0,
+        "outsideOwnRing": 0,
+        "center": 0,
+        "timeLabel": 0
+      },
+      "viewTransformEvidence": {
+        "evaluationRunsBefore": 1,
+        "evaluationRunsAfter": 1,
+        "fingerprintUnchanged": true
+      },
+      "algorithmSwitchEvidence": {
+        "frontierFingerprint": "fnv1a-1f4a7d7b",
+        "fermatFingerprint": "fnv1a-8bd9ab14",
+        "updated": true
+      },
+      "deleteParameterRestoresNormalMode": true,
+      "businessUpstreamRequests": 0
+    },
+    "exportEvidence": {
+      "consecutiveExports": 2,
+      "layoutRevisionBefore": 3,
+      "layoutRevisionAfter": 3,
+      "layoutFingerprintUnchanged": true,
+      "evaluationFingerprintUnchanged": true,
+      "exportedEvaluationFingerprint": "fnv1a-1f4a7d7b",
+      "networkRequests": 0
+    }
+  },
+  "forbiddenDataAudit": {
+    "orsKeyPresent": false,
+    "tiandituKeyPresent": false,
+    "upstreamResponseEmbedded": false,
+    "personalInformationAdded": false
+  },
+  "screenshots": [
+    {
+      "name": "stage39-normal-mode.png",
+      "bytes": 843620,
+      "width": 1280,
+      "height": 720,
+      "sha256": "72005c775104f8f57668fd4c447c0bb0c95b8374a2a5c9fc51f666f14eadd411"
+    },
+    {
+      "name": "stage39-hidden-research-mode.png",
+      "bytes": 795561,
+      "width": 1126,
+      "height": 943,
+      "sha256": "6cd4e4bd70d9e90fff071843e26200fdc014866516ddcd1b09fe116a2262861b"
+    }
+  ]
+}

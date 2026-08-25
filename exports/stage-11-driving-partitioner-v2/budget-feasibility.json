@@ -1,0 +1,15 @@
+{
+  "stage": 57,
+  "status": "completed-approval-ready",
+  "selectedPlanFingerprint": "633aa700d21cc7582b77dea610a5e43a2bf35c7b382df6bbb48a6b90a941efd0",
+  "baseRequests": 43,
+  "currentApprovedPoiRequests": 48,
+  "remainingReserveAtCurrentBudget": 5,
+  "budgetClassification": "base-feasible-with-minimal-reserve",
+  "minimumAdaptiveReserve": 9,
+  "recommendedApprovedPoiRequests": 52,
+  "reason": "43 initial requests reach the theoretical lower bound, but 5 remaining requests under the old 48 cap are below the recommended max(8, ceil(base*20%)) reserve for result truncation subdivisions. The recommended 52 is a future approval request only, not authorization granted by this stage.",
+  "matrixUnknown": true,
+  "matrixWarning": "POI candidate total is unknown without forbidden live POI retrieval; Stage57 cannot prove the later Matrix job will fit 40 batches or 20000 destinations.",
+  "upstreamRequestCount": 0
+}

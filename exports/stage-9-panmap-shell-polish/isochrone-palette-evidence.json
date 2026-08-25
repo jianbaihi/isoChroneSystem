@@ -1,0 +1,43 @@
+{
+  "stage": 49,
+  "status": "passed",
+  "singleSource": "src/config/isochrone-palette.js",
+  "initial": [
+    {"minutes": 10, "color": "#1e9152", "semantic": "green"},
+    {"minutes": 20, "color": "#2670e1", "semantic": "blue"},
+    {"minutes": 30, "color": "#8b57be", "semantic": "purple"}
+  ],
+  "afterAdd15": [
+    {"minutes": 10, "color": "#1e9152"},
+    {"minutes": 15, "color": "#2670e1"},
+    {"minutes": 20, "color": "#8b57be"},
+    {"minutes": 30, "color": "#e88926"}
+  ],
+  "afterDelete20": [
+    {"minutes": 10, "color": "#1e9152"},
+    {"minutes": 15, "color": "#2670e1"},
+    {"minutes": 30, "color": "#8b57be"}
+  ],
+  "restored": [
+    {"minutes": 10, "color": "#1e9152"},
+    {"minutes": 20, "color": "#2670e1"},
+    {"minutes": 30, "color": "#8b57be"}
+  ],
+  "activeRing": {
+    "minutes": 20,
+    "thresholdClass": "is-active-ring",
+    "legendClass": "is-active-ring",
+    "legendAriaPressed": true,
+    "mapLibrePaintUsesPaletteExpression": true,
+    "otherRingsRemainVisible": true
+  },
+  "mappedSurfaces": [
+    "threshold color strip",
+    "map legend polygon",
+    "MapLibre polygon fill",
+    "MapLibre polygon line",
+    "active polygon emphasis"
+  ],
+  "geometryRequestsTriggered": 0,
+  "screenshot": "stage49-isochrone-palette-map.png"
+}

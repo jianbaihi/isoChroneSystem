@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 37,
+  "status": "complete",
+  "files": {
+    "stage37-baseline-geographic.png": {
+      "sha256": "5784aa0ea5d2210b7c17a1e20c903e133b2467aaa4ff6dfc31b86f9d7d915313",
+      "bytes": 118779
+    },
+    "stage37-fermat-compact.png": {
+      "sha256": "c6bd5a597540714ad7daa095e298afef5f89c6923f4617311e59fec4167f71f1",
+      "bytes": 150272
+    },
+    "stage37-poisson-compact.png": {
+      "sha256": "87e993f154c54da16f29ea5cee48c76568f34f9368c1482a667e5e6949c762eb",
+      "bytes": 150264
+    },
+    "stage37-frontier-geographic.png": {
+      "sha256": "c68b752d9dff10daf6bff2d289871db7cbf5ab114bf14a75dfa2e6fce0599b5e",
+      "bytes": 153370
+    },
+    "stage37-frontier-random-match.png": {
+      "sha256": "497fdd35cbb6093cd3896e084230c2d2328c34519780b1a75cc9761a8a0a782e",
+      "bytes": 138987
+    },
+    "stage37-four-algorithm-comparison.png": {
+      "sha256": "4eb46e4a383159345fbb640b9560c645160b089b559f22bba4fb41629e151bdf",
+      "bytes": 146703
+    },
+    "stage37-frontier-reading-view.png": {
+      "sha256": "db09e2b9cba26e1701c988fc0346acc55e23bdea952c1a71f4341e188ad77a18",
+      "bytes": 204751
+    }
+  },
+  "missing": []
+}

@@ -1,0 +1,8 @@
+{
+  "stage": 55,
+  "profile": "driving-car",
+  "status": "not-executed-blocked-before-publish",
+  "ordinary": null,
+  "research": null,
+  "reason": "Browser acceptance is intentionally not run without a complete published driving result."
+}

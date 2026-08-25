@@ -1,0 +1,34 @@
+{
+  "sequence": [
+    "cycling-regular",
+    "foot-walking",
+    "cycling-regular"
+  ],
+  "walking": {
+    "analysisId": "analysis-name-cloud-7823d8e3-5c27-4a22-8b78-be5939c4e2ba",
+    "total": 284,
+    "eligible": 254,
+    "rings": [
+      39,
+      85,
+      130
+    ],
+    "matrixFingerprint": "c4a00b9309bdd758ad6313c068a3321151e6576079c78fa97cc78db75c67578f",
+    "labelDomNodes": 254
+  },
+  "cycling": {
+    "analysisId": "analysis-stage51-cycling-38ef5a3bdd60c562354e88fd",
+    "total": 2413,
+    "eligible": 1800,
+    "rings": [
+      127,
+      433,
+      1240
+    ],
+    "matrixFingerprint": "f41b23c25e23a997c03b0050451a8976303683d15342842129d8f47e80d0d203",
+    "labelDomNodes": 1800
+  },
+  "profileConfusion": false,
+  "businessUpstreamRequests": 0,
+  "passed": true
+}

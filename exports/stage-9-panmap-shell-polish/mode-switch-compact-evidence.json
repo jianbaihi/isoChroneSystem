@@ -1,0 +1,32 @@
+{
+  "stage": 49,
+  "status": "passed",
+  "control": {
+    "location": "泛地图工作台标题行右侧",
+    "role": "switch",
+    "labelsAlwaysVisible": ["普通", "研究"],
+    "singleStateSource": "PanmapApp.panmapModeStore",
+    "legacyResearchQuerySupported": true
+  },
+  "twentySwitches": {
+    "requested": 20,
+    "completed": 20,
+    "beforeMode": "ordinary",
+    "afterMode": "ordinary",
+    "beforeLabelDomNodes": 254,
+    "afterLabelDomNodes": 254,
+    "beforeCoordinateFingerprint": "fnv1a-0bd70523",
+    "afterCoordinateFingerprint": "fnv1a-0bd70523",
+    "beforeViewBox": "-11.248439450686647 70.97378277153553 1522.4968789013733 1358.052434456929",
+    "afterViewBox": "-11.248439450686647 70.97378277153553 1522.4968789013733 1358.052434456929",
+    "stable": true
+  },
+  "legacyLink": {
+    "url": "http://127.0.0.1:5500/?stage45Cache=1&research=1",
+    "mode": "research",
+    "ariaChecked": "true",
+    "labelDomNodes": 254
+  },
+  "networkRequestsTriggered": 0,
+  "screenshot": "stage49-compact-mode-switch-research.png"
+}

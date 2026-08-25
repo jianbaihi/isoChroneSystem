@@ -1,0 +1,1015 @@
+{
+  "pieceCount": 93,
+  "areaSumKm2": 1903.24597,
+  "areaKm2": {
+    "min": 0.005787,
+    "max": 45.0,
+    "median": 14.211483,
+    "p10": 0.239353,
+    "p90": 45.0
+  },
+  "areaThresholdCounts": {
+    "lt0_1": 6,
+    "lt1": 20,
+    "lt5": 39,
+    "gt40": 28
+  },
+  "vertexCount": {
+    "min": 4,
+    "max": 99,
+    "median": 14.0
+  },
+  "perimeterMeters": {
+    "min": 375.115976,
+    "max": 36838.279946,
+    "median": 20869.847994
+  },
+  "compactness": {
+    "min": 0.131598386,
+    "max": 0.798141411,
+    "median": 0.529245502
+  },
+  "bboxUtilization": {
+    "min": 0.109241184,
+    "max": 1.0,
+    "median": 0.666737805
+  },
+  "adjacency": {
+    "sharedBoundaryPairs": 136,
+    "mergeablePairsAt45Km2": 57,
+    "pairs": [
+      {
+        "leftPieceId": "piece-5276f5df6f198fdf90fa",
+        "rightPieceId": "piece-683a7ca807a33c61e19e",
+        "sharedBoundaryMeters": 3534.10724,
+        "unionAreaKm2": 41.314957,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-683a7ca807a33c61e19e",
+        "rightPieceId": "piece-f9296f5f8e0e9d889a77",
+        "sharedBoundaryMeters": 6152.528187,
+        "unionAreaKm2": 48.525221,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-683a7ca807a33c61e19e",
+        "rightPieceId": "piece-b494d902a9cf00acfb55",
+        "sharedBoundaryMeters": 915.549827,
+        "unionAreaKm2": 35.441562,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-683a7ca807a33c61e19e",
+        "rightPieceId": "piece-0818efff28b0bfa161fb",
+        "sharedBoundaryMeters": 920.642339,
+        "unionAreaKm2": 35.588384,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-683a7ca807a33c61e19e",
+        "rightPieceId": "piece-da3dea5bc2cfe1555e9b",
+        "sharedBoundaryMeters": 6708.203958,
+        "unionAreaKm2": 79.313739,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-f9296f5f8e0e9d889a77",
+        "rightPieceId": "piece-3ced9a3cd2af2b3bbf4d",
+        "sharedBoundaryMeters": 142.502671,
+        "unionAreaKm2": 14.225179,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-f9296f5f8e0e9d889a77",
+        "rightPieceId": "piece-0ea92fcaa0df1fd6dc9a",
+        "sharedBoundaryMeters": 6708.203962,
+        "unionAreaKm2": 59.211483,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-0818efff28b0bfa161fb",
+        "rightPieceId": "piece-5844007062d2a33937ad",
+        "sharedBoundaryMeters": 1938.746533,
+        "unionAreaKm2": 36.543093,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-3ced9a3cd2af2b3bbf4d",
+        "rightPieceId": "piece-e6370845c3b636e6b56b",
+        "sharedBoundaryMeters": 192.223228,
+        "unionAreaKm2": 24.18898,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-e6370845c3b636e6b56b",
+        "rightPieceId": "piece-0ea92fcaa0df1fd6dc9a",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 69.175284,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-e6370845c3b636e6b56b",
+        "rightPieceId": "piece-a3881b42ac4a1c44314b",
+        "sharedBoundaryMeters": 438.686525,
+        "unionAreaKm2": 24.572657,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-e6370845c3b636e6b56b",
+        "rightPieceId": "piece-728bf7fd6fd1d71532fd",
+        "sharedBoundaryMeters": 5452.005801,
+        "unionAreaKm2": 59.741017,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-0ea92fcaa0df1fd6dc9a",
+        "rightPieceId": "piece-da3dea5bc2cfe1555e9b",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-0ea92fcaa0df1fd6dc9a",
+        "rightPieceId": "piece-b08c69c06ed7ce29c1c6",
+        "sharedBoundaryMeters": 6708.203962,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-da3dea5bc2cfe1555e9b",
+        "rightPieceId": "piece-5844007062d2a33937ad",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 80.268448,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-da3dea5bc2cfe1555e9b",
+        "rightPieceId": "piece-876a5fa5c2d8d98d0b1e",
+        "sharedBoundaryMeters": 6708.203958,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-5844007062d2a33937ad",
+        "rightPieceId": "piece-c605c1253f45cc7bd6b9",
+        "sharedBoundaryMeters": 3550.150529,
+        "unionAreaKm2": 57.258534,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-5844007062d2a33937ad",
+        "rightPieceId": "piece-eef4800f37dd29fba592",
+        "sharedBoundaryMeters": 6708.203954,
+        "unionAreaKm2": 80.268448,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-c605c1253f45cc7bd6b9",
+        "rightPieceId": "piece-4dba27e78e377468fc1f",
+        "sharedBoundaryMeters": 1140.546765,
+        "unionAreaKm2": 23.068348,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-c605c1253f45cc7bd6b9",
+        "rightPieceId": "piece-37ac66af7734af81abd0",
+        "sharedBoundaryMeters": 6708.203951,
+        "unionAreaKm2": 66.990087,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-4dba27e78e377468fc1f",
+        "rightPieceId": "piece-554b3d57c5c00d016184",
+        "sharedBoundaryMeters": 1045.371371,
+        "unionAreaKm2": 20.935438,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-728bf7fd6fd1d71532fd",
+        "rightPieceId": "piece-b08c69c06ed7ce29c1c6",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 80.565734,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-728bf7fd6fd1d71532fd",
+        "rightPieceId": "piece-8bd2142ec4e89614a058",
+        "sharedBoundaryMeters": 2852.803012,
+        "unionAreaKm2": 51.91227,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-728bf7fd6fd1d71532fd",
+        "rightPieceId": "piece-057d8f94a66e761d9c13",
+        "sharedBoundaryMeters": 6708.203967,
+        "unionAreaKm2": 71.175527,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-b08c69c06ed7ce29c1c6",
+        "rightPieceId": "piece-876a5fa5c2d8d98d0b1e",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-b08c69c06ed7ce29c1c6",
+        "rightPieceId": "piece-edbab731397789b811b8",
+        "sharedBoundaryMeters": 6708.203962,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-876a5fa5c2d8d98d0b1e",
+        "rightPieceId": "piece-eef4800f37dd29fba592",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-876a5fa5c2d8d98d0b1e",
+        "rightPieceId": "piece-0199d3e29b8ac9816d8e",
+        "sharedBoundaryMeters": 6708.203958,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-eef4800f37dd29fba592",
+        "rightPieceId": "piece-37ac66af7734af81abd0",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-eef4800f37dd29fba592",
+        "rightPieceId": "piece-f6286c626f3a37c072de",
+        "sharedBoundaryMeters": 6708.203954,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-37ac66af7734af81abd0",
+        "rightPieceId": "piece-554b3d57c5c00d016184",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 64.857177,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-37ac66af7734af81abd0",
+        "rightPieceId": "piece-7217809adf026b01dace",
+        "sharedBoundaryMeters": 6708.203951,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-554b3d57c5c00d016184",
+        "rightPieceId": "piece-3e067b3b6a580f1ff00c",
+        "sharedBoundaryMeters": 790.470327,
+        "unionAreaKm2": 20.515891,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-554b3d57c5c00d016184",
+        "rightPieceId": "piece-f315692243a2d06480e3",
+        "sharedBoundaryMeters": 6708.203948,
+        "unionAreaKm2": 64.857177,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-8bd2142ec4e89614a058",
+        "rightPieceId": "piece-82b31c6f857ca6923ba5",
+        "sharedBoundaryMeters": 1850.054929,
+        "unionAreaKm2": 17.613746,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-8bd2142ec4e89614a058",
+        "rightPieceId": "piece-a33331531c603958bf19",
+        "sharedBoundaryMeters": 1232.346911,
+        "unionAreaKm2": 16.685422,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-32bd16e95eff1160c8c0",
+        "rightPieceId": "piece-3c56b9508b2594cdc41b",
+        "sharedBoundaryMeters": 443.867963,
+        "unionAreaKm2": 19.419585,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-a33331531c603958bf19",
+        "rightPieceId": "piece-057d8f94a66e761d9c13",
+        "sharedBoundaryMeters": 430.539974,
+        "unionAreaKm2": 35.948678,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-057d8f94a66e761d9c13",
+        "rightPieceId": "piece-edbab731397789b811b8",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 80.609793,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-057d8f94a66e761d9c13",
+        "rightPieceId": "piece-f070fed3929bcf8f591c",
+        "sharedBoundaryMeters": 2023.838839,
+        "unionAreaKm2": 39.273401,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-057d8f94a66e761d9c13",
+        "rightPieceId": "piece-bd48380996f5906491f0",
+        "sharedBoundaryMeters": 6708.203967,
+        "unionAreaKm2": 80.609793,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-3e067b3b6a580f1ff00c",
+        "rightPieceId": "piece-3c56b9508b2594cdc41b",
+        "sharedBoundaryMeters": 1174.343486,
+        "unionAreaKm2": 18.205663,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-edbab731397789b811b8",
+        "rightPieceId": "piece-0199d3e29b8ac9816d8e",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-edbab731397789b811b8",
+        "rightPieceId": "piece-aa5ed078038648c44aac",
+        "sharedBoundaryMeters": 6708.203962,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-0199d3e29b8ac9816d8e",
+        "rightPieceId": "piece-f6286c626f3a37c072de",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-0199d3e29b8ac9816d8e",
+        "rightPieceId": "piece-fc49e333bac1d8583030",
+        "sharedBoundaryMeters": 6708.203958,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-f6286c626f3a37c072de",
+        "rightPieceId": "piece-7217809adf026b01dace",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-f6286c626f3a37c072de",
+        "rightPieceId": "piece-c03aa1360aebdebb1206",
+        "sharedBoundaryMeters": 6708.203954,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-7217809adf026b01dace",
+        "rightPieceId": "piece-f315692243a2d06480e3",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-7217809adf026b01dace",
+        "rightPieceId": "piece-a4b6a4ab4594e015b528",
+        "sharedBoundaryMeters": 6708.203951,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-f315692243a2d06480e3",
+        "rightPieceId": "piece-3c56b9508b2594cdc41b",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 62.546949,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-f315692243a2d06480e3",
+        "rightPieceId": "piece-4df512e83112b71fc82f",
+        "sharedBoundaryMeters": 6708.203948,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-3c56b9508b2594cdc41b",
+        "rightPieceId": "piece-459a013163facca21945",
+        "sharedBoundaryMeters": 1071.677104,
+        "unionAreaKm2": 44.079584,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-92e691e19537f7bd9998",
+        "rightPieceId": "piece-f6188035d81d886d9f9d",
+        "sharedBoundaryMeters": 359.195841,
+        "unionAreaKm2": 29.27104,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-f070fed3929bcf8f591c",
+        "rightPieceId": "piece-f6188035d81d886d9f9d",
+        "sharedBoundaryMeters": 1834.449072,
+        "unionAreaKm2": 32.005597,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-80aa8b0a2d7526c906f3",
+        "rightPieceId": "piece-7ac3ccc07f6e91f57042",
+        "sharedBoundaryMeters": 399.283669,
+        "unionAreaKm2": 5.76609,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-80aa8b0a2d7526c906f3",
+        "rightPieceId": "piece-218ba008389f29243644",
+        "sharedBoundaryMeters": 1094.594053,
+        "unionAreaKm2": 8.120793,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-f6188035d81d886d9f9d",
+        "rightPieceId": "piece-bd48380996f5906491f0",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 73.341989,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-f6188035d81d886d9f9d",
+        "rightPieceId": "piece-de512bd503d487af59c4",
+        "sharedBoundaryMeters": 399.857987,
+        "unionAreaKm2": 32.245486,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-f6188035d81d886d9f9d",
+        "rightPieceId": "piece-0ae99c380923ac643dbe",
+        "sharedBoundaryMeters": 5372.792336,
+        "unionAreaKm2": 61.247802,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-bd48380996f5906491f0",
+        "rightPieceId": "piece-aa5ed078038648c44aac",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-bd48380996f5906491f0",
+        "rightPieceId": "piece-3e8b495ad22a356c76c0",
+        "sharedBoundaryMeters": 6708.203967,
+        "unionAreaKm2": 88.993904,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-aa5ed078038648c44aac",
+        "rightPieceId": "piece-fc49e333bac1d8583030",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-aa5ed078038648c44aac",
+        "rightPieceId": "piece-0b6e7ce56a3500fc051c",
+        "sharedBoundaryMeters": 6708.203962,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-fc49e333bac1d8583030",
+        "rightPieceId": "piece-c03aa1360aebdebb1206",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-fc49e333bac1d8583030",
+        "rightPieceId": "piece-2d0259827a1be2d630d7",
+        "sharedBoundaryMeters": 6708.203958,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-c03aa1360aebdebb1206",
+        "rightPieceId": "piece-a4b6a4ab4594e015b528",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-c03aa1360aebdebb1206",
+        "rightPieceId": "piece-775cb629e65bf09660d5",
+        "sharedBoundaryMeters": 6708.203955,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-a4b6a4ab4594e015b528",
+        "rightPieceId": "piece-4df512e83112b71fc82f",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-a4b6a4ab4594e015b528",
+        "rightPieceId": "piece-f67d1fba7b2229352b9c",
+        "sharedBoundaryMeters": 6708.203951,
+        "unionAreaKm2": 89.99867,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-4df512e83112b71fc82f",
+        "rightPieceId": "piece-459a013163facca21945",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 71.532634,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-4df512e83112b71fc82f",
+        "rightPieceId": "piece-f5a0c147304fdf85c6ab",
+        "sharedBoundaryMeters": 6708.203948,
+        "unionAreaKm2": 83.186814,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-459a013163facca21945",
+        "rightPieceId": "piece-218ba008389f29243644",
+        "sharedBoundaryMeters": 1339.354678,
+        "unionAreaKm2": 28.906681,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-459a013163facca21945",
+        "rightPieceId": "piece-64bff732aaebe3abde4c",
+        "sharedBoundaryMeters": 853.360821,
+        "unionAreaKm2": 31.448488,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-0ae99c380923ac643dbe",
+        "rightPieceId": "piece-3e8b495ad22a356c76c0",
+        "sharedBoundaryMeters": 5049.72879,
+        "unionAreaKm2": 76.899716,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-0ae99c380923ac643dbe",
+        "rightPieceId": "piece-22c2a40a883b25bc6a96",
+        "sharedBoundaryMeters": 3011.539999,
+        "unionAreaKm2": 34.466219,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-3e8b495ad22a356c76c0",
+        "rightPieceId": "piece-0b6e7ce56a3500fc051c",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 88.993904,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-3e8b495ad22a356c76c0",
+        "rightPieceId": "piece-1e9fb751a4a81d98475b",
+        "sharedBoundaryMeters": 5861.163038,
+        "unionAreaKm2": 83.725907,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-0b6e7ce56a3500fc051c",
+        "rightPieceId": "piece-2d0259827a1be2d630d7",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-0b6e7ce56a3500fc051c",
+        "rightPieceId": "piece-e9dcf1b45bf365f285a9",
+        "sharedBoundaryMeters": 6708.203963,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-2d0259827a1be2d630d7",
+        "rightPieceId": "piece-775cb629e65bf09660d5",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-2d0259827a1be2d630d7",
+        "rightPieceId": "piece-44775c2b5d5d75b0a8d9",
+        "sharedBoundaryMeters": 6708.203958,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-775cb629e65bf09660d5",
+        "rightPieceId": "piece-f67d1fba7b2229352b9c",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 89.99867,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-775cb629e65bf09660d5",
+        "rightPieceId": "piece-a8c448f6f64bee1ae859",
+        "sharedBoundaryMeters": 6708.203955,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-f67d1fba7b2229352b9c",
+        "rightPieceId": "piece-f5a0c147304fdf85c6ab",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 83.185484,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-f67d1fba7b2229352b9c",
+        "rightPieceId": "piece-55ab940de3f8557227a3",
+        "sharedBoundaryMeters": 3961.729001,
+        "unionAreaKm2": 72.991312,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-f67d1fba7b2229352b9c",
+        "rightPieceId": "piece-4370192dc2d6fd6d89ef",
+        "sharedBoundaryMeters": 2567.346283,
+        "unionAreaKm2": 46.970342,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-f5a0c147304fdf85c6ab",
+        "rightPieceId": "piece-64bff732aaebe3abde4c",
+        "sharedBoundaryMeters": 1097.984627,
+        "unionAreaKm2": 43.102667,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-f5a0c147304fdf85c6ab",
+        "rightPieceId": "piece-8eb069e024bad78fe2d3",
+        "sharedBoundaryMeters": 732.041006,
+        "unionAreaKm2": 39.727676,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-f5a0c147304fdf85c6ab",
+        "rightPieceId": "piece-6c7e62dd0c9a4e715450",
+        "sharedBoundaryMeters": 6708.203949,
+        "unionAreaKm2": 47.721173,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-64bff732aaebe3abde4c",
+        "rightPieceId": "piece-24b19b67fb472c2622a1",
+        "sharedBoundaryMeters": 230.643111,
+        "unionAreaKm2": 4.92185,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-64bff732aaebe3abde4c",
+        "rightPieceId": "piece-242277ea504dee137acc",
+        "sharedBoundaryMeters": 498.773008,
+        "unionAreaKm2": 5.100551,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-8eb069e024bad78fe2d3",
+        "rightPieceId": "piece-f5099a2b59da973e955a",
+        "sharedBoundaryMeters": 1136.346138,
+        "unionAreaKm2": 1.755331,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-22c2a40a883b25bc6a96",
+        "rightPieceId": "piece-29f5fdc2b102fa016117",
+        "sharedBoundaryMeters": 335.629302,
+        "unionAreaKm2": 1.577539,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-1e9fb751a4a81d98475b",
+        "rightPieceId": "piece-e9dcf1b45bf365f285a9",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 84.732004,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-1e9fb751a4a81d98475b",
+        "rightPieceId": "piece-8ab662c58df0d9161144",
+        "sharedBoundaryMeters": 399.654578,
+        "unionAreaKm2": 40.089508,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-1e9fb751a4a81d98475b",
+        "rightPieceId": "piece-4678c6424f787e2b01cd",
+        "sharedBoundaryMeters": 294.968448,
+        "unionAreaKm2": 39.744206,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-1e9fb751a4a81d98475b",
+        "rightPieceId": "piece-9a049dedabf191d0964e",
+        "sharedBoundaryMeters": 844.063583,
+        "unionAreaKm2": 40.235641,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-1e9fb751a4a81d98475b",
+        "rightPieceId": "piece-106eec629ed5fc33bb48",
+        "sharedBoundaryMeters": 4239.975916,
+        "unionAreaKm2": 47.709349,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-e9dcf1b45bf365f285a9",
+        "rightPieceId": "piece-44775c2b5d5d75b0a8d9",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-e9dcf1b45bf365f285a9",
+        "rightPieceId": "piece-7c7bae17180c4c680d15",
+        "sharedBoundaryMeters": 6708.203963,
+        "unionAreaKm2": 86.080496,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-44775c2b5d5d75b0a8d9",
+        "rightPieceId": "piece-a8c448f6f64bee1ae859",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-44775c2b5d5d75b0a8d9",
+        "rightPieceId": "piece-63c317fd711ba46e848f",
+        "sharedBoundaryMeters": 6708.203959,
+        "unionAreaKm2": 90.0,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-a8c448f6f64bee1ae859",
+        "rightPieceId": "piece-55ab940de3f8557227a3",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 72.992642,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-a8c448f6f64bee1ae859",
+        "rightPieceId": "piece-681dcd92181978de8bc0",
+        "sharedBoundaryMeters": 6708.203955,
+        "unionAreaKm2": 89.808623,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-55ab940de3f8557227a3",
+        "rightPieceId": "piece-b8f3b739a113e682b3e7",
+        "sharedBoundaryMeters": 1762.080982,
+        "unionAreaKm2": 41.084849,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-55ab940de3f8557227a3",
+        "rightPieceId": "piece-48cd076a3f5c07ba91a8",
+        "sharedBoundaryMeters": 6708.203952,
+        "unionAreaKm2": 58.85303,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-4370192dc2d6fd6d89ef",
+        "rightPieceId": "piece-6c7e62dd0c9a4e715450",
+        "sharedBoundaryMeters": 1086.730569,
+        "unionAreaKm2": 11.506032,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-6c7e62dd0c9a4e715450",
+        "rightPieceId": "piece-f5099a2b59da973e955a",
+        "sharedBoundaryMeters": 268.022419,
+        "unionAreaKm2": 9.748829,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-24b19b67fb472c2622a1",
+        "rightPieceId": "piece-ee5c09cbf8059f098833",
+        "sharedBoundaryMeters": 53.807527,
+        "unionAreaKm2": 0.455309,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-242277ea504dee137acc",
+        "rightPieceId": "piece-ee5c09cbf8059f098833",
+        "sharedBoundaryMeters": 1006.970341,
+        "unionAreaKm2": 0.63401,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-190c0acddbef0ac8c4fe",
+        "rightPieceId": "piece-b8f3b739a113e682b3e7",
+        "sharedBoundaryMeters": 2427.655374,
+        "unionAreaKm2": 16.433158,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-b8f3b739a113e682b3e7",
+        "rightPieceId": "piece-936d69c0664b3238c922",
+        "sharedBoundaryMeters": 2437.904155,
+        "unionAreaKm2": 20.765972,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-9a049dedabf191d0964e",
+        "rightPieceId": "piece-abbe09e41ede0c0df325",
+        "sharedBoundaryMeters": 452.428383,
+        "unionAreaKm2": 1.002651,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-106eec629ed5fc33bb48",
+        "rightPieceId": "piece-7c7bae17180c4c680d15",
+        "sharedBoundaryMeters": 3563.818802,
+        "unionAreaKm2": 49.057841,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-7c7bae17180c4c680d15",
+        "rightPieceId": "piece-63c317fd711ba46e848f",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 86.080496,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-7c7bae17180c4c680d15",
+        "rightPieceId": "piece-c7df5aae9bc71899d0da",
+        "sharedBoundaryMeters": 1648.084818,
+        "unionAreaKm2": 41.540132,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-7c7bae17180c4c680d15",
+        "rightPieceId": "piece-c448ebfff569ae5f064e",
+        "sharedBoundaryMeters": 2356.986098,
+        "unionAreaKm2": 44.596913,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-63c317fd711ba46e848f",
+        "rightPieceId": "piece-681dcd92181978de8bc0",
+        "sharedBoundaryMeters": 6708.203933,
+        "unionAreaKm2": 89.808623,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-63c317fd711ba46e848f",
+        "rightPieceId": "piece-c82b9f6fe2f1b59bc00b",
+        "sharedBoundaryMeters": 6708.203959,
+        "unionAreaKm2": 76.748537,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-681dcd92181978de8bc0",
+        "rightPieceId": "piece-48cd076a3f5c07ba91a8",
+        "sharedBoundaryMeters": 6217.847208,
+        "unionAreaKm2": 75.669012,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-681dcd92181978de8bc0",
+        "rightPieceId": "piece-c39b6e6fb6e1152d94cb",
+        "sharedBoundaryMeters": 6125.083597,
+        "unionAreaKm2": 77.36281,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-48cd076a3f5c07ba91a8",
+        "rightPieceId": "piece-936d69c0664b3238c922",
+        "sharedBoundaryMeters": 3282.580406,
+        "unionAreaKm2": 38.534152,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-48cd076a3f5c07ba91a8",
+        "rightPieceId": "piece-b5303dc22016d9447447",
+        "sharedBoundaryMeters": 90.431198,
+        "unionAreaKm2": 30.866175,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-48cd076a3f5c07ba91a8",
+        "rightPieceId": "piece-b7eb1b1961656bca1648",
+        "sharedBoundaryMeters": 794.555508,
+        "unionAreaKm2": 32.439468,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-c7df5aae9bc71899d0da",
+        "rightPieceId": "piece-b4ac1a0281136d1e6740",
+        "sharedBoundaryMeters": 525.967469,
+        "unionAreaKm2": 1.774788,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-c448ebfff569ae5f064e",
+        "rightPieceId": "piece-c82b9f6fe2f1b59bc00b",
+        "sharedBoundaryMeters": 3885.733801,
+        "unionAreaKm2": 35.264954,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-c82b9f6fe2f1b59bc00b",
+        "rightPieceId": "piece-c39b6e6fb6e1152d94cb",
+        "sharedBoundaryMeters": 6005.714242,
+        "unionAreaKm2": 64.302724,
+        "mergeAllowedAt45Km2": false
+      },
+      {
+        "leftPieceId": "piece-c82b9f6fe2f1b59bc00b",
+        "rightPieceId": "piece-ea104665fa1cbe17b6cf",
+        "sharedBoundaryMeters": 507.572912,
+        "unionAreaKm2": 33.502169,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-c39b6e6fb6e1152d94cb",
+        "rightPieceId": "piece-864fb12091dc1a1ff9a1",
+        "sharedBoundaryMeters": 347.320938,
+        "unionAreaKm2": 33.166614,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-c39b6e6fb6e1152d94cb",
+        "rightPieceId": "piece-8c34edd12e416bc78806",
+        "sharedBoundaryMeters": 2039.167467,
+        "unionAreaKm2": 37.657846,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-b5303dc22016d9447447",
+        "rightPieceId": "piece-44487aaabd49d683f527",
+        "sharedBoundaryMeters": 127.979483,
+        "unionAreaKm2": 1.968105,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-b7eb1b1961656bca1648",
+        "rightPieceId": "piece-44487aaabd49d683f527",
+        "sharedBoundaryMeters": 1265.056622,
+        "unionAreaKm2": 3.541398,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-b7eb1b1961656bca1648",
+        "rightPieceId": "piece-ea118519fd36fb7cbb9b",
+        "sharedBoundaryMeters": 1066.1816,
+        "unionAreaKm2": 1.743714,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-9cd8d0597ce4c49dd4be",
+        "rightPieceId": "piece-a1b0882a642003dd2e93",
+        "sharedBoundaryMeters": 538.104618,
+        "unionAreaKm2": 2.633152,
+        "mergeAllowedAt45Km2": true
+      },
+      {
+        "leftPieceId": "piece-a1b0882a642003dd2e93",
+        "rightPieceId": "piece-ea104665fa1cbe17b6cf",
+        "sharedBoundaryMeters": 2151.578518,
+        "unionAreaKm2": 4.173354,
+        "mergeAllowedAt45Km2": true
+      }
+    ]
+  },
+  "validPieceCount": 93,
+  "invalidPieceCount": 0,
+  "holePieceCount": 0,
+  "multiPolygonPieceCount": 0,
+  "coverage": {
+    "outerAreaKm2": 1903.245963,
+    "plannedAreaKm2": 1903.24597,
+    "areaDifferenceKm2": 7.209e-06,
+    "uncoveredAreaKm2": 2.1412e-05,
+    "outsideAreaKm2": 2.8621e-05,
+    "overlapAreaKm2": 0.0,
+    "toleranceKm2": 1.903246,
+    "areaConserved": true
+  },
+  "stage": 57,
+  "plannerVersion": "stage-6-spatial-batch-v1",
+  "planFingerprint": "790314e5c7ff025fe46f8b8616041ddd0e94acba3084f50faa75f2a77a25231d",
+  "outerGeometryHash": "ac5d6fe70567e744bcad2fb4241c7bec57af6d8aeeb326bb5eb2ff7a48127177",
+  "upstreamRequestCount": 0,
+  "fragmentInterpretation": "Small areas are grid-intersection remnants: 20 pieces below 1 km² and 39 below 5 km² coexist with 28 pieces above 40 km². The shared-boundary audit records 57 geometrically mergeable pairs, proving the count is not imposed by the 45 km² area bound alone."
+}

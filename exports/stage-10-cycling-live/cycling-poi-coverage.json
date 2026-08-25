@@ -1,0 +1,20 @@
+{
+  "profile": "cycling-regular",
+  "raw": 3996,
+  "parsed": 2413,
+  "named": 2413,
+  "missingName": 1583,
+  "mergedNamed": 2413,
+  "deduplicated": 2413,
+  "duplicatesRemoved": 0,
+  "inside": 2413,
+  "outside": 0,
+  "invalid": 0,
+  "requests": 10,
+  "cacheHits": 10,
+  "upstreamRequests": 0,
+  "resultLimitPerPiece": 2000,
+  "resultTruncated": false,
+  "fullyCovered": true,
+  "source": "2026-08-01 Stage29 accepted real OpenPOIService cache"
+}

@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-08-01T14:31:17.505244Z",
+  "source": "exports/stage-6-layout/stage20-cache-baseline.json",
+  "sourceSha256": "c1ac3a837cf96bd576ad5ed6ac228be78d88da706c0c5db04d35194f14e4d51b",
+  "centerId": "wuhan-huanghelou",
+  "profile": "foot-walking",
+  "rangesSeconds": [
+    600,
+    1200,
+    1800
+  ],
+  "totalPoi": 282,
+  "validCoordinates": 282,
+  "invalidCoordinates": 0,
+  "invalidCoordinatePoiIds": [],
+  "matrixOk": 282,
+  "eligible": 252,
+  "outOfRange": 30,
+  "outOfRangePoiIds": [
+    "ors-poi:1:11894772512",
+    "ors-poi:1:12163492901",
+    "ors-poi:1:1228776862",
+    "ors-poi:1:12469005394",
+    "ors-poi:1:12469044137",
+    "ors-poi:1:12469044138",
+    "ors-poi:1:13608906943",
+    "ors-poi:1:2398956506",
+    "ors-poi:1:2401122514",
+    "ors-poi:1:2401122517",
+    "ors-poi:1:2401122523",
+    "ors-poi:1:2401177340",
+    "ors-poi:1:2401413747",
+    "ors-poi:1:2401413748",
+    "ors-poi:1:2446691098",
+    "ors-poi:1:4683673589",
+    "ors-poi:1:5903666637",
+    "ors-poi:1:5937634541",
+    "ors-poi:1:5981008828",
+    "ors-poi:1:9397102198",
+    "ors-poi:1:9397102202",
+    "ors-poi:1:9397128718",
+    "ors-poi:2:1120163128",
+    "ors-poi:2:1126843758",
+    "ors-poi:2:1126844504",
+    "ors-poi:2:1314072076",
+    "ors-poi:2:1323365403",
+    "ors-poi:2:236672651",
+    "ors-poi:2:381668426",
+    "ors-poi:2:492443211"
+  ],
+  "rings": {
+    "600": 39,
+    "1200": 83,
+    "1800": 130
+  },
+  "duplicateStableIds": 0,
+  "duplicateStablePoiIds": [],
+  "conflictingCoordinatePoiIds": [],
+  "missingNames": 0,
+  "missingNamePoiIds": [],
+  "conservation": {
+    "eligiblePlusOutOfRangeEqualsTotal": true,
+    "ringsEqualEligible": true
+  },
+  "upstreamRequests": {
+    "isochrones": 0,
+    "poi": 0,
+    "matrix": 0,
+    "geocoder": 0
+  }
+}

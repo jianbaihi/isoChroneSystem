@@ -1,0 +1,22 @@
+{
+  "auditLayer": "canonical-projected-full-precision",
+  "coordinateDecimals": null,
+  "outerAreaKm2": 1903.2459628579993,
+  "plannedAreaKm2": 1903.2459628579973,
+  "uncoveredAreaKm2": 0.0,
+  "outsideAreaKm2": 2.6611576231516664e-13,
+  "overlapAreaKm2": 0.0,
+  "areaDifferenceKm2": -2.0463630789890885e-12,
+  "toleranceKm2": 1.9032459628579994,
+  "withinTolerance": true,
+  "displayScientific": {
+    "outerAreaKm2": "1.903245962858e+03",
+    "plannedAreaKm2": "1.903245962858e+03",
+    "uncoveredAreaKm2": "0.000000000000e+00",
+    "outsideAreaKm2": "2.661157623152e-13",
+    "overlapAreaKm2": "0.000000000000e+00",
+    "areaDifferenceKm2": "-2.046363078989e-12"
+  },
+  "selectedPlanFingerprint": "633aa700d21cc7582b77dea610a5e43a2bf35c7b382df6bbb48a6b90a941efd0",
+  "upstreamRequestCount": 0
+}

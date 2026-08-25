@@ -1,0 +1,19 @@
+{
+  "sequence": [
+    "cycling-regular",
+    "foot-walking",
+    "cycling-regular"
+  ],
+  "cycling": {
+    "analysisId": "analysis-stage51-cycling-38ef5a3bdd60c562354e88fd",
+    "total": 2413,
+    "schema": "2.0"
+  },
+  "walking": {
+    "analysisId": "analysis-name-cloud-7823d8e3-5c27-4a22-8b78-be5939c4e2ba",
+    "total": 284,
+    "schema": "2.0"
+  },
+  "profileIsolation": true,
+  "networkDuringSwitch": 0
+}

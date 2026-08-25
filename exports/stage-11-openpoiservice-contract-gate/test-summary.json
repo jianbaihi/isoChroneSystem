@@ -1,0 +1,12 @@
+{
+  "stage": 59,
+  "status": "passed",
+  "commands": [
+    {"command": "node --check app.js", "status": "passed"},
+    {"command": "node --test src/**/*.test.js", "status": "passed", "passed": 114, "failed": 0},
+    {"command": "PYTHONPATH=server server/.venv/bin/python -m unittest discover -s server/tests -p 'test_*.py'", "status": "passed", "passed": 139, "failed": 0},
+    {"command": "git diff --check", "status": "passed"}
+  ],
+  "stage59Tests": 23,
+  "businessUpstreamRequests": {"isochrones": 0, "pois": 0, "matrix": 0, "geocoder": 0, "directions": 0}
+}

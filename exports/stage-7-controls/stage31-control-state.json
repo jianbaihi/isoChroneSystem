@@ -1,0 +1,279 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 31,
+  "defaults": {
+    "schemaVersion": "1.0",
+    "draft": {
+      "schemaVersion": "1.0",
+      "labelOrientation": "legacy-baseline",
+      "envelopeMode": "circular",
+      "compactness": 50,
+      "fontHierarchy": 50,
+      "autoExpandRings": true,
+      "allEligibleRequired": true,
+      "adaptiveCanvas": true,
+      "autoFitView": true,
+      "envelopeTightness": 50,
+      "envelopeSmoothness": 60,
+      "minEnvelopeGapPx": 12,
+      "showDensityDebug": false,
+      "randomSeed": "stage21-baseline-seed"
+    },
+    "applied": {
+      "schemaVersion": "1.0",
+      "labelOrientation": "legacy-baseline",
+      "envelopeMode": "circular",
+      "compactness": 50,
+      "fontHierarchy": 50,
+      "autoExpandRings": true,
+      "allEligibleRequired": true,
+      "adaptiveCanvas": true,
+      "autoFitView": true,
+      "envelopeTightness": 50,
+      "envelopeSmoothness": 60,
+      "minEnvelopeGapPx": 12,
+      "showDensityDebug": false,
+      "randomSeed": "stage21-baseline-seed"
+    },
+    "draftFingerprint": "fnv1a-c0a90ee2",
+    "appliedFingerprint": "fnv1a-c0a90ee2",
+    "applyCount": 0,
+    "warnings": []
+  },
+  "modifiedDraft": {
+    "schemaVersion": "1.0",
+    "draft": {
+      "schemaVersion": "1.0",
+      "labelOrientation": "legacy-baseline",
+      "envelopeMode": "natural-density",
+      "compactness": 78,
+      "fontHierarchy": 66,
+      "autoExpandRings": true,
+      "allEligibleRequired": true,
+      "adaptiveCanvas": true,
+      "autoFitView": true,
+      "envelopeTightness": 50,
+      "envelopeSmoothness": 60,
+      "minEnvelopeGapPx": 12,
+      "showDensityDebug": false,
+      "randomSeed": "stage21-baseline-seed"
+    },
+    "applied": {
+      "schemaVersion": "1.0",
+      "labelOrientation": "legacy-baseline",
+      "envelopeMode": "circular",
+      "compactness": 50,
+      "fontHierarchy": 50,
+      "autoExpandRings": true,
+      "allEligibleRequired": true,
+      "adaptiveCanvas": true,
+      "autoFitView": true,
+      "envelopeTightness": 50,
+      "envelopeSmoothness": 60,
+      "minEnvelopeGapPx": 12,
+      "showDensityDebug": false,
+      "randomSeed": "stage21-baseline-seed"
+    },
+    "draftFingerprint": "fnv1a-550aae5a",
+    "appliedFingerprint": "fnv1a-c0a90ee2",
+    "applyCount": 0,
+    "warnings": []
+  },
+  "unsupportedApply": {
+    "applied": false,
+    "reason": "所选布局参数将在第33号实现；当前第22号基线保持不变。",
+    "localLayoutCalls": 0
+  },
+  "restoredDefaultDraft": {
+    "schemaVersion": "1.0",
+    "draft": {
+      "schemaVersion": "1.0",
+      "labelOrientation": "legacy-baseline",
+      "envelopeMode": "circular",
+      "compactness": 50,
+      "fontHierarchy": 50,
+      "autoExpandRings": true,
+      "allEligibleRequired": true,
+      "adaptiveCanvas": true,
+      "autoFitView": true,
+      "envelopeTightness": 50,
+      "envelopeSmoothness": 60,
+      "minEnvelopeGapPx": 12,
+      "showDensityDebug": false,
+      "randomSeed": "stage21-baseline-seed"
+    },
+    "applied": {
+      "schemaVersion": "1.0",
+      "labelOrientation": "legacy-baseline",
+      "envelopeMode": "circular",
+      "compactness": 50,
+      "fontHierarchy": 50,
+      "autoExpandRings": true,
+      "allEligibleRequired": true,
+      "adaptiveCanvas": true,
+      "autoFitView": true,
+      "envelopeTightness": 50,
+      "envelopeSmoothness": 60,
+      "minEnvelopeGapPx": 12,
+      "showDensityDebug": false,
+      "randomSeed": "stage21-baseline-seed"
+    },
+    "draftFingerprint": "fnv1a-c0a90ee2",
+    "appliedFingerprint": "fnv1a-c0a90ee2",
+    "applyCount": 0,
+    "warnings": []
+  },
+  "supportedApply": {
+    "applied": true,
+    "appliedFingerprint": "fnv1a-eb14e229",
+    "localLayoutCalls": 1
+  },
+  "refreshRestore": {
+    "schemaVersion": "1.0",
+    "draft": {
+      "schemaVersion": "1.0",
+      "labelOrientation": "legacy-baseline",
+      "envelopeMode": "circular",
+      "compactness": 50,
+      "fontHierarchy": 50,
+      "autoExpandRings": true,
+      "allEligibleRequired": true,
+      "adaptiveCanvas": true,
+      "autoFitView": false,
+      "envelopeTightness": 50,
+      "envelopeSmoothness": 60,
+      "minEnvelopeGapPx": 12,
+      "showDensityDebug": false,
+      "randomSeed": "stage31-fixed-20260801"
+    },
+    "applied": {
+      "schemaVersion": "1.0",
+      "labelOrientation": "legacy-baseline",
+      "envelopeMode": "circular",
+      "compactness": 50,
+      "fontHierarchy": 50,
+      "autoExpandRings": true,
+      "allEligibleRequired": true,
+      "adaptiveCanvas": true,
+      "autoFitView": false,
+      "envelopeTightness": 50,
+      "envelopeSmoothness": 60,
+      "minEnvelopeGapPx": 12,
+      "showDensityDebug": false,
+      "randomSeed": "stage31-fixed-20260801"
+    },
+    "draftFingerprint": "fnv1a-eb14e229",
+    "appliedFingerprint": "fnv1a-eb14e229",
+    "applyCount": 0,
+    "warnings": []
+  },
+  "resetWithoutApply": {
+    "schemaVersion": "1.0",
+    "draft": {
+      "schemaVersion": "1.0",
+      "labelOrientation": "legacy-baseline",
+      "envelopeMode": "circular",
+      "compactness": 50,
+      "fontHierarchy": 50,
+      "autoExpandRings": true,
+      "allEligibleRequired": true,
+      "adaptiveCanvas": true,
+      "autoFitView": true,
+      "envelopeTightness": 50,
+      "envelopeSmoothness": 60,
+      "minEnvelopeGapPx": 12,
+      "showDensityDebug": false,
+      "randomSeed": "stage21-baseline-seed"
+    },
+    "applied": {
+      "schemaVersion": "1.0",
+      "labelOrientation": "legacy-baseline",
+      "envelopeMode": "circular",
+      "compactness": 50,
+      "fontHierarchy": 50,
+      "autoExpandRings": true,
+      "allEligibleRequired": true,
+      "adaptiveCanvas": true,
+      "autoFitView": false,
+      "envelopeTightness": 50,
+      "envelopeSmoothness": 60,
+      "minEnvelopeGapPx": 12,
+      "showDensityDebug": false,
+      "randomSeed": "stage31-fixed-20260801"
+    },
+    "draftFingerprint": "fnv1a-c0a90ee2",
+    "appliedFingerprint": "fnv1a-eb14e229",
+    "applyCount": 1,
+    "warnings": []
+  },
+  "invariants": {
+    "draftDoesNotChangeAppliedFingerprint": true,
+    "unsupportedApplyDoesNotLayout": true,
+    "continuousInputDoesNotAutoLayout": true,
+    "supportedApplyCallsLayoutOnce": true,
+    "refreshRestoresApplied": true,
+    "resetDoesNotAutoApply": true,
+    "dataCacheInvalidations": 0,
+    "businessApiRequests": 0
+  },
+  "frozenLayout": {
+    "algorithmVersion": "stage21-time-sprite-board-v1",
+    "eligible": 252,
+    "placed": 138,
+    "unplaced": 114,
+    "outOfRange": 30,
+    "fingerprint": "fnv1a-8b0581ae"
+  },
+  "browserValidation": {
+    "baselineLoad": {
+      "profile": "foot-walking",
+      "total": 282,
+      "eligible": 252,
+      "rings": [
+        39,
+        83,
+        130
+      ],
+      "placed": 138,
+      "unplaced": 114,
+      "outOfRange": 30,
+      "fingerprint": "fnv1a-8b0581ae"
+    },
+    "sliderInput": {
+      "layoutRevisionBefore": 4,
+      "layoutRevisionAfter": 4,
+      "applyCount": 0
+    },
+    "unsupportedNaturalEnvelopeApply": {
+      "layoutRevisionBefore": 4,
+      "layoutRevisionAfter": 4,
+      "applyCount": 0,
+      "baselinePreserved": true
+    },
+    "supportedLocalApply": {
+      "layoutRevisionBefore": 4,
+      "layoutRevisionAfter": 5,
+      "localLayoutCalls": 1,
+      "fingerprint": "fnv1a-8b0581ae"
+    },
+    "refreshRestore": {
+      "restored": true,
+      "autoFitView": false,
+      "fingerprint": "fnv1a-8b0581ae"
+    },
+    "themeAndPanelToggle": {
+      "layoutRevisionBefore": 4,
+      "layoutRevisionAfter": 4,
+      "collapsedPanelWidthPx": 44,
+      "baselinePreserved": true
+    },
+    "accessibility": {
+      "panelLabel": "泛地图样式控制",
+      "namedButtons": 10,
+      "labeledRanges": 4,
+      "keyboardNativeControls": true
+    },
+    "passed": 8,
+    "failed": 0
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "schemaVersion": "1.1",
+  "status": "completed-with-view-contract",
+  "originalStatus": "blocked-needs-design-decision",
+  "source": "exports/stage-6-layout/stage20-cache-baseline.json",
+  "inputFingerprint": "24061da8f56b7a184b660e2f40e70278de06d0973b7a9a2dc054a565c22d4479",
+  "identicalInputPoiIds": true,
+  "inputCounts": {
+    "total": 282,
+    "eligible": 252,
+    "outOfRange": 30,
+    "rings": {
+      "ring-0-10": 39,
+      "ring-10-20": 83,
+      "ring-20-30": 130
+    }
+  },
+  "oldBaseline": {
+    "algorithmVersion": "stage21-time-sprite-board-v1",
+    "placed": 138,
+    "unplaced": 114,
+    "fingerprint": "fnv1a-8b0581ae"
+  },
+  "geographic": {
+    "placed": 252,
+    "unplaced": 0,
+    "placedByRing": {
+      "ring-0-10": 39,
+      "ring-10-20": 83,
+      "ring-20-30": 130
+    },
+    "constraints": {
+      "overlapCount": 0,
+      "outsideOwnRingCount": 0,
+      "centerCollisionCount": 0,
+      "timeLabelCollisionCount": 0
+    },
+    "fingerprint": "fnv1a-c715b7de",
+    "ringRadii": [
+      {
+        "inner": 90,
+        "outer": 448
+      },
+      {
+        "inner": 460,
+        "outer": 790
+      },
+      {
+        "inner": 802,
+        "outer": 1142
+      }
+    ],
+    "fitScale": 0.4058,
+    "finalScreenFontPx": {
+      "min": 6.01,
+      "max": 9.41,
+      "readableMinimum": 8
+    },
+    "angular": {
+      "mean": 2.37,
+      "median": 0,
+      "p95": 13.75,
+      "max": 57.5,
+      "withinConfiguredWindowRate": 1
+    },
+    "adjacentDirectionOrder": {
+      "windowDegrees": 10,
+      "comparedPairs": 2183,
+      "inversions": 305,
+      "inversionRate": 0.1397
+    }
+  },
+  "random": {
+    "placed": 252,
+    "unplaced": 0,
+    "placedByRing": {
+      "ring-0-10": 39,
+      "ring-10-20": 83,
+      "ring-20-30": 130
+    },
+    "constraints": {
+      "overlapCount": 0,
+      "outsideOwnRingCount": 0,
+      "centerCollisionCount": 0,
+      "timeLabelCollisionCount": 0
+    },
+    "fingerprint": "fnv1a-b4c87899",
+    "ringRadii": [
+      {
+        "inner": 90,
+        "outer": 448
+      },
+      {
+        "inner": 460,
+        "outer": 790
+      },
+      {
+        "inner": 802,
+        "outer": 1142
+      }
+    ],
+    "fitScale": 0.4058,
+    "finalScreenFontPx": {
+      "min": 6.01,
+      "max": 9.41,
+      "readableMinimum": 8
+    },
+    "geographicBearingError": "N/A"
+  },
+  "stability": {
+    "sameSeedRuns": [
+      "fnv1a-b4c87899",
+      "fnv1a-b4c87899",
+      "fnv1a-b4c87899",
+      "fnv1a-b4c87899",
+      "fnv1a-b4c87899"
+    ],
+    "sameSeedStable": true,
+    "alternateSeedFingerprint": "fnv1a-0305eb8a",
+    "alternateSeedChangesLayout": true,
+    "restoredSeedFingerprint": "fnv1a-b4c87899",
+    "restoredSeedMatches": true
+  },
+  "parameterIntegration": {
+    "compactness20": {
+      "placed": 252,
+      "fingerprint": "fnv1a-54d59053",
+      "tokens": {
+        "compactness": 20,
+        "fontHierarchy": 50,
+        "paddingPx": 3.8,
+        "radialStepPx": 3.6,
+        "angularStepDeg": 1.7,
+        "maxAngularOffsetDeg": 120,
+        "collisionModel": "axis-aligned-label-bbox",
+        "rotation": 0
+      }
+    },
+    "fontHierarchy80": {
+      "placed": 252,
+      "fingerprint": "fnv1a-2915e05a",
+      "font": {
+        "min": 13.12,
+        "max": 24.88,
+        "mean": 19
+      }
+    },
+    "matrixTimesChanged": 0,
+    "ringIdsChanged": 0,
+    "hiddenLabels": 0,
+    "rotationNonZero": 0
+  },
+  "browserEvidence": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "logicalCanvas": {
+      "width": 2324,
+      "height": 2324
+    },
+    "fullyVisibleFitScale": 0.2822,
+    "fullyVisibleMinimumScreenFontPx": 4.18,
+    "svgRenderedScale": 0.568,
+    "svgRenderedMinimumScreenFontPx": 8.41,
+    "explanation": "SVG 本身高于单屏；完整画布适配 1280×720 可见区域时才是可读性门禁口径。"
+  },
+  "readabilityGate": {
+    "minimumRequiredScreenFontPx": 8,
+    "referenceFitMinimum": 6.01,
+    "fullyVisibleBrowserMinimum": 4.18,
+    "passed": false,
+    "decision": "扩大到252/252后，完整圆形画布适配 1280×720 单屏时最小字号低于8px；需设计决策，不能标 completed。"
+  },
+  "originalBlockedResult": {
+    "status": "blocked-needs-design-decision",
+    "reason": "原门禁将全景单屏的最小字号作为阅读门禁；1280×720 完整画布适配低于8px。",
+    "preserved": true
+  },
+  "designDecision": {
+    "acceptedAt": "2026-08-02",
+    "fullPlacementDefinition": "252个eligible POI全部进入逻辑布局；不要求在1280×720全景中同时逐字可读。",
+    "overviewMayBeBelow8px": true,
+    "readingMinimumScreenFontPx": 8,
+    "viewChangesLayout": false
+  },
+  "viewContract": {
+    "version": "stage33-view-contract-v1",
+    "layoutAlgorithmChanged": false,
+    "modes": {
+      "overview": {
+        "label": "全景预览",
+        "fitAllThreeRings": true,
+        "scale": 0.240103,
+        "minimumScreenFontPx": 3.55,
+        "readingState": false,
+        "nonErrorExplanationVisible": true
+      },
+      "reading": {
+        "label": "阅读视图",
+        "canvasMayOverflowViewport": true,
+        "scale": 0.541216,
+        "minimumScreenFontPx": 8.01,
+        "readingState": true,
+        "pan": true,
+        "wheelZoom": true,
+        "ringFocus": true
+      }
+    },
+    "invariants": {
+      "layoutFingerprintBefore": "fnv1a-c715b7de",
+      "layoutFingerprintAfter": "fnv1a-c715b7de",
+      "layoutRevisionBefore": "4",
+      "layoutRevisionAfter": "4",
+      "domNodesBefore": 252,
+      "domNodesOverview": 252,
+      "domNodesReading": 252,
+      "hiddenLabels": 0,
+      "matrixTimesChanged": 0,
+      "ringIdsChanged": 0,
+      "viewSwitchRecomputedLayout": false,
+      "fitPanZoomResizeTransformOnly": true,
+      "passed": true
+    },
+    "zoomEvidence": {
+      "minimumScreenFontPx": 9.77,
+      "domNodes": 252,
+      "fingerprint": "fnv1a-c715b7de",
+      "revision": "4"
+    },
+    "finalStatusRulePassed": true
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "stage43-screenshot-sha256/v1",
+  "stage": 43,
+  "status": "passed",
+  "files": {
+    "stage43-research-standard-balanced.png": {
+      "bytes": 690810,
+      "width": 1126,
+      "height": 897,
+      "sha256": "63ea9d4e961b735cd0ae93d8a2cc8a399c08f4453d7003ed2179e39cfa5001db"
+    },
+    "stage43-research-density-rich.png": {
+      "bytes": 672896,
+      "width": 1126,
+      "height": 897,
+      "sha256": "cd30724a24b4049d07bfd2efe1f320d88cc1f9d8e6dc903fb21a0cd4fd1bd59c"
+    },
+    "stage43-normal-mode-regression.png": {
+      "bytes": 1153871,
+      "width": 1126,
+      "height": 897,
+      "sha256": "fd7fb2956c633acfefd84698840984a80f48311cd8b7e1db47555017ebe1bb51"
+    }
+  }
+}

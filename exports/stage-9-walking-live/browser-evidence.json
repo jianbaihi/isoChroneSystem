@@ -1,0 +1,20 @@
+{
+  "browser": "Codex in-app browser",
+  "url": "http://127.0.0.1:5500/",
+  "initialLoadBusinessRequests": 0,
+  "clickSequence": ["选择步行", "生成可达域", "探索泛地图", "进入泛地图"],
+  "isochroneState": {"button": "可达域生成完毕", "exploreEnabled": true, "polygonVisible": true},
+  "ordinaryMode": {"resultSource": "current-online-cache", "totalPoi": 284, "eligibleLabels": 254, "labelDomNodes": 254, "badge": "254/254"},
+  "researchMode": {
+    "resultSource": "current-online-cache",
+    "sameAnalysisId": "analysis-name-cloud-7823d8e3-5c27-4a22-8b78-be5939c4e2ba",
+    "totalPoi": 284,
+    "eligibleLabels": 254,
+    "rings": [39, 85, 130],
+    "labelDomNodes": 254,
+    "sourceCopy": "数据来源：当前在线任务缓存（与普通模式同一结果）",
+    "frozenStage43ExperimentNotRecomputed": true
+  },
+  "consoleErrors": [],
+  "screenshots": ["stage45-walking-isochrones.png", "stage45-walking-panmap.png", "stage45-walking-research-mode.png"]
+}

@@ -1,0 +1,18 @@
+{
+  "python": {
+    "command": "PYTHONPATH=server server/.venv/bin/python -m unittest discover -s server/tests -p 'test_*.py'",
+    "status": "pass",
+    "passed": 95,
+    "failed": 0
+  },
+  "javascript": {
+    "command": "node --test src/**/*.test.js",
+    "status": "pass",
+    "passed": 114,
+    "failed": 0
+  },
+  "static": {
+    "command": "node --check app.js && git diff --check",
+    "status": "pass"
+  }
+}

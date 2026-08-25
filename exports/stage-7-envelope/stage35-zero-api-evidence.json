@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 35,
+  "status": "completed",
+  "budget": {
+    "isochrones": 0,
+    "openPoiService": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "actual": {
+    "isochrones": 0,
+    "openPoiService": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "dataSources": [
+    "stage33-geographic-layout.json",
+    "stage33-random-layout.json"
+  ],
+  "localBusinessRequests": 0,
+  "upstreamRequests": 0,
+  "browserNetworkClassification": {
+    "staticAssets": "allowed-local",
+    "localHealthAndDatasetStatus": "allowed-local",
+    "businessRoutes": []
+  },
+  "cache": {
+    "envelope": {
+      "geographic": {
+        "coldHit": false,
+        "coldGenerationDurationMs": 72,
+        "hotHit": true,
+        "hotLookupDurationMs": 0.0144,
+        "cacheSize": 1
+      },
+      "random": {
+        "coldHit": false,
+        "coldGenerationDurationMs": 40,
+        "hotHit": true,
+        "hotLookupDurationMs": 0.0186,
+        "cacheSize": 1
+      }
+    },
+    "layout": "frozen-stage33"
+  },
+  "profiles": {
+    "footWalking": "local-cache-only",
+    "cyclingRegular": "frozen",
+    "drivingCar": "awaiting-approval"
+  },
+  "fingerprint": "ee5e132c5c883704911176c9ccd4582e4d2a661cd70248a7fe62c8cfc14b477e"
+}

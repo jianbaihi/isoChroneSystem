@@ -1,0 +1,7 @@
+{
+  "stage": 55,
+  "profile": "driving-car",
+  "status": "not-published",
+  "publishedResultSchemaVersion": null,
+  "reason": "No complete, non-truncated POI and Matrix dataset exists because the pre-request POI budget gate blocked execution."
+}

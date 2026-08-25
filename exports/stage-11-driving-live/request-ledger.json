@@ -1,0 +1,1778 @@
+{
+  "stage": 55,
+  "generatedAt": "2026-08-06T11:20:59Z",
+  "status": "blocked-needs-decision",
+  "profile": "driving-car",
+  "reason": "POI plan requires 93 initial Polygon pieces at the frozen <=45 km² safety limit; Stage 55 authorizes at most 48 POI upstream requests.",
+  "noExecutionPerformed": true,
+  "planFingerprint": "790314e5c7ff025fe46f8b8616041ddd0e94acba3084f50faa75f2a77a25231d",
+  "plan": {
+    "planId": "poi-plan-790314e5c7ff025fe46f8b86",
+    "planFingerprint": "790314e5c7ff025fe46f8b8616041ddd0e94acba3084f50faa75f2a77a25231d",
+    "plannerVersion": "stage-6-spatial-batch-v1",
+    "normalizationVersion": "wgs84-polygon-v1",
+    "profile": "driving-car",
+    "center": {
+      "longitude": 114.296944,
+      "latitude": 30.546944
+    },
+    "rangesSeconds": [
+      600,
+      1200,
+      1800
+    ],
+    "outerGeometryHash": "ac5d6fe70567e744bcad2fb4241c7bec57af6d8aeeb326bb5eb2ff7a48127177",
+    "outerAreaKm2": 1903.245963,
+    "strategy": "non-overlapping-grid-intersection",
+    "pieceCount": 93,
+    "estimatedMinimumPoiRequests": 93,
+    "reservedAdaptiveRequests": 0,
+    "estimatedMaximumApprovedRequests": 93,
+    "requestBudget": 48,
+    "budgetStatus": "approval-required",
+    "provider": "openpoiservice",
+    "providerLimits": {
+      "maxAreaKm2": 50.0,
+      "requestLimit": 2000
+    },
+    "plannerConfig": {
+      "targetPieceAreaKm2": 45.0,
+      "maxSubdivisionDepth": 8,
+      "minPieceAreaKm2": 0.1,
+      "requestBudget": 48,
+      "adaptiveReserveRatio": 0.0,
+      "safePieceAreaKm2": 45.0
+    },
+    "poiFilter": null,
+    "coverage": {
+      "outerGeometryValid": true,
+      "plannedAreaKm2": 1903.24597,
+      "uncoveredAreaKm2": 2.1412e-05,
+      "outsideAreaKm2": 2.8621e-05,
+      "overlapAreaKm2": 0.0,
+      "areaDifferenceKm2": 7.209e-06,
+      "toleranceKm2": 1.903246,
+      "areaConserved": true
+    },
+    "upstreamRequestCount": 0,
+    "stage": 55,
+    "status": "blocked-needs-decision",
+    "blockingReason": "estimatedMinimumPoiRequests_exceeds_approved_48_before_any_poi_request",
+    "requestBudgetPolicy": {
+      "approvedPoiRequests": 48,
+      "estimatedMinimumPoiRequests": 93,
+      "adaptiveReserveUsedForGate": 0,
+      "estimatedMaximumApprovedRequests": 93,
+      "gate": "blocked"
+    },
+    "pieces": [
+      {
+        "pieceId": "piece-5276f5df6f198fdf90fa",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 7.001218,
+        "bbox": [
+          114.2442363,
+          30.23341,
+          114.28174,
+          30.2904518
+        ],
+        "geometryHash": "7b067bce61a3c23c892f03ca51400f4088429483347912d1f4edf5e174bb065d",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-683a7ca807a33c61e19e",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 34.313739,
+        "bbox": [
+          114.240977,
+          30.2896836,
+          114.3119062,
+          30.35157
+        ],
+        "geometryHash": "1a13f1b20f527e848d43927886151c2e2330f53101c1e3f8bb460206f830c017",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-f9296f5f8e0e9d889a77",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 14.211483,
+        "bbox": [
+          114.1712617,
+          30.292294,
+          114.2425319,
+          30.3501162
+        ],
+        "geometryHash": "2ab18bf5c9428260540fac4c05c0e3cbfbaa42b466814e101b037321568dd970",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-b494d902a9cf00acfb55",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.127824,
+        "bbox": [
+          114.3116808,
+          30.3073538,
+          114.339401,
+          30.318067
+        ],
+        "geometryHash": "d70d5444dec2b1f28326710ca9ee18a46584e8c01c4eb19f72f1a2450623b7d7",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-0818efff28b0bfa161fb",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.274646,
+        "bbox": [
+          114.3106974,
+          30.3432712,
+          114.3308483,
+          30.3519833
+        ],
+        "geometryHash": "95d793ea59fb490fea353f0762b694b17496e1acc51b81ee7f37b1ca9ab6ac3e",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-3ced9a3cd2af2b3bbf4d",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.013696,
+        "bbox": [
+          114.1692641,
+          30.3473409,
+          114.1712987,
+          30.3486253
+        ],
+        "geometryHash": "fcaf0b4a24962b5c5fc674dd4f88cb02c79236810658b28f9a1c2ccb5f3a3db1",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-e6370845c3b636e6b56b",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 24.175284,
+        "bbox": [
+          114.1008521,
+          30.348582,
+          114.1712617,
+          30.4090867
+        ],
+        "geometryHash": "5883454789037d326407d90be0cb406c6c15f86c58a7e1580257f5b7de8e5da1",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-0ea92fcaa0df1fd6dc9a",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.1695187,
+          30.3486253,
+          114.240977,
+          30.4105812
+        ],
+        "geometryHash": "7331d00559802090460af16ab0ede808554fcd307dd179b384ff6eef68c55b0c",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-da3dea5bc2cfe1555e9b",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.2392768,
+          30.3501162,
+          114.3106974,
+          30.4120385
+        ],
+        "geometryHash": "98bcb24038deacbd757876cd2329073ab78da340c40e1bcba89d2e8085637cad",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-5844007062d2a33937ad",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 35.268447,
+        "bbox": [
+          114.30904,
+          30.35157,
+          114.3796634,
+          30.4134585
+        ],
+        "geometryHash": "da80a25837d3b542fab6e2b9685c49e60ccd9f82f8572b2595055b8404577dcd",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-a3881b42ac4a1c44314b",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.397374,
+        "bbox": [
+          114.091083,
+          30.36238,
+          114.1009689,
+          30.3708025
+        ],
+        "geometryHash": "9c8adab8b77f0e0347541249febe808de6954e7ea1498e063e8d04fb8e21b435",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-c605c1253f45cc7bd6b9",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 21.990087,
+        "bbox": [
+          114.3788083,
+          30.367985,
+          114.4488491,
+          30.4148414
+        ],
+        "geometryHash": "1a9b0145af783d57e0b07fe52c34fc8c2fb1950bcc2b6eee2cdef9cfcac54660",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-4dba27e78e377468fc1f",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.078261,
+        "bbox": [
+          114.4485815,
+          30.401043,
+          114.459455,
+          30.4150536
+        ],
+        "geometryHash": "af3c94de5018e9bb2b7d328f024a541d518338c21c8f4a15f1a38b105c5617c4",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-728bf7fd6fd1d71532fd",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 35.565734,
+        "bbox": [
+          114.0979745,
+          30.4078446,
+          114.1695187,
+          30.4695474
+        ],
+        "geometryHash": "b26580b261e4048eab216ebb705519e810d408a29d882bf2a625be05b3953ef5",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-b08c69c06ed7ce29c1c6",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.1677703,
+          30.4090867,
+          114.2392768,
+          30.4710454
+        ],
+        "geometryHash": "1bc86f0b03c779c07e2aef5ce48cb303dd93d70f6f34ff7c201a500a2c15ee02",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-876a5fa5c2d8d98d0b1e",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.2375714,
+          30.4105812,
+          114.30904,
+          30.4725063
+        ],
+        "geometryHash": "1602130a0dd31c1090a7762a3540aa8ca7bd2b80c39dc3d1eb37b6643609e037",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-eef4800f37dd29fba592",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.3073776,
+          30.4120385,
+          114.3788083,
+          30.4739298
+        ],
+        "geometryHash": "ec40d91acf8614f52f020361ebf1d3ba22a5f59b8fb98ea0a3c44b20964365a7",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-37ac66af7734af81abd0",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.3771889,
+          30.4134585,
+          114.4485815,
+          30.475316
+        ],
+        "geometryHash": "db97b8ffdf2a13af2939b5194c21cae98ddacb582e7d741a4e212b67727a4ffa",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-554b3d57c5c00d016184",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 19.857177,
+        "bbox": [
+          114.4470051,
+          30.4148414,
+          114.517007,
+          30.4766648
+        ],
+        "geometryHash": "9bffd6f47b15da0a1978ee3e8bd1738d7e6a958f1c995ba5a32052644cb769b7",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-8bd2142ec4e89614a058",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 16.346536,
+        "bbox": [
+          114.030764,
+          30.430884,
+          114.098737,
+          30.468012
+        ],
+        "geometryHash": "87362c2bffd1f8c6b292fce6959c7eb4a20fa686b1207c10e89a7e4828020e55",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-32bd16e95eff1160c8c0",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.872635,
+        "bbox": [
+          114.554274,
+          30.455107,
+          114.56914,
+          30.4775076
+        ],
+        "geometryHash": "05d07070a05245e07a95dddd0b3124a1d9e740eb7d15f496d89a779a1563daa8",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-82b31c6f857ca6923ba5",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.26721,
+        "bbox": [
+          114.0640655,
+          30.4672525,
+          114.0833132,
+          30.480511
+        ],
+        "geometryHash": "10d76c34caa2ffc0dcc1cb680b77fc5ca7edacc7c35d6850b3be166ceea38aac",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-a33331531c603958bf19",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.338885,
+        "bbox": [
+          114.0851531,
+          30.4677259,
+          114.0979745,
+          30.4718921
+        ],
+        "geometryHash": "6498c7cbbc360263b9de730059b6b17f33651982e9daed6842a4f7fa876a8ffd",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-057d8f94a66e761d9c13",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 35.609793,
+        "bbox": [
+          114.0961778,
+          30.468012,
+          114.1677703,
+          30.5300074
+        ],
+        "geometryHash": "3e5e2ed03cc6a3ea869ba98defd802968ea41568378b20525f8cdf313fe10aca",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-3e067b3b6a580f1ff00c",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.658714,
+        "bbox": [
+          114.516826,
+          30.4695384,
+          114.5290494,
+          30.4768971
+        ],
+        "geometryHash": "54456617d1a1008c0834737c4d891cdf82d012ab8bd0863b1b5deda28d4e7f27",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-edbab731397789b811b8",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.1660166,
+          30.4695474,
+          114.2375714,
+          30.5315091
+        ],
+        "geometryHash": "ac94f00763589ebb9a70e47846c8fd757070877ceed8b224014e4cb90f567ee3",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-0199d3e29b8ac9816d8e",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.2358608,
+          30.4710454,
+          114.3073776,
+          30.5329734
+        ],
+        "geometryHash": "d513ba1d80d3d3c98eddae33d07e340181968fd1321f23d33425e14af2651883",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-f6286c626f3a37c072de",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.3057101,
+          30.4725063,
+          114.3771889,
+          30.5344003
+        ],
+        "geometryHash": "81a2f84fbdf6f195fe6fdcb9af6b9bf31055b16534a5e688c31d4acd2c6b79cc",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-7217809adf026b01dace",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.3755645,
+          30.4739298,
+          114.4470051,
+          30.5357899
+        ],
+        "geometryHash": "71b31a9954c44719eb05947fd88eb23f6b21030a9a8a7b82a97ca211645de303",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-f315692243a2d06480e3",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.4454238,
+          30.475316,
+          114.516826,
+          30.537142
+        ],
+        "geometryHash": "8523e842515f855e119a880eb14ac594c9cfaa459c108a23413c4f4ef0123302",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-3c56b9508b2594cdc41b",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 17.546949,
+        "bbox": [
+          114.5152879,
+          30.4766648,
+          114.570864,
+          30.5373545
+        ],
+        "geometryHash": "a5c73e323cabe733924af9d83596a7276cf13f9298e806559587d54d065b9254",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-92e691e19537f7bd9998",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.929051,
+        "bbox": [
+          114.03573,
+          30.503292,
+          114.042337,
+          30.5272322
+        ],
+        "geometryHash": "7aa5580e2dc5c40cff00766ddccdfb1e97aeeeed0bd3c5541ec8e889d08afaf9",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-f070fed3929bcf8f591c",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 3.663608,
+        "bbox": [
+          114.07557,
+          30.508651,
+          114.0967205,
+          30.5284683
+        ],
+        "geometryHash": "a1ecc25de3688c2564dfcea628ecc20a89a61f28cc5dfb6ebf9652f9b1ea71b3",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-80aa8b0a2d7526c906f3",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 5.746747,
+        "bbox": [
+          114.597763,
+          30.512971,
+          114.6556701,
+          30.539372
+        ],
+        "geometryHash": "dd70c5cdf0c42cfc1091a108c445d30bf466261e8bff47aaaa022a038efb5d71",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-7ac3ccc07f6e91f57042",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.019343,
+        "bbox": [
+          114.6555836,
+          30.513091,
+          114.656211,
+          30.516712
+        ],
+        "geometryHash": "11de4fcb142e5b852945be69885cb20887f8234c6940035cb852eec0146046ad",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-f6188035d81d886d9f9d",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 28.341989,
+        "bbox": [
+          114.0253088,
+          30.5271471,
+          114.0961778,
+          30.588924
+        ],
+        "geometryHash": "7521580c46c2aa42393a973497dcffa500e1b93cc98d301170ccb4759cf47e8e",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-bd48380996f5906491f0",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.0943757,
+          30.5284683,
+          114.1660166,
+          30.5904668
+        ],
+        "geometryHash": "08c6b6ce0ccf8c203ff9b89a70f8281f3b9ff95df8c58e057ddc833157c9f985",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-aa5ed078038648c44aac",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.1642577,
+          30.5300074,
+          114.2358608,
+          30.5919721
+        ],
+        "geometryHash": "d2e4e2d3bd0117753e24215b828a9593e8b527e46da8e8093292acd936e970b3",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-fc49e333bac1d8583030",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.234145,
+          30.5315091,
+          114.3057101,
+          30.5934399
+        ],
+        "geometryHash": "075539afcccbc6051201441612ed4a641bf38da65d229cb3e458983c5c379c91",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-c03aa1360aebdebb1206",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.3040376,
+          30.5329734,
+          114.3755645,
+          30.5948703
+        ],
+        "geometryHash": "50ccd82635e21bba18f661c586636370ff16644ec22bf99bbff5d4523e7da68a",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-a4b6a4ab4594e015b528",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.3739352,
+          30.5344003,
+          114.4454238,
+          30.5962631
+        ],
+        "geometryHash": "e8c5b3e031c155e37c77eb3c3cc64e7bcbe922c51e2b9da1294b79b0b7f088e1",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-4df512e83112b71fc82f",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.4438378,
+          30.5357899,
+          114.5152879,
+          30.5976185
+        ],
+        "geometryHash": "c496870f5b90fa47825cf7977ee3e3c9271b61c342a8aa4c8686f7bf6639f88a",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-459a013163facca21945",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 26.532634,
+        "bbox": [
+          114.5137451,
+          30.537142,
+          114.5850381,
+          30.5977882
+        ],
+        "geometryHash": "8b2329446ef2c8f90c4f381a201371345e49ac19bc8d9da625eddf4b796e6e9a",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-218ba008389f29243644",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 2.374047,
+        "bbox": [
+          114.584739,
+          30.5389373,
+          114.6226125,
+          30.55532
+        ],
+        "geometryHash": "042bf60a1c0856237ab12e46696f425280be187575ba6d5d14e25330dadf295a",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-de512bd503d487af59c4",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 3.903497,
+        "bbox": [
+          113.960684,
+          30.540805,
+          114.0254189,
+          30.565359
+        ],
+        "geometryHash": "a6bd6b68399223996c492e7a08edc9d27d32a49185228974ae03897d010eb45a",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-0ae99c380923ac643dbe",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 32.905813,
+        "bbox": [
+          114.02354,
+          30.5876614,
+          114.0943757,
+          30.6485739
+        ],
+        "geometryHash": "269b0f72338bf69d2ac5c4633a8e912a078596354ed1bb62db78b4dd2b97038f",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-3e8b495ad22a356c76c0",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 43.993903,
+        "bbox": [
+          114.0930154,
+          30.588924,
+          114.1642577,
+          30.6509255
+        ],
+        "geometryHash": "24799b6e3644bbab141d844700e10390399b5159aae188175083c7b38a574f53",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-0b6e7ce56a3500fc051c",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.1624934,
+          30.5904668,
+          114.234145,
+          30.6524344
+        ],
+        "geometryHash": "ecfc8f00d3e7e7b56b2e66a04801d79a170e388848191357e1bfc41649f4afc3",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-2d0259827a1be2d630d7",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.2324241,
+          30.5919721,
+          114.3040376,
+          30.6539058
+        ],
+        "geometryHash": "8c26836b0acacb9a5bb8396e8aed3a112a6f9156b4737c5221a95b21e963eb51",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-775cb629e65bf09660d5",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.30236,
+          30.5934399,
+          114.3739352,
+          30.6553396
+        ],
+        "geometryHash": "7a8b999b1082d11e0227e7ffe1c630abc3507d7a89acb162a2e58fe569870cea",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-f67d1fba7b2229352b9c",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 44.99867,
+        "bbox": [
+          114.372301,
+          30.5948703,
+          114.4438378,
+          30.6567358
+        ],
+        "geometryHash": "c394eef7e04954091ba7c8e68339554efcd7eeb1ce2529ff72bfd741a801e27b",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-f5a0c147304fdf85c6ab",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 38.186814,
+        "bbox": [
+          114.4422469,
+          30.5962631,
+          114.5137451,
+          30.6580944
+        ],
+        "geometryHash": "9f9e18edd59685a2289c70cb63a9a26aa9be7a6ae4db6165a26dd1300f5e8769",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-64bff732aaebe3abde4c",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 4.915853,
+        "bbox": [
+          114.5134922,
+          30.5976185,
+          114.5822049,
+          30.6594154
+        ],
+        "geometryHash": "3f7987fbe346aaa23349d3afc1dfdefecb337b02e47847983f30d3e7170d8923",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-8eb069e024bad78fe2d3",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.540862,
+        "bbox": [
+          114.5121977,
+          30.64357,
+          114.527454,
+          30.6583208
+        ],
+        "geometryHash": "e57e236c7e035b41694f581b1b8ba80f22f532dab16a5be2aa06a3c6f8497cb6",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-22c2a40a883b25bc6a96",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.560406,
+        "bbox": [
+          114.022437,
+          30.6478588,
+          114.0568184,
+          30.659085
+        ],
+        "geometryHash": "800d867749a67b99ffe102c74af15adf93a08f380b42c30290bb8719f22a9271",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-1e9fb751a4a81d98475b",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 39.732004,
+        "bbox": [
+          114.0909628,
+          30.6495764,
+          114.1624934,
+          30.7113836
+        ],
+        "geometryHash": "2b2a5fe871d9d18686b3adb0df8b30ed1524c979df4f2407d6ad41a0898e4f67",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-e9dcf1b45bf365f285a9",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.1607237,
+          30.6509255,
+          114.2324241,
+          30.7128961
+        ],
+        "geometryHash": "8719faa7e74896b73e2b1bba62e8d8f7383c155ab8bb01c87058464ca69bee7b",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-29f5fdc2b102fa016117",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.017133,
+        "bbox": [
+          114.021548,
+          30.6516547,
+          114.0225298,
+          30.6546792
+        ],
+        "geometryHash": "55ea08eac7fa86c951c617631797c473423f11e2c526827e7a2c669cda1763f7",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-44775c2b5d5d75b0a8d9",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.2306979,
+          30.6524344,
+          114.30236,
+          30.714371
+        ],
+        "geometryHash": "1e94cb1ceb3c20a98633c322800d407ed33ef0da425a588a14215a3c5b646406",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-a8c448f6f64bee1ae859",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.3006773,
+          30.6539058,
+          114.372301,
+          30.7158082
+        ],
+        "geometryHash": "08f0947396403f23c60465abaf267644a109afa7f6dfb89de273f7fcfe7250e3",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-55ab940de3f8557227a3",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 27.992642,
+        "bbox": [
+          114.3706618,
+          30.6553396,
+          114.4410709,
+          30.7172078
+        ],
+        "geometryHash": "b01ed92a8d117668a8dbfb49f48fb623b9ec56ae4b36af5ce1b7d89e4eea8ae2",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-4370192dc2d6fd6d89ef",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.971672,
+        "bbox": [
+          114.4154768,
+          30.6562059,
+          114.4422469,
+          30.6665323
+        ],
+        "geometryHash": "919d5c4c09babc4e887df751f362ade2195d952d160817b9f22e7ed47701b262",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-6c7e62dd0c9a4e715450",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 9.534359,
+        "bbox": [
+          114.4419888,
+          30.6567358,
+          114.5121977,
+          30.687159
+        ],
+        "geometryHash": "f0cbc105b343f7382feb4afb9f131196f8896e6b4ac45d5ee3a1e3fa195722ab",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-24b19b67fb472c2622a1",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.005997,
+        "bbox": [
+          114.5821532,
+          30.657336,
+          114.5827143,
+          30.6594259
+        ],
+        "geometryHash": "ccacd4a99e57d2ea92bc722fb8afb32f07586aadf2636bf56a32e0dc7ac7d3b4",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-f5099a2b59da973e955a",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.21447,
+        "bbox": [
+          114.5121358,
+          30.6580944,
+          114.5240476,
+          30.6605107
+        ],
+        "geometryHash": "bb725813a7676424597c748a1fdb7aa31940bac047d16ed27daabf8db3aa3cf0",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-242277ea504dee137acc",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.184697,
+        "bbox": [
+          114.5769516,
+          30.6593185,
+          114.5821532,
+          30.6684939
+        ],
+        "geometryHash": "420d46d4973aed7ab6cbb89fb3f2f49cd2af3643c073a1856fce62e83efdc7e4",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-ee5c09cbf8059f098833",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.449313,
+        "bbox": [
+          114.581927,
+          30.6594154,
+          114.586686,
+          30.674782
+        ],
+        "geometryHash": "556ed2a45e42e21efad434c6dfef78717373632404b367f44c412f8e4bdb919a",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-8ab662c58df0d9161144",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.357505,
+        "bbox": [
+          114.08215,
+          30.678687,
+          114.091687,
+          30.682483
+        ],
+        "geometryHash": "79f2b344d943d645559c5e23ef8119b73f346bd6b3e9355efdeb6fbdee11fa04",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-190c0acddbef0ac8c4fe",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 3.34095,
+        "bbox": [
+          114.5107664,
+          30.686554,
+          114.553378,
+          30.7138662
+        ],
+        "geometryHash": "446ecb03ee3a4ed229208a4777bf3b0eb45cfafdb25b933cbb976958d6a086f1",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-b8f3b739a113e682b3e7",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 13.092207,
+        "bbox": [
+          114.4406513,
+          30.6919806,
+          114.5113286,
+          30.7177071
+        ],
+        "geometryHash": "6f1d0e5cf731196d44f1c5ada5c4a6a6e4f1fb6e357a14822334a4651c338f31",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-4678c6424f787e2b01cd",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.012202,
+        "bbox": [
+          114.090176,
+          30.7002539,
+          114.0910426,
+          30.7029121
+        ],
+        "geometryHash": "9293f80d9c8593b604f6d2da811911f624da6ce9d3104cba8fd0c969e12a2900",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-9a049dedabf191d0964e",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.503637,
+        "bbox": [
+          114.090484,
+          30.7099126,
+          114.1030907,
+          30.7188497
+        ],
+        "geometryHash": "718c81dbfaedcd3a9757e38806cef5786c689fcdf0814e072dad5adeacdccb2d",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-106eec629ed5fc33bb48",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 7.977345,
+        "bbox": [
+          114.1164987,
+          30.7104082,
+          114.1607237,
+          30.7435025
+        ],
+        "geometryHash": "c014fbaf4cac3d4fbcc9c0c8e60a5a9390bd263dbcb6cc729e96c6da365a3b43",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-7c7bae17180c4c680d15",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 41.080496,
+        "bbox": [
+          114.1597814,
+          30.7113836,
+          114.2306979,
+          30.7733572
+        ],
+        "geometryHash": "619e8349f160fcf0d1f9a8288a1a67cc50a129eed7d6fc3e84b277cabba41ce2",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-63c317fd711ba46e848f",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 45.0,
+        "bbox": [
+          114.2289665,
+          30.7128961,
+          114.3006773,
+          30.7748356
+        ],
+        "geometryHash": "b19a53b0645c587ec0b035eb2c515631d67a41e8e2f40cad206dced378ea0edf",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-681dcd92181978de8bc0",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 44.808623,
+        "bbox": [
+          114.2989895,
+          30.714371,
+          114.3706618,
+          30.7761525
+        ],
+        "geometryHash": "a6faec70abc735766c202d217488947e28a930a160f23c419a0469d86e19d7a5",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-abbe09e41ede0c0df325",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.499014,
+        "bbox": [
+          114.077948,
+          30.7147725,
+          114.0906065,
+          30.7238
+        ],
+        "geometryHash": "4ef684295d741a88bed98b6697824f86d1d0a854292f664d58089b1d5acb9b9c",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-48cd076a3f5c07ba91a8",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 30.860388,
+        "bbox": [
+          114.369138,
+          30.7158082,
+          114.4406513,
+          30.7776791
+        ],
+        "geometryHash": "501851d616d8c2768b97ef423844282f879be00293137e0ba40795d186b18bfa",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-936d69c0664b3238c922",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 7.673764,
+        "bbox": [
+          114.4398687,
+          30.7172078,
+          114.473984,
+          30.7467988
+        ],
+        "geometryHash": "231a747fb0954a95de44fd4d6d9a490f2665e525fd3a2f4b0b2fa65d1a34bdd4",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-c7df5aae9bc71899d0da",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.459636,
+        "bbox": [
+          114.1586773,
+          30.7719739,
+          114.1822181,
+          30.7810693
+        ],
+        "geometryHash": "de6d57b0edecab41a22d7a7004cd90e915d54985c236a02148361bbe22888133",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-c448ebfff569ae5f064e",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 3.516416,
+        "bbox": [
+          114.2043645,
+          30.7728288,
+          114.2289665,
+          30.808379
+        ],
+        "geometryHash": "3a6eec5e6cbebaacf1b3b1a36157013cfd2437619f0cb1af9598946c981a16cc",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-c82b9f6fe2f1b59bc00b",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 31.748537,
+        "bbox": [
+          114.2279612,
+          30.7733572,
+          114.2989895,
+          30.8340997
+        ],
+        "geometryHash": "8239c7518ab9cdd5fa7874333ffcde7e58f81e88614a17de71ad02926bb8b624",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-c39b6e6fb6e1152d94cb",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 32.554187,
+        "bbox": [
+          114.2974742,
+          30.7748356,
+          114.3629302,
+          30.8362773
+        ],
+        "geometryHash": "72229808d70ef9cd998dc9616e91f4d94c8e6a8e64a6112bd2eaf8a44d96f5f7",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-b4ac1a0281136d1e6740",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.315152,
+        "bbox": [
+          114.1382,
+          30.776329,
+          114.1588167,
+          30.806857
+        ],
+        "geometryHash": "43b646c7fb7f1b98e8d1db4445991d4b04282a81e822db4f98e76b1592f3bb1a",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-b5303dc22016d9447447",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.005787,
+        "bbox": [
+          114.4390508,
+          30.7768639,
+          114.4403869,
+          30.7777055
+        ],
+        "geometryHash": "f93ac0353752d5b85316ec4628a6ea0725cec98718e00d588688276cf787a0b0",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-b7eb1b1961656bca1648",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.57908,
+        "bbox": [
+          114.4307554,
+          30.7775149,
+          114.4390508,
+          30.818954
+        ],
+        "geometryHash": "88c1feec484f0c74c91a39872509ab8da4cd8ebbb6d4ef4e4482068769e5e359",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-44487aaabd49d683f527",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.962319,
+        "bbox": [
+          114.4387484,
+          30.7776791,
+          114.481644,
+          30.790006
+        ],
+        "geometryHash": "c683279848680b418d6611e4299d742312c1e77b7e7816c6ff7c1a5f2ff2574f",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-ea118519fd36fb7cbb9b",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.164634,
+        "bbox": [
+          114.4379555,
+          30.809343,
+          114.441402,
+          30.819391
+        ],
+        "geometryHash": "fb0bb255bfb1a607cea82bb42f40e22ea8b4792d9c29baf1dc2bc3d9ffcd15cb",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-9cd8d0597ce4c49dd4be",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.21343,
+        "bbox": [
+          114.219137,
+          30.828567,
+          114.2251253,
+          30.8337725
+        ],
+        "geometryHash": "658f2754227eab0b0dfcaab09ea64e0a09d1954b6e7dcc042d3f6f205b1a58ee",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-a1b0882a642003dd2e93",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 2.419722,
+        "bbox": [
+          114.203027,
+          30.8336519,
+          114.2272063,
+          30.885505
+        ],
+        "geometryHash": "000630e980bf6b0613dbb33cb9da6171a9629075d5094e15517890629dea3aab",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-ea104665fa1cbe17b6cf",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 1.753632,
+        "bbox": [
+          114.2266482,
+          30.8339866,
+          114.2404315,
+          30.8540272
+        ],
+        "geometryHash": "fe877b7d8394dca1c5ad472a01b23ca0dc3f0aa24fdb8e836072065f85ca2521",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-864fb12091dc1a1ff9a1",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 0.612426,
+        "bbox": [
+          114.302288,
+          30.8354071,
+          114.310666,
+          30.850916
+        ],
+        "geometryHash": "8ea56582f02afdafa6d1074021d4be0d9d3ac2b692b8e773fe48908163eba511",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      },
+      {
+        "pieceId": "piece-8c34edd12e416bc78806",
+        "parentPieceId": null,
+        "depth": 0,
+        "areaKm2": 5.103659,
+        "bbox": [
+          114.3232395,
+          30.8358386,
+          114.357894,
+          30.880999
+        ],
+        "geometryHash": "fb2207b79f94d20cabe0ea7271b6676a7dce4a02eb2393a47fcca0968f326402",
+        "status": "planned",
+        "attemptCount": 0,
+        "resultCount": null,
+        "resultTruncated": null,
+        "cacheHit": false
+      }
+    ]
+  },
+  "upstreamRequestLedger": {
+    "isochrones": {
+      "attempted": 0,
+      "cacheHits": 0,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "pois": {
+      "attempted": 0,
+      "cacheHits": 0,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "matrix": {
+      "attempted": 0,
+      "cacheHits": 0,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "geocoder": {
+      "attempted": 0,
+      "cacheHits": 0,
+      "upstreamRequests": 0,
+      "retries": 0
+    },
+    "directions": {
+      "attempted": 0,
+      "cacheHits": 0,
+      "upstreamRequests": 0,
+      "retries": 0
+    }
+  },
+  "note": "The isochrone cache validation is a local file read and is not an upstream request."
+}

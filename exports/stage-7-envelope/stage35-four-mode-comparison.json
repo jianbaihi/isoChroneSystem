@@ -1,0 +1,643 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 35,
+  "status": "completed",
+  "sourceLayouts": {
+    "geographic": "exports/stage-7-radial/stage33-geographic-layout.json",
+    "random": "exports/stage-7-radial/stage33-random-layout.json"
+  },
+  "inputCounts": {
+    "total": 282,
+    "eligible": 252,
+    "outOfRange": 30,
+    "rings": {
+      "ring-0-10": 39,
+      "ring-10-20": 83,
+      "ring-20-30": 130
+    },
+    "cumulative": [
+      39,
+      122,
+      252
+    ]
+  },
+  "params": {
+    "cellSize": 8,
+    "bandwidth": 26,
+    "thresholdPreset": "balanced",
+    "sampleStep": 8,
+    "envelopePaddingPx": 14,
+    "smoothing": 60,
+    "minEnvelopeGapPx": 12,
+    "minComponentArea": 2000,
+    "referenceRadius": 1142,
+    "showDensityDebug": false
+  },
+  "dependency": {
+    "type": "in-repo-equivalent-density-contour-adapter",
+    "algorithmVersion": "stage35-polar-density-contour-v1",
+    "externalD3Version": null,
+    "statement": "无构建静态架构未引入外部 D3 包；实现 bbox 栅格/极坐标密度采样与等值外轮廓适配器，不宣称调用 D3 API。"
+  },
+  "combinations": [
+    {
+      "combinationId": "G-C",
+      "labelOrientation": "geographic-radial",
+      "envelopeMode": "circular",
+      "eligible": 252,
+      "placed": 252,
+      "unplaced": 0,
+      "placedByRing": {
+        "ring-0-10": 39,
+        "ring-10-20": 83,
+        "ring-20-30": 130
+      },
+      "layoutFingerprint": "fnv1a-c715b7de",
+      "envelopeFingerprint": "circular-fnv1a-c715b7de",
+      "layoutDurationMs": 610,
+      "envelopeDurationMs": 0,
+      "logicalCanvas": {
+        "width": 2324,
+        "height": 2324
+      },
+      "fitScale": 0.4058,
+      "constraints": {
+        "overlapCount": 0,
+        "outsideOwnRingCount": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "densityCalculationPerformed": false,
+      "fallbackCount": 0,
+      "envelopes": [
+        {
+          "ringId": "ring-0-10",
+          "time": 10,
+          "cumulativeLabelCount": 39,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 39,
+            "requiredLabelCount": 39,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": null,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 630530.21,
+            "perimeterPx": 2814.87,
+            "compactness4PiAOverP2": 1,
+            "concavityConvexHullRatio": 1,
+            "vertexCount": 120,
+            "generationDurationMs": 0,
+            "adjustmentIterations": 0,
+            "fallbackUsed": false,
+            "fallbackReason": null
+          }
+        },
+        {
+          "ringId": "ring-10-20",
+          "time": 20,
+          "cumulativeLabelCount": 122,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 122,
+            "requiredLabelCount": 122,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": 12,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 1960667.98,
+            "perimeterPx": 4963.72,
+            "compactness4PiAOverP2": 1,
+            "concavityConvexHullRatio": 1,
+            "vertexCount": 120,
+            "generationDurationMs": 0,
+            "adjustmentIterations": 0,
+            "fallbackUsed": false,
+            "fallbackReason": null
+          }
+        },
+        {
+          "ringId": "ring-20-30",
+          "time": 30,
+          "cumulativeLabelCount": 252,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 252,
+            "requiredLabelCount": 252,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": 12,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 4097152.04,
+            "perimeterPx": 7175.4,
+            "compactness4PiAOverP2": 1,
+            "concavityConvexHullRatio": 1,
+            "vertexCount": 120,
+            "generationDurationMs": 0,
+            "adjustmentIterations": 0,
+            "fallbackUsed": false,
+            "fallbackReason": null
+          }
+        }
+      ],
+      "coordinateChangesFromCircular": 0
+    },
+    {
+      "combinationId": "G-N",
+      "labelOrientation": "geographic-radial",
+      "envelopeMode": "natural-density",
+      "eligible": 252,
+      "placed": 252,
+      "unplaced": 0,
+      "placedByRing": {
+        "ring-0-10": 39,
+        "ring-10-20": 83,
+        "ring-20-30": 130
+      },
+      "layoutFingerprint": "fnv1a-c715b7de",
+      "envelopeFingerprint": "fnv1a-79778658",
+      "layoutDurationMs": 610,
+      "envelopeDurationMs": 72,
+      "logicalCanvas": {
+        "width": 2324,
+        "height": 2324
+      },
+      "fitScale": 0.4058,
+      "constraints": {
+        "overlapCount": 0,
+        "outsideOwnRingCount": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "densityCalculationPerformed": true,
+      "fallbackCount": 0,
+      "envelopes": [
+        {
+          "ringId": "ring-0-10",
+          "time": 10,
+          "cumulativeLabelCount": 39,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 39,
+            "requiredLabelCount": 39,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": null,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 428690.24,
+            "perimeterPx": 3412.18,
+            "compactness4PiAOverP2": 0.4627,
+            "distanceFromSafeShapePx": {
+              "mean": 131.47,
+              "median": 117.71,
+              "p95": 282.88,
+              "max": 354.8
+            },
+            "concavityConvexHullRatio": 0.8556,
+            "vertexCount": 360,
+            "adjustmentIterations": 0,
+            "fallbackUsed": false,
+            "fallbackReason": null,
+            "generationDurationMs": 6,
+            "envelopeFingerprint": "fnv1a-9cb0ca57"
+          }
+        },
+        {
+          "ringId": "ring-10-20",
+          "time": 20,
+          "cumulativeLabelCount": 122,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 122,
+            "requiredLabelCount": 122,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": 12.05,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 1731378.64,
+            "perimeterPx": 6721.4,
+            "compactness4PiAOverP2": 0.4816,
+            "distanceFromSafeShapePx": {
+              "mean": 236.01,
+              "median": 181.51,
+              "p95": 557.83,
+              "max": 699.8
+            },
+            "concavityConvexHullRatio": 0.9064,
+            "vertexCount": 360,
+            "adjustmentIterations": 3,
+            "fallbackUsed": false,
+            "fallbackReason": null,
+            "generationDurationMs": 32,
+            "envelopeFingerprint": "fnv1a-5d7c7b8e"
+          }
+        },
+        {
+          "ringId": "ring-20-30",
+          "time": 30,
+          "cumulativeLabelCount": 252,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 252,
+            "requiredLabelCount": 252,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": 12.07,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 3438037.14,
+            "perimeterPx": 8403.63,
+            "compactness4PiAOverP2": 0.6118,
+            "distanceFromSafeShapePx": {
+              "mean": 341.42,
+              "median": 246.1,
+              "p95": 867,
+              "max": 1063
+            },
+            "concavityConvexHullRatio": 0.9253,
+            "vertexCount": 360,
+            "adjustmentIterations": 8,
+            "fallbackUsed": false,
+            "fallbackReason": null,
+            "generationDurationMs": 72,
+            "envelopeFingerprint": "fnv1a-49d0755e"
+          }
+        }
+      ],
+      "coordinateChangesFromCircular": 0
+    },
+    {
+      "combinationId": "R-C",
+      "labelOrientation": "random-radial",
+      "envelopeMode": "circular",
+      "eligible": 252,
+      "placed": 252,
+      "unplaced": 0,
+      "placedByRing": {
+        "ring-0-10": 39,
+        "ring-10-20": 83,
+        "ring-20-30": 130
+      },
+      "layoutFingerprint": "fnv1a-b4c87899",
+      "envelopeFingerprint": "circular-fnv1a-b4c87899",
+      "layoutDurationMs": 382,
+      "envelopeDurationMs": 0,
+      "logicalCanvas": {
+        "width": 2324,
+        "height": 2324
+      },
+      "fitScale": 0.4058,
+      "constraints": {
+        "overlapCount": 0,
+        "outsideOwnRingCount": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "densityCalculationPerformed": false,
+      "fallbackCount": 0,
+      "envelopes": [
+        {
+          "ringId": "ring-0-10",
+          "time": 10,
+          "cumulativeLabelCount": 39,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 39,
+            "requiredLabelCount": 39,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": null,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 630530.21,
+            "perimeterPx": 2814.87,
+            "compactness4PiAOverP2": 1,
+            "concavityConvexHullRatio": 1,
+            "vertexCount": 120,
+            "generationDurationMs": 0,
+            "adjustmentIterations": 0,
+            "fallbackUsed": false,
+            "fallbackReason": null
+          }
+        },
+        {
+          "ringId": "ring-10-20",
+          "time": 20,
+          "cumulativeLabelCount": 122,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 122,
+            "requiredLabelCount": 122,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": 12,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 1960667.98,
+            "perimeterPx": 4963.72,
+            "compactness4PiAOverP2": 1,
+            "concavityConvexHullRatio": 1,
+            "vertexCount": 120,
+            "generationDurationMs": 0,
+            "adjustmentIterations": 0,
+            "fallbackUsed": false,
+            "fallbackReason": null
+          }
+        },
+        {
+          "ringId": "ring-20-30",
+          "time": 30,
+          "cumulativeLabelCount": 252,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 252,
+            "requiredLabelCount": 252,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": 12,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 4097152.04,
+            "perimeterPx": 7175.4,
+            "compactness4PiAOverP2": 1,
+            "concavityConvexHullRatio": 1,
+            "vertexCount": 120,
+            "generationDurationMs": 0,
+            "adjustmentIterations": 0,
+            "fallbackUsed": false,
+            "fallbackReason": null
+          }
+        }
+      ],
+      "coordinateChangesFromCircular": 0
+    },
+    {
+      "combinationId": "R-N",
+      "labelOrientation": "random-radial",
+      "envelopeMode": "natural-density",
+      "eligible": 252,
+      "placed": 252,
+      "unplaced": 0,
+      "placedByRing": {
+        "ring-0-10": 39,
+        "ring-10-20": 83,
+        "ring-20-30": 130
+      },
+      "layoutFingerprint": "fnv1a-b4c87899",
+      "envelopeFingerprint": "fnv1a-0510e122",
+      "layoutDurationMs": 382,
+      "envelopeDurationMs": 40,
+      "logicalCanvas": {
+        "width": 2324,
+        "height": 2324
+      },
+      "fitScale": 0.4058,
+      "constraints": {
+        "overlapCount": 0,
+        "outsideOwnRingCount": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "densityCalculationPerformed": true,
+      "fallbackCount": 0,
+      "envelopes": [
+        {
+          "ringId": "ring-0-10",
+          "time": 10,
+          "cumulativeLabelCount": 39,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 39,
+            "requiredLabelCount": 39,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": null,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 466456.88,
+            "perimeterPx": 3475.74,
+            "compactness4PiAOverP2": 0.4852,
+            "distanceFromSafeShapePx": {
+              "mean": 121.25,
+              "median": 113.63,
+              "p95": 254.14,
+              "max": 351.03
+            },
+            "concavityConvexHullRatio": 0.8508,
+            "vertexCount": 360,
+            "adjustmentIterations": 0,
+            "fallbackUsed": false,
+            "fallbackReason": null,
+            "generationDurationMs": 2,
+            "envelopeFingerprint": "fnv1a-62c390ec"
+          }
+        },
+        {
+          "ringId": "ring-10-20",
+          "time": 20,
+          "cumulativeLabelCount": 122,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 122,
+            "requiredLabelCount": 122,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": 28.14,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 1772511.36,
+            "perimeterPx": 5945.87,
+            "compactness4PiAOverP2": 0.63,
+            "distanceFromSafeShapePx": {
+              "mean": 236.58,
+              "median": 178.91,
+              "p95": 557.59,
+              "max": 705.17
+            },
+            "concavityConvexHullRatio": 0.9384,
+            "vertexCount": 360,
+            "adjustmentIterations": 0,
+            "fallbackUsed": false,
+            "fallbackReason": null,
+            "generationDurationMs": 19,
+            "envelopeFingerprint": "fnv1a-b90f303d"
+          }
+        },
+        {
+          "ringId": "ring-20-30",
+          "time": 30,
+          "cumulativeLabelCount": 252,
+          "metrics": {
+            "geometryType": "Polygon",
+            "closed": true,
+            "componentCount": 1,
+            "holeCount": 0,
+            "selfIntersectionCount": 0,
+            "coveredLabelCount": 252,
+            "requiredLabelCount": 252,
+            "previousEnvelopeCovered": true,
+            "minGapToPreviousEnvelopePx": 96.86,
+            "lineTextIntersectionCount": 0,
+            "areaPx2": 3810283.36,
+            "perimeterPx": 8706.58,
+            "compactness4PiAOverP2": 0.6316,
+            "distanceFromSafeShapePx": {
+              "mean": 362.65,
+              "median": 317.44,
+              "p95": 860.88,
+              "max": 1060.12
+            },
+            "concavityConvexHullRatio": 0.9451,
+            "vertexCount": 360,
+            "adjustmentIterations": 0,
+            "fallbackUsed": false,
+            "fallbackReason": null,
+            "generationDurationMs": 40,
+            "envelopeFingerprint": "fnv1a-9eb22156"
+          }
+        }
+      ],
+      "coordinateChangesFromCircular": 0
+    }
+  ],
+  "coordinateInvariants": {
+    "geographicCircularVsNaturalChanges": 0,
+    "randomCircularVsNaturalChanges": 0,
+    "poiIdChanges": 0,
+    "ringIdChanges": 0,
+    "matrixTimeChanges": 0,
+    "domNodesExpected": 252,
+    "labelLayoutFeedbackMode": false
+  },
+  "stability": {
+    "geographic": [
+      "fnv1a-79778658",
+      "fnv1a-79778658",
+      "fnv1a-79778658",
+      "fnv1a-79778658",
+      "fnv1a-79778658"
+    ],
+    "geographicStable": true,
+    "random": [
+      "fnv1a-0510e122",
+      "fnv1a-0510e122",
+      "fnv1a-0510e122",
+      "fnv1a-0510e122",
+      "fnv1a-0510e122"
+    ],
+    "randomStable": true
+  },
+  "cache": {
+    "geographic": {
+      "coldHit": false,
+      "coldGenerationDurationMs": 72,
+      "hotHit": true,
+      "hotLookupDurationMs": 0.0144,
+      "cacheSize": 1
+    },
+    "random": {
+      "coldHit": false,
+      "coldGenerationDurationMs": 40,
+      "hotHit": true,
+      "hotLookupDurationMs": 0.0186,
+      "cacheSize": 1
+    }
+  },
+  "tightnessTrend": {
+    "loose20": 344.96,
+    "tight80": 338.06,
+    "passed": true
+  },
+  "browserEvidence": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "combinations": {
+      "G-C": {
+        "nodes": 252,
+        "layoutFingerprint": "fnv1a-c715b7de",
+        "envelopeFingerprint": "circular-fnv1a-c715b7de",
+        "valid": true
+      },
+      "G-N": {
+        "nodes": 252,
+        "layoutFingerprint": "fnv1a-c715b7de",
+        "envelopeFingerprint": "fnv1a-79778658",
+        "valid": true
+      },
+      "R-C": {
+        "nodes": 252,
+        "layoutFingerprint": "fnv1a-b4c87899",
+        "envelopeFingerprint": "circular-fnv1a-b4c87899",
+        "valid": true
+      },
+      "R-N": {
+        "nodes": 252,
+        "layoutFingerprint": "fnv1a-b4c87899",
+        "envelopeFingerprint": "fnv1a-0510e122",
+        "valid": true
+      }
+    },
+    "switching": {
+      "geographicCoordinateChanges": 0,
+      "randomCoordinateChanges": 0,
+      "envelopeSwitchLayoutExecutionDelta": 0,
+      "hotNaturalCache": "hit"
+    },
+    "parameterInteraction": {
+      "tightness": 80,
+      "smoothing": 80,
+      "minEnvelopeGapPx": 16,
+      "debugPointCount": 22125,
+      "allValid": true,
+      "restoredDebugResidueCount": 0
+    },
+    "naturalReadingView": {
+      "minimumScreenFontPx": 8.01,
+      "nodeCount": 252,
+      "transformOnly": true
+    },
+    "businessUpstreamRequests": 0
+  },
+  "viewContract": {
+    "frozen": "stage33-view-contract-v1",
+    "overviewAllowsBelow8": true,
+    "readingMinimumScreenFontPx": 8,
+    "viewTransformOnly": true,
+    "naturalModeSupported": true
+  },
+  "zeroApi": {
+    "isochrones": 0,
+    "poi": 0,
+    "matrix": 0,
+    "geocoder": 0
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "planFingerprint": "272d594a7ca30b6284ec64bebd51f4d112945ca513a5d87a757929c82cb0e706",
+  "profile": "cycling-regular",
+  "outerAreaKm2": 121.109624,
+  "pieceCount": 10,
+  "pieceAreasKm2": [
+    10.305047,
+    3.191105,
+    34.785799,
+    28.187641,
+    0.010268,
+    9.070499,
+    6.213864,
+    11.82819,
+    3.262811,
+    14.254401
+  ],
+  "safePieceAreaKm2": 45,
+  "minimumRequests": 10,
+  "adaptiveReserve": 2,
+  "approvedUpperBound": 12,
+  "requestBudget": 12,
+  "budgetStatus": "within-budget",
+  "coverage": {
+    "outerGeometryValid": true,
+    "plannedAreaKm2": 121.109625,
+    "uncoveredAreaKm2": 2.338e-06,
+    "outsideAreaKm2": 2.777e-06,
+    "overlapAreaKm2": 0.0,
+    "areaDifferenceKm2": 4.39e-07,
+    "toleranceKm2": 0.12111,
+    "areaConserved": true
+  },
+  "queryGeometry": "cycling 30-minute cumulative isochrone outer Polygon",
+  "fixedRadiusPreviewUsed": false,
+  "upstreamRequests": 0
+}

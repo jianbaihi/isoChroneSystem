@@ -1,0 +1,52 @@
+{
+  "stage": 49,
+  "status": "passed",
+  "stateMachine": [
+    "map-view",
+    "panmap-entering-skeleton",
+    "panmap-entering-panel",
+    "panmap-ready",
+    "panmap-leaving"
+  ],
+  "skeletonFrame": {
+    "observedShellClass": "panmap-entering-panel",
+    "skeletonStillDisplayed": true,
+    "skeletonOpacityAtMeasurement": 1,
+    "background": "rgb(243, 246, 248)",
+    "abnormalRedBackground": false,
+    "oldReachabilityPanelDisplay": "none",
+    "oldReachabilityPanelWidthPx": 0,
+    "panmapPanelWidthPx": 2,
+    "canvasLeftPx": 257,
+    "canvasWidthPx": 1099,
+    "fullAvailableCanvas": true,
+    "screenshot": "stage49-panmap-skeleton-full-canvas.png"
+  },
+  "readyFrame": {
+    "shellClass": "panmap-ready",
+    "panmapPanelWidthPx": 425,
+    "panelCanvasGapPx": 13,
+    "canvasWidthPx": 836,
+    "skeletonDisplay": "none",
+    "horizontalOverflow": false,
+    "labelDomNodes": 254,
+    "coordinateFingerprint": "fnv1a-0bd70523",
+    "viewBox": "-22.334581772784077 70.97378277153553 1544.6691635455682 1358.052434456929",
+    "screenshot": "stage49-panmap-workbench-slid-in.png"
+  },
+  "returnAndReentry": {
+    "cyclesAfterResizeGuardFix": 2,
+    "beforeLabelDomNodes": 254,
+    "afterLabelDomNodes": 254,
+    "beforeCoordinateFingerprint": "fnv1a-0bd70523",
+    "afterCoordinateFingerprint": "fnv1a-0bd70523",
+    "beforeViewBox": "-22.334581772784077 70.97378277153553 1544.6691635455682 1358.052434456929",
+    "hiddenViewBoxAfterReturn": "-22.334581772784077 70.97378277153553 1544.6691635455682 1358.052434456929",
+    "afterViewBox": "-22.334581772784077 70.97378277153553 1544.6691635455682 1358.052434456929",
+    "stable": true,
+    "ghostPanel": false,
+    "resizeObserverIgnoredWhileHidden": true
+  },
+  "completionSignal": "transitionend",
+  "fallbackTimeoutMs": 420
+}

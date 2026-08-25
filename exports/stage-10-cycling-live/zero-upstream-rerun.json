@@ -1,0 +1,13 @@
+{
+  "Isochrones": 0,
+  "OpenPOIService": 0,
+  "Matrix": 0,
+  "Geocoder": 0,
+  "Directions": 0,
+  "cacheHits": {
+    "Isochrones": 1,
+    "OpenPOIServicePieces": 10,
+    "MatrixBatches": 5
+  },
+  "passed": true
+}

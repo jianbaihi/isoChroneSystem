@@ -1,0 +1,10 @@
+{
+  "uiMode": "bike",
+  "orsProfile": "cycling-regular",
+  "singleMappingSource": "app.js:PROFILE_BY_MODE",
+  "isochronesHeader": "X-Stage51-Job-ID",
+  "matrixProfile": "cycling-regular",
+  "ledgerProfile": "cycling-regular",
+  "resultProfile": "cycling-regular",
+  "passed": true
+}

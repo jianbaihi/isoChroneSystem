@@ -1,0 +1,483 @@
+{
+  "schemaVersion": "1.0",
+  "stage": 37,
+  "status": "completed-with-layout-tradeoff",
+  "inputCounts": {
+    "total": 282,
+    "eligible": 252,
+    "outOfRange": 30,
+    "rings": {
+      "ring-0-10": 39,
+      "ring-10-20": 83,
+      "ring-20-30": 130
+    }
+  },
+  "algorithms": [
+    {
+      "id": "old-radial",
+      "placed": 252,
+      "unplaced": 0,
+      "placedByRing": {
+        "ring-0-10": 39,
+        "ring-10-20": 83,
+        "ring-20-30": 130
+      },
+      "constraints": {
+        "overlapCount": 0,
+        "outsideOwnRingCount": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "canvasLogicalWidth": 2324,
+      "canvasReductionVsOld": 0,
+      "effectiveCanvasUtilization": 0.1721,
+      "ringMetrics": [
+        {
+          "ringId": "ring-0-10",
+          "count": 39,
+          "innerRadiusPx": 90,
+          "outerRadiusPx": 448,
+          "bandWidthPx": 358,
+          "unusedInnerBandPx": 37.28,
+          "outerSlackPx": 4.55,
+          "gapFromPreviousRingPx": 28,
+          "bandUtilization": 0.2608,
+          "voidAreaRatio": 0.7392,
+          "nearestGapPx": {
+            "min": 2.35,
+            "median": 3.58,
+            "p95": 15.15
+          }
+        },
+        {
+          "ringId": "ring-10-20",
+          "count": 83,
+          "innerRadiusPx": 460,
+          "outerRadiusPx": 790,
+          "bandWidthPx": 330,
+          "unusedInnerBandPx": 4.86,
+          "outerSlackPx": 4.48,
+          "gapFromPreviousRingPx": 12,
+          "bandUtilization": 0.2715,
+          "voidAreaRatio": 0.7285,
+          "nearestGapPx": {
+            "min": 0.9,
+            "median": 3.61,
+            "p95": 6.89
+          }
+        },
+        {
+          "ringId": "ring-20-30",
+          "count": 130,
+          "innerRadiusPx": 802,
+          "outerRadiusPx": 1142,
+          "bandWidthPx": 340,
+          "unusedInnerBandPx": 8.71,
+          "outerSlackPx": 11.25,
+          "gapFromPreviousRingPx": 12,
+          "bandUtilization": 0.2022,
+          "voidAreaRatio": 0.7978,
+          "nearestGapPx": {
+            "min": 1.04,
+            "median": 3.64,
+            "p95": 13.05
+          }
+        }
+      ],
+      "layoutDurationMs": 610,
+      "candidateChecks": 53825,
+      "fingerprint": "fnv1a-c715b7de",
+      "geographicBearingError": {
+        "mean": 2.37,
+        "median": 0,
+        "p95": 13.75,
+        "max": 57.5
+      }
+    },
+    {
+      "id": "fermat",
+      "placed": 252,
+      "unplaced": 0,
+      "placedByRing": {
+        "ring-0-10": 39,
+        "ring-10-20": 83,
+        "ring-20-30": 130
+      },
+      "constraints": {
+        "overlapCount": 0,
+        "outsideOwnRingCount": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "canvasLogicalWidth": 1563,
+      "canvasReductionVsOld": 0.3275,
+      "effectiveCanvasUtilization": 0.3805,
+      "ringMetrics": [
+        {
+          "ringId": "ring-0-10",
+          "count": 39,
+          "innerRadiusPx": 64,
+          "outerRadiusPx": 301.45,
+          "bandWidthPx": 237.45,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 2,
+          "bandUtilization": 0.5788,
+          "voidAreaRatio": 0.4212,
+          "largestEmptyCircleRadiusPx": 29.44,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 3.52
+          },
+          "maximumAngularEmptyRunDeg": 0
+        },
+        {
+          "ringId": "ring-10-20",
+          "count": 83,
+          "innerRadiusPx": 309.45,
+          "outerRadiusPx": 547.97,
+          "bandWidthPx": 238.52,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 8,
+          "bandUtilization": 0.5476,
+          "voidAreaRatio": 0.4524,
+          "largestEmptyCircleRadiusPx": 41.68,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 5.29
+          },
+          "maximumAngularEmptyRunDeg": 0
+        },
+        {
+          "ringId": "ring-20-30",
+          "count": 130,
+          "innerRadiusPx": 555.97,
+          "outerRadiusPx": 755.13,
+          "bandWidthPx": 199.16,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 8,
+          "bandUtilization": 0.5119,
+          "voidAreaRatio": 0.4881,
+          "largestEmptyCircleRadiusPx": 37.16,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 7.38
+          },
+          "maximumAngularEmptyRunDeg": 0
+        }
+      ],
+      "layoutDurationMs": 83,
+      "candidateChecks": 208931,
+      "fingerprint": "fnv1a-3fb8b6cf",
+      "geographicBearingError": {
+        "mean": 89.75,
+        "median": 91.68,
+        "p95": 168.01,
+        "max": 179.05
+      }
+    },
+    {
+      "id": "poisson-disc",
+      "placed": 252,
+      "unplaced": 0,
+      "placedByRing": {
+        "ring-0-10": 39,
+        "ring-10-20": 83,
+        "ring-20-30": 130
+      },
+      "constraints": {
+        "overlapCount": 0,
+        "outsideOwnRingCount": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "canvasLogicalWidth": 1548,
+      "canvasReductionVsOld": 0.3339,
+      "effectiveCanvasUtilization": 0.3879,
+      "ringMetrics": [
+        {
+          "ringId": "ring-0-10",
+          "count": 39,
+          "innerRadiusPx": 64,
+          "outerRadiusPx": 298.58,
+          "bandWidthPx": 234.58,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 2,
+          "bandUtilization": 0.5905,
+          "voidAreaRatio": 0.4095,
+          "largestEmptyCircleRadiusPx": 32.27,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 2.42
+          },
+          "maximumAngularEmptyRunDeg": 0
+        },
+        {
+          "ringId": "ring-10-20",
+          "count": 83,
+          "innerRadiusPx": 306.58,
+          "outerRadiusPx": 546.28,
+          "bandWidthPx": 239.7,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 8,
+          "bandUtilization": 0.5478,
+          "voidAreaRatio": 0.4522,
+          "largestEmptyCircleRadiusPx": 41.7,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 3.97
+          },
+          "maximumAngularEmptyRunDeg": 0
+        },
+        {
+          "ringId": "ring-20-30",
+          "count": 130,
+          "innerRadiusPx": 554.28,
+          "outerRadiusPx": 747.56,
+          "bandWidthPx": 193.28,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 8,
+          "bandUtilization": 0.5312,
+          "voidAreaRatio": 0.4688,
+          "largestEmptyCircleRadiusPx": 36.05,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 8.81
+          },
+          "maximumAngularEmptyRunDeg": 0
+        }
+      ],
+      "layoutDurationMs": 94,
+      "candidateChecks": 236904,
+      "fingerprint": "fnv1a-c14ed794",
+      "geographicBearingError": {
+        "mean": 90.42,
+        "median": 91.57,
+        "p95": 170.47,
+        "max": 179.23
+      }
+    },
+    {
+      "id": "frontier-geographic",
+      "placed": 252,
+      "unplaced": 0,
+      "placedByRing": {
+        "ring-0-10": 39,
+        "ring-10-20": 83,
+        "ring-20-30": 130
+      },
+      "constraints": {
+        "overlapCount": 0,
+        "outsideOwnRingCount": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "canvasLogicalWidth": 1510,
+      "canvasReductionVsOld": 0.3503,
+      "effectiveCanvasUtilization": 0.4077,
+      "ringMetrics": [
+        {
+          "ringId": "ring-0-10",
+          "count": 39,
+          "innerRadiusPx": 64,
+          "outerRadiusPx": 301.54,
+          "bandWidthPx": 237.54,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 2,
+          "bandUtilization": 0.5784,
+          "voidAreaRatio": 0.4216,
+          "largestEmptyCircleRadiusPx": 48.63,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 1.5
+          },
+          "maximumAngularEmptyRunDeg": 0
+        },
+        {
+          "ringId": "ring-10-20",
+          "count": 83,
+          "innerRadiusPx": 309.54,
+          "outerRadiusPx": 531.71,
+          "bandWidthPx": 222.17,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 8,
+          "bandUtilization": 0.5992,
+          "voidAreaRatio": 0.4008,
+          "largestEmptyCircleRadiusPx": 37.51,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 5.63
+          },
+          "maximumAngularEmptyRunDeg": 0
+        },
+        {
+          "ringId": "ring-20-30",
+          "count": 130,
+          "innerRadiusPx": 539.71,
+          "outerRadiusPx": 728.76,
+          "bandWidthPx": 189.05,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 8,
+          "bandUtilization": 0.5574,
+          "voidAreaRatio": 0.4426,
+          "largestEmptyCircleRadiusPx": 39.05,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 9.49
+          },
+          "maximumAngularEmptyRunDeg": 0
+        }
+      ],
+      "layoutDurationMs": 317,
+      "candidateChecks": 89546,
+      "fingerprint": "fnv1a-59ce1506",
+      "geographicBearingError": {
+        "mean": 46.9,
+        "median": 36,
+        "p95": 131.25,
+        "max": 170.79
+      }
+    },
+    {
+      "id": "frontier-random-match",
+      "placed": 252,
+      "unplaced": 0,
+      "placedByRing": {
+        "ring-0-10": 39,
+        "ring-10-20": 83,
+        "ring-20-30": 130
+      },
+      "constraints": {
+        "overlapCount": 0,
+        "outsideOwnRingCount": 0,
+        "centerCollisionCount": 0,
+        "timeLabelCollisionCount": 0
+      },
+      "canvasLogicalWidth": 1717,
+      "canvasReductionVsOld": 0.2612,
+      "effectiveCanvasUtilization": 0.3153,
+      "ringMetrics": [
+        {
+          "ringId": "ring-0-10",
+          "count": 39,
+          "innerRadiusPx": 64,
+          "outerRadiusPx": 330.54,
+          "bandWidthPx": 266.54,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 2,
+          "bandUtilization": 0.4776,
+          "voidAreaRatio": 0.5224,
+          "largestEmptyCircleRadiusPx": 55.5,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 1.5
+          },
+          "maximumAngularEmptyRunDeg": 0
+        },
+        {
+          "ringId": "ring-10-20",
+          "count": 83,
+          "innerRadiusPx": 338.54,
+          "outerRadiusPx": 623.96,
+          "bandWidthPx": 285.42,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 8,
+          "bandUtilization": 0.4077,
+          "voidAreaRatio": 0.5923,
+          "largestEmptyCircleRadiusPx": 86.98,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 14.75
+          },
+          "maximumAngularEmptyRunDeg": 0
+        },
+        {
+          "ringId": "ring-20-30",
+          "count": 130,
+          "innerRadiusPx": 631.96,
+          "outerRadiusPx": 832.35,
+          "bandWidthPx": 200.39,
+          "unusedInnerBandPx": 0,
+          "outerSlackPx": 3,
+          "gapFromPreviousRingPx": 8,
+          "bandUtilization": 0.4555,
+          "voidAreaRatio": 0.5445,
+          "largestEmptyCircleRadiusPx": 57.3,
+          "nearestGapPx": {
+            "min": 1.5,
+            "median": 1.5,
+            "p95": 10.12
+          },
+          "maximumAngularEmptyRunDeg": 0
+        }
+      ],
+      "layoutDurationMs": 356,
+      "candidateChecks": 78021,
+      "fingerprint": "fnv1a-b66afd6d",
+      "geographicBearingError": "N/A"
+    }
+  ],
+  "browserRenderedFingerprints": {
+    "old-radial": "fnv1a-c715b7de",
+    "fermat": "fnv1a-3fb8b6cf",
+    "poisson-disc": "fnv1a-fd9a6f8a",
+    "frontier-geographic": "fnv1a-ac6abd7a",
+    "frontier-random-match": "fnv1a-a5c15af7"
+  },
+  "frontierContract": {
+    "innerToOuterContinuous": true,
+    "innerRingTouchesCenterWord": true,
+    "nextRingTouchesPreviousContour": true,
+    "randomMatchingOnly": true,
+    "randomCoordinateScatter": false,
+    "hiddenLabels": 0,
+    "shrunkLabels": 0,
+    "artificialEmptyCircleExpansion": false
+  },
+  "gate": {
+    "allAlgorithmsPlaced252": true,
+    "allRingsConserved": true,
+    "allConstraintsZero": true,
+    "frontierInnerBoundaryPassed": true,
+    "frontierOuterSlackPassed": true,
+    "frontierCanvasReduced": true,
+    "semanticChanges": 0,
+    "fontChanges": 0,
+    "randomFiveRunStable": true,
+    "alternateSeedChangesMatching": true,
+    "naturalEnvelopeRuns": 0,
+    "passed": true
+  },
+  "tradeoffs": {
+    "geographicBearingErrorReported": true,
+    "randomGeographicBearingError": "N/A",
+    "note": "紧凑优先会增加地理角度变形；随机模式仅对标签与接触前沿候选槽位做固定种子匹配。独立指标脚本与浏览器渲染管线的亚像素测量不同，因此分别记录稳定指纹。"
+  },
+  "zeroApi": {
+    "isochrones": 0,
+    "openPoiService": 0,
+    "matrix": 0,
+    "geocoder": 0
+  }
+}

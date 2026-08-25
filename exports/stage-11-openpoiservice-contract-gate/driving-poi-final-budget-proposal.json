@@ -1,0 +1,23 @@
+{
+  "providerContractStatus": "not-verified-quota-gate-blocked",
+  "selectedPlanFingerprint": "633aa700d21cc7582b77dea610a5e43a2bf35c7b382df6bbb48a6b90a941efd0",
+  "baseRequestUnits": null,
+  "adaptiveReserve": null,
+  "recommendedApprovedPoiRequests": null,
+  "currentOldBudget": 48,
+  "budgetIncreaseRequested": null,
+  "matrixCandidateCountKnown": false,
+  "matrixBudgetApproved": false,
+  "reason": "No Canary may be sent without confirmed POI remaining quota >=10. The supported and fallback budgets remain conditional only.",
+  "conditionalIfMultiPolygonSupported": {
+    "baseRequestUnits": 43,
+    "adaptiveReserve": 9,
+    "recommendedApprovedPoiRequests": 52
+  },
+  "conditionalIfMultiPolygonUnsupported": {
+    "baseRequestUnits": 53,
+    "adaptiveReserve": 11,
+    "recommendedApprovedPoiRequests": 64
+  },
+  "upstreamRequestCount": 0
+}

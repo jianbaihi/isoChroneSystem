@@ -1,0 +1,49 @@
+{
+  "screenshots": [
+    {
+      "file": "stage51-cycling-selected-stale.png",
+      "sha256": "414570cdecf79d7884921a87dcd6a0b90b04940da23936797246583d8f740584",
+      "dimensions": [
+        1409,
+        897
+      ],
+      "format": "PNG"
+    },
+    {
+      "file": "stage51-cycling-isochrones.png",
+      "sha256": "50aa1476a9e403f91a523b14fd973560eaf01ca1b40487777515fb7fb82174e5",
+      "dimensions": [
+        1409,
+        897
+      ],
+      "format": "PNG"
+    },
+    {
+      "file": "stage51-cycling-panmap-ordinary.png",
+      "sha256": "1f585c69847072411962a41be82dd19a31cd521fb663fe2dc04200138adeaf99",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "format": "PNG"
+    },
+    {
+      "file": "stage51-cycling-panmap-research.png",
+      "sha256": "2481032d105ccae02ce96bbb34c22c239d4f263c0dd3958d2ca4bab26b936e1a",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "format": "PNG"
+    },
+    {
+      "file": "stage51-cycling-cache-restored.png",
+      "sha256": "7058bfa032c103c8f756c014cd0d14ca51f144d831206d5b2a2945d3152fb81e",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "format": "PNG"
+    }
+  ]
+}

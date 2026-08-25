@@ -1,0 +1,28 @@
+{
+  "centerId": "wuhan-huanghelou",
+  "rangesSeconds": [600, 1200, 1800],
+  "approvedScope": [
+    "foot-walking-cache-validation",
+    "cycling-regular-live"
+  ],
+  "profiles": {
+    "foot-walking": {
+      "planFingerprint": "8e38cc4f5da176d8e55001020b49df2d2ff1a87ec210106e3f013b58b68d2e9c",
+      "approvedPoiRequests": 0,
+      "approvedMatrixRequests": 0
+    },
+    "cycling-regular": {
+      "planFingerprint": "8a2f9714ac7469ecf54238c69d06e59f1d210ba8ed16db7c6d9884741e6a6832",
+      "approvedPoiRequests": 13,
+      "approvedMatrixRequests": 52
+    },
+    "driving-car": {
+      "planFingerprint": "4870cae7fde62285229e22fe35b13af21f794e4d40ed27fdccc7cb8b01030031",
+      "approvedPoiRequests": 0,
+      "approvedMatrixRequests": 0
+    }
+  },
+  "stopAfterProfile": "cycling-regular",
+  "stopOnProfileFailure": true,
+  "createdAt": "2026-08-01T13:00:34+09:00"
+}

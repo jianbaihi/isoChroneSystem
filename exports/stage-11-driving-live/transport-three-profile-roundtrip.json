@@ -1,0 +1,5 @@
+{
+  "stage": 55,
+  "status": "not-executed-blocked-before-driving-publish",
+  "reason": "The required driving result does not exist; cycling and walking frozen caches were not touched."
+}

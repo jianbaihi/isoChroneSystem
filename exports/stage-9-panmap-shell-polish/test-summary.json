@@ -1,0 +1,35 @@
+{
+  "stage": 49,
+  "status": "passed",
+  "completedAt": "2026-08-06T12:22:37+08:00",
+  "commands": [
+    {
+      "command": "node --check app.js && node --check panmap-layout.js && node --check src/research/research-mode.js && node --check src/adapters/traditional-map-adapter.js && node --check src/config/isochrone-palette.js && node --check src/state/analysis-store.js && node --test src/**/*.test.js",
+      "exitCode": 0,
+      "tests": 104,
+      "passed": 104,
+      "failed": 0
+    },
+    {
+      "command": "PYTHONPATH=server server/.venv/bin/python -m unittest discover -s server/tests -p 'test_*.py'",
+      "exitCode": 0,
+      "tests": 88,
+      "passed": 88,
+      "failed": 0,
+      "warnings": ["Starlette TestClient deprecation", "Pydantic dict() deprecation"]
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "browser": {
+    "consoleErrors": 0,
+    "modeSwitches": 20,
+    "mapPickCompleted": true,
+    "escapeCancellation": true,
+    "entryReturnCyclesAfterResizeGuardFix": 2,
+    "labelDomNodes": 254,
+    "coordinateFingerprint": "fnv1a-0bd70523"
+  }
+}

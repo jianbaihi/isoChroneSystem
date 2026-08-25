@@ -1,0 +1,52 @@
+{
+  "stage": 47,
+  "capturedAt": "2026-08-06",
+  "branch": "main",
+  "head": "6379d19b644d44d471c7ad3ed29c4e3e558928c3",
+  "preExistingDirtyWorktree": true,
+  "preExistingStatusEntryCount": 64,
+  "preservationContract": {
+    "noReset": true,
+    "noCleanup": true,
+    "noBackendChangeForStage47": true,
+    "frozenLayoutAlgorithmsChanged": false
+  },
+  "stage45PublishedBaseline": {
+    "analysisId": "analysis-name-cloud-7823d8e3-5c27-4a22-8b78-be5939c4e2ba",
+    "totalPoi": 284,
+    "eligible": 254,
+    "rings": [39, 85, 130],
+    "outOfRange": 30,
+    "matrixFingerprint": "c4a00b9309bdd758ad6313c068a3321151e6576079c78fa97cc78db75c67578f"
+  },
+  "stage43FrozenResearchBaseline": {
+    "eligible": 252,
+    "rings": [39, 83, 130],
+    "recomputed": false
+  },
+  "preImplementationUi": {
+    "explicitModeSwitch": false,
+    "ordinaryControlRoot": "#panmapControlPanel",
+    "researchControlRoot": "#stage43ResearchControls",
+    "researchMetricsRoot": "#hiddenResearchPanel",
+    "modeTruthSources": [
+      "src/research/research-mode.js URLSearchParams(research)",
+      "app.js loadStage21CachedBaseline URLSearchParams(research)"
+    ],
+    "forkingCss": ".app-shell.is-stage43-research .control-panel-body > :not(.stage43-research-controls)"
+  },
+  "stage45ScreenshotHashCorrection": {
+    "status": "verified-consistent",
+    "actualFilesArePng": true,
+    "files": {
+      "stage45-walking-isochrones.png": "d1a4b320e3928ab6c1c5a8e0bda0306b23f9dcf6e485a47d715f59848c1863c8",
+      "stage45-walking-panmap.png": "1a21def2b2626103dae8a2420cac94f2d1bd03e3f6bee02814b1ba94787f1bda",
+      "stage45-walking-research-mode.png": "4a77c04fd10ba9265db32074e2ad0d30418bbe3577c0c4fac7144f25f43e380f"
+    },
+    "jsonAndReportMatch": true
+  },
+  "acceptedPriorTestBaseline": {
+    "node": {"passed": 91, "failed": 0},
+    "python": {"passed": 88, "failed": 0}
+  }
+}

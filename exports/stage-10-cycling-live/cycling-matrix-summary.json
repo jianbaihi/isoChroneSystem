@@ -1,0 +1,35 @@
+{
+  "analysisId": "analysis-stage51-cycling-38ef5a3bdd60c562354e88fd",
+  "profile": "cycling-regular",
+  "requested": 2413,
+  "ok": 2413,
+  "null": 0,
+  "invalid": 0,
+  "eligible": 1800,
+  "outOfRange": 613,
+  "rings": {
+    "ring-0-10": 127,
+    "ring-10-20": 433,
+    "ring-20-30": 1240
+  },
+  "durationSeconds": {
+    "max": 4468.61,
+    "median": 1587.11,
+    "min": 48.94,
+    "p90": 1958.59
+  },
+  "distanceMeters": {
+    "max": 13761.07,
+    "median": 6968.99,
+    "min": 81.57,
+    "p90": 8818.16
+  },
+  "batchCount": 5,
+  "cacheHits": 5,
+  "retries": 0,
+  "upstreamRequests": 0,
+  "resultFingerprint": "f41b23c25e23a997c03b0050451a8976303683d15342842129d8f47e80d0d203",
+  "routingGraphDate": "2026-07-27T01:13:39Z",
+  "conservationEquation": "1800 + 613 + 0 + 0 = 2413",
+  "conserved": true
+}

@@ -1,0 +1,62 @@
+{
+  "browser": "Codex in-app browser",
+  "viewportOrdinaryResearch": [
+    1280,
+    720
+  ],
+  "consoleErrors": [],
+  "consoleWarnings": [],
+  "clickSequence": [
+    "open",
+    "select cycling",
+    "generate reachability",
+    "explore panmap",
+    "ordinary",
+    "research",
+    "20 switches",
+    "cache rerun",
+    "walking roundtrip",
+    "cycling restore"
+  ],
+  "stale": {
+    "previousProfile": "foot-walking",
+    "previousNodes": 254,
+    "profile": "cycling-regular",
+    "generateEnabled": true,
+    "exploreDisabled": true,
+    "automaticBusinessRequests": 0
+  },
+  "ordinary": {
+    "analysisId": "analysis-stage51-cycling-38ef5a3bdd60c562354e88fd",
+    "total": 2413,
+    "eligible": 1800,
+    "outOfRange": 613,
+    "rings": [
+      127,
+      433,
+      1240
+    ],
+    "labelDomNodes": 1800,
+    "layoutFingerprint": "fnv1a-9a1fe12a"
+  },
+  "research": {
+    "analysisId": "analysis-stage51-cycling-38ef5a3bdd60c562354e88fd",
+    "labelDomNodes": 1800,
+    "layoutFingerprint": "fnv1a-9a1fe12a",
+    "sharedResult": true,
+    "frozenStage43ExperimentRuns": 0
+  },
+  "final": {
+    "page": "panmap",
+    "mode": "ordinary",
+    "center": "武汉·黄鹤楼",
+    "profile": "cycling-regular",
+    "rangesMinutes": [
+      10,
+      20,
+      30
+    ],
+    "loadingNodes": 0,
+    "skeletonVisible": false
+  }
+}

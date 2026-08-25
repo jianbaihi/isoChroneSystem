@@ -1,0 +1,10 @@
+{
+  "stage": 55,
+  "profile": "driving-car",
+  "status": "not-executed-blocked-before-poi",
+  "ok": 0,
+  "null": 0,
+  "invalid": 0,
+  "outOfRange": 0,
+  "matrixRequests": 0
+}

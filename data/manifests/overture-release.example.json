@@ -1,0 +1,16 @@
+{
+  "source": "overture",
+  "theme": "places",
+  "type": "place",
+  "sourceRelease": "2026-07-22.0",
+  "taxonomyFamily": "OPC",
+  "schemaFields": [
+    "taxonomy.hierarchy",
+    "taxonomy.primary",
+    "taxonomy.alternates",
+    "basic_category"
+  ],
+  "licenseSummary": ["CDLA-Permissive-2.0", "Apache-2.0"],
+  "attribution": "Overture Maps Foundation",
+  "downloadedAt": "待实际下载时填写 UTC ISO 8601"
+}

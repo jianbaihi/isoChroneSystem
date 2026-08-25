@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "stage41-zero-api/v1",
+  "stage": 41,
+  "status": "passed",
+  "budget": {
+    "isochrones": 0,
+    "openPoiService": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "actual": {
+    "isochrones": 0,
+    "openPoiService": 0,
+    "matrix": 0,
+    "geocoder": 0
+  },
+  "dataSources": [
+    "exports/stage-6-layout/stage20-cache-baseline.json",
+    "exports/stage-8-research/stage39-research-evaluation.json",
+    "exports/stage-7-radial/stage33-geographic-layout.json"
+  ],
+  "browserEvidence": {
+    "normal": {
+      "panelDomCount": 0,
+      "directionalOptionVisible": false,
+      "evaluationRuns": 0,
+      "directionalLayoutRuns": 0,
+      "nodeCount": 252,
+      "layoutFingerprint": "fnv1a-ac6abd7a",
+      "businessApiRequests": 0
+    },
+    "research": {
+      "baseline": {
+        "layoutFingerprint": "fnv1a-ac6abd7a",
+        "evaluationFingerprint": "fnv1a-1f4a7d7b"
+      },
+      "directional": {
+        "layoutFingerprint": "fnv1a-19b5d803",
+        "evaluationFingerprint": "fnv1a-ea59dcc4",
+        "layoutRevision": 4,
+        "nodeCount": 252,
+        "evaluationRunsAfterSwitch": 2,
+        "directionalLayoutRuns": 1,
+        "collisions": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "flips": [
+          0,
+          0
+        ]
+      },
+      "viewTransform": {
+        "layoutRevisionUnchanged": true,
+        "layoutFingerprintUnchanged": true,
+        "evaluationFingerprintUnchanged": true,
+        "evaluationRunsUnchanged": true,
+        "directionalLayoutRunsUnchanged": true
+      },
+      "export": {
+        "schema": "research-evaluation/v1",
+        "layoutRevisionUnchanged": true,
+        "evaluationFingerprintUnchanged": true,
+        "networkRequests": 0
+      },
+      "removeResearchParameterRestoresNormal": true
+    }
+  },
+  "screenshots": [
+    {
+      "name": "stage41-normal-mode.png",
+      "bytes": 934157,
+      "width": 1126,
+      "height": 943,
+      "sha256": "68ea2a6f6374bc82462051b28c3342b8b3b6cd7e5fce8906da174de5ac811446"
+    },
+    {
+      "name": "stage41-directional-research-mode.png",
+      "bytes": 850811,
+      "width": 1126,
+      "height": 943,
+      "sha256": "5168f98ad757dc87aaf31b0ae45bfa856eef14d8d670da8bd43cf919bd8c7d8f"
+    }
+  ]
+}

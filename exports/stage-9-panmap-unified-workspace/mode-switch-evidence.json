@@ -1,0 +1,58 @@
+{
+  "stage": 47,
+  "defaultMode": "ordinary",
+  "singleSourceOfTruth": "PanmapApp.panmapModeStore",
+  "explicitSwitchVisible": true,
+  "switchRoot": "#panmapModeSwitch",
+  "aria": {
+    "role": "radiogroup",
+    "label": "泛地图使用模式",
+    "buttonsUseRadioRole": true,
+    "selectedState": "aria-checked",
+    "keyboardKeys": ["ArrowLeft", "ArrowRight", "Home", "End"],
+    "focusVisible": true
+  },
+  "urlContract": {
+    "ordinary": "?stage45Cache=1",
+    "research": "?stage45Cache=1&research=1",
+    "legacyResearchQueryCompatible": true,
+    "invalidQueryFallsBack": true,
+    "invalidQueryObservedMode": "ordinary"
+  },
+  "ordinaryCapabilities": {
+    "sharedWorkspace": true,
+    "dataSummary": true,
+    "layoutPresets": true,
+    "densityPresets": true,
+    "commonStyleControls": true,
+    "applyAndReset": true,
+    "metricsPanel": false,
+    "comparison": false,
+    "algorithmParameters": false,
+    "experimentExport": false
+  },
+  "researchCapabilities": {
+    "sharedWorkspace": true,
+    "dataSummary": true,
+    "layoutPresets": true,
+    "densityPresets": true,
+    "commonStyleControls": true,
+    "metricsPanel": true,
+    "comparison": true,
+    "algorithmParameters": true,
+    "experimentExport": true,
+    "frozenBaselineNotice": true
+  },
+  "sharedDom": {
+    "controlPanelCount": 1,
+    "canvasCount": 1,
+    "controlPanel": "#panmapControlPanel",
+    "canvas": ".panmap-art"
+  },
+  "switchSideEffects": {
+    "callsLayout": false,
+    "callsNetwork": false,
+    "publishesAnalysis": false,
+    "runsFrozenExperiment": false
+  }
+}
