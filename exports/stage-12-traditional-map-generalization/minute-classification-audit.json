@@ -1,0 +1,21 @@
+{
+  "liveCase": "武汉黄鹤楼 / foot-walking / 5,8,12 minutes",
+  "poiCount": 72,
+  "classifiedWithinRange": 72,
+  "outOfRange": 0,
+  "minuteContourCount": 12,
+  "batchCount": 2,
+  "firstRun": {"upstreamRequestCount": 2, "cacheHitCount": 0},
+  "repeatRun": {"upstreamRequestCount": 0, "cacheHitCount": 2},
+  "boundaryPointCount": 0,
+  "nonNestedContourPairCount": 4,
+  "sample": {
+    "name": "费祎亭",
+    "travelTimeMinuteEstimate": 2,
+    "travelTimeBand": {"lowerExclusiveMinutes": 1, "upperInclusiveMinutes": 2},
+    "travelTimeMethod": "isochrone-minute-band",
+    "travelTimeSeconds": null,
+    "networkDistanceMeters": null
+  },
+  "note": "The provider returned four non-nested adjacent contour pairs. Classification still uses the first cumulative polygon covering each POI and the anomaly remains explicit."
+}

@@ -1,0 +1,12 @@
+{
+  "centerSources": ["preset", "geocoder", "geolocation", "map-pick"],
+  "displayRangeSemantics": "sorted unique positive integer minutes",
+  "displayIsochroneRequest": "one isochrone-only analysis request using the explicit display ranges",
+  "poiSelectionGeometry": "largest cumulative display isochrone",
+  "minuteEstimateFields": {
+    "travelTimeMinuteEstimate": "integer minute estimate",
+    "travelTimeBand": {"lowerExclusiveMinutes": "integer", "upperInclusiveMinutes": "integer"},
+    "travelTimeMethod": "isochrone-minute-band"
+  },
+  "matrixFieldRule": "travelTimeSeconds and networkDistanceMeters are populated only by a real Matrix response"
+}

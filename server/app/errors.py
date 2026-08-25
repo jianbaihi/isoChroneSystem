@@ -25,6 +25,11 @@ class FeatureNotAvailableError(ApiError):
         super().__init__("FEATURE_NOT_AVAILABLE", message, details, status_code=501)
 
 
+class ApprovalRequiredError(ApiError):
+    def __init__(self, message: str, details: list[dict[str, Any]] | None = None) -> None:
+        super().__init__("APPROVAL_REQUIRED", message, details, status_code=409)
+
+
 class ProviderNotConfiguredError(ApiError):
     def __init__(self) -> None:
         super().__init__(

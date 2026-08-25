@@ -110,6 +110,7 @@ let stage33ViewState = { mode: null, layout: null, contract: null };
 let lastPanmapInteractionKey = '';
 let lastQuotaSnapshot = { services: {} };
 let primaryWorkflowActive = null;
+let providerCapabilities = null;
 const activeProfileJobIds = Object.create(null);
 const STAGE45_WALKING_CACHE_KEY = 'panmap.stage45.walking.completed.v1';
 const STAGE51_CYCLING_CACHE_KEY = 'panmap.stage51.cycling.completed.v1';
@@ -127,6 +128,11 @@ const ISOCHRONE_PALETTE = window.PanmapApp?.isochronePalette;
 
 function profileLabel(profile) {
   return profile === 'cycling-regular' ? '骑行' : profile === 'foot-walking' ? '步行' : '驾车';
+}
+
+function currentProfileMaxMinutes() {
+  const profile = analysisStore?.getState().data.parameterDraft?.profile || 'foot-walking';
+  return Number(providerCapabilities?.profiles?.[profile]?.maxTimeMinutes || 60);
 }
 
 function createProfileJobId(profile) {
@@ -353,8 +359,8 @@ function updateMatrixPresentation(result, interaction = {}) {
   }
   const poiId = interaction.selectedPoiId || interaction.hoveredPoiId || null;
   const poi = result?.pois?.find((item) => item.poiId === poiId);
-  const detail = poi?.bandAssignmentMethod === 'minute-isochrone-spatial'
-    ? `${poi.name || '当前 POI'} · 约 ${Math.round(Number(poi.travelTimeSeconds) / 60)} 分钟 · 由累计等时圈空间包含关系判定`
+  const detail = poi?.travelTimeMethod === 'isochrone-minute-band'
+    ? `${poi.name || '当前 POI'} · ${poi.travelTimeBand?.lowerExclusiveMinutes ?? Number(poi.travelTimeMinuteEstimate) - 1}–${poi.travelTimeBand?.upperInclusiveMinutes ?? poi.travelTimeMinuteEstimate} 分钟 · 约 ${poi.travelTimeMinuteEstimate} 分钟 · 方法：1 min Isochrone`
     : '';
   if (matrixPoiDetail) {
     matrixPoiDetail.hidden = !detail;
@@ -407,9 +413,9 @@ function applyPanmapPoiState(interaction = {}) {
 
 function setCenterSelection(selection, options = {}) {
   if (!selection) return null;
-  const source = ['preset', 'search', 'geolocation', 'map-pick'].includes(options.source || selection.source)
+  const source = ['preset', 'geocoder', 'geolocation', 'map-pick'].includes(options.source || selection.source)
     ? (options.source || selection.source)
-    : 'search';
+    : 'geocoder';
   const center = {
     lon: Number(selection.lon),
     lat: Number(selection.lat),
@@ -1592,9 +1598,10 @@ function setNameCloudLoadingState(isLoading) {
   const hasPois = successfulResultMatchesDraft(currentState)
     && isNameCloudResult(currentState?.data?.lastSuccessfulResult)
     && currentState.data.lastSuccessfulResult.pois?.length > 0;
+  const approvalRequired = poiQueryButton?.dataset.approvalRequired === 'true';
   setPoiQueryButtonState(
-    isLoading ? 'loading' : hasPois ? 'complete' : canGenerateNameCloud(currentState) ? 'idle' : 'disabled',
-    isLoading ? '正在查询 POI…' : hasPois ? 'POI 查询完成' : '查询等时圈内 POI',
+    isLoading ? 'loading' : approvalRequired ? 'error' : hasPois ? 'complete' : canGenerateNameCloud(currentState) ? 'idle' : 'disabled',
+    isLoading ? '正在查询 POI…' : approvalRequired ? '请求较大 · 再次点击确认' : hasPois ? 'POI 查询完成' : '查询等时圈内 POI',
   );
   if (analysisStatusCopy && isLoading) analysisStatusCopy.textContent = '正在查询最外层等时圈 Polygon 内的 POI…';
 }
@@ -1608,6 +1615,7 @@ async function runNameCloud({ publish = true, jobId = null } = {}) {
   const result = state.data.lastSuccessfulResult;
   const draft = state.data.parameterDraft;
   const modeLabel = profileLabel(draft.profile);
+  const approved = poiQueryButton?.dataset.approvalRequired === 'true';
   setNameCloudLoadingState(true);
   try {
     if (analysisStatusCopy) analysisStatusCopy.textContent = `正在查询最外层${modeLabel}等时圈 Polygon 内的真实 POI…`;
@@ -1617,6 +1625,7 @@ async function runNameCloud({ publish = true, jobId = null } = {}) {
       rangesMinutes: draft.rangesMinutes,
       categoryIds: draft.categoryIds,
       cumulativeIsochrones: result.cumulativeIsochrones,
+      approved,
     }, { jobId });
     if (publish) {
       analysisStore?.setResult(nameCloud);
@@ -1624,12 +1633,20 @@ async function runNameCloud({ publish = true, jobId = null } = {}) {
     }
     renderQuota(nameCloud.metadata?.apiQuota, nameCloud.metadata?.cacheHit ? 'cache' : '');
     setPoiQueryButtonState('complete', 'POI 查询完成');
+    poiQueryButton?.removeAttribute('data-approval-required');
     const truncated = Boolean(nameCloud.metadata?.poiCoverage?.resultTruncated);
     showToast(nameCloud.metadata?.cacheHit
       ? `${modeLabel} POI 已命中真实缓存，未消耗上游请求`
       : truncated ? `${modeLabel} POI 查询完成 · 已返回上游限额内结果` : `${modeLabel} POI 查询完成`);
     return nameCloud;
   } catch (error) {
+    if (error.code === 'APPROVAL_REQUIRED') {
+      if (poiQueryButton) poiQueryButton.dataset.approvalRequired = 'true';
+      setPoiQueryButtonState('error', '请求较大 · 再次点击确认');
+      showToast(`${error.message} 再次点击即可确认继续。`);
+      if (analysisStatusCopy) analysisStatusCopy.textContent = 'POI 查询超过自动预算 · 等待确认';
+      return null;
+    }
     setPoiQueryButtonState('error', 'POI 查询失败 · 点击重试');
     showToast(`POI 查询失败：${error.message || '服务不可用'}（已保留当前等时圈）`);
     if (analysisStatusCopy) analysisStatusCopy.textContent = 'POI 请求失败 · 已保留当前真实等时圈';
@@ -1658,31 +1675,6 @@ function setMatrixLoadingState(isLoading) {
   if (analysisStatusCopy && isLoading) analysisStatusCopy.textContent = '正在分批生成 1 分钟精度累计等时圈…';
 }
 
-async function requestMinuteIsochroneBatch(baseResult, ranges, completed, total) {
-  const controller = new AbortController();
-  const timeoutId = window.setTimeout(() => controller.abort('minute-isochrone-timeout'), 60000);
-  try {
-    setSpatialTimeProgress(completed, total, `正在计算 ${ranges[0]}–${ranges[ranges.length - 1]} 分钟`);
-    const batch = await window.PanmapApp.analysisClient.createAnalysis({
-      schemaVersion: '1.0', center: baseResult.center, profile: baseResult.profile,
-      rangesMinutes: ranges, categoryIds: [],
-      options: { includePois: false, calculateTravelTimes: false },
-    }, { signal: controller.signal });
-    return batch.cumulativeIsochrones || [];
-  } catch (error) {
-    if (error.name === 'AbortError' && ranges.length > 1) {
-      const middle = Math.ceil(ranges.length / 2);
-      const left = await requestMinuteIsochroneBatch(baseResult, ranges.slice(0, middle), completed, total);
-      setSpatialTimeProgress(completed + left.length, total);
-      const right = await requestMinuteIsochroneBatch(baseResult, ranges.slice(middle), completed + left.length, total);
-      return [...left, ...right];
-    }
-    throw error;
-  } finally {
-    window.clearTimeout(timeoutId);
-  }
-}
-
 async function runSpatialTimeAccessibility(baseResultOverride = null, { publish = true } = {}) {
   const state = analysisStore?.getState();
   if (!baseResultOverride && !canCalculateSpatialTime(state)) {
@@ -1691,18 +1683,14 @@ async function runSpatialTimeAccessibility(baseResultOverride = null, { publish 
   }
   const baseResult = baseResultOverride || state.data.lastSuccessfulResult;
   const total = Math.max(...baseResult.rangesMinutes);
-  const minutes = Array.from({ length: total }, (_, index) => index + 1);
+  const batchCount = Math.ceil(total / 10);
+  const approved = matrixButton?.dataset.approvalRequired === 'true';
   setMatrixLoadingState(true);
-  setSpatialTimeProgress(0, total, `准备生成 1–${total} 分钟`);
+  setSpatialTimeProgress(0, 1, `后端规划 ${batchCount} 个批次`);
   try {
-    const minuteIsochrones = [];
-    for (let index = 0; index < minutes.length; index += 10) {
-      const batchRanges = minutes.slice(index, index + 10);
-      const batchResult = await requestMinuteIsochroneBatch(baseResult, batchRanges, minuteIsochrones.length, total);
-      minuteIsochrones.push(...batchResult);
-      setSpatialTimeProgress(minuteIsochrones.length, total, `已完成 ${minuteIsochrones.length}/${total} 分钟`);
-    }
-    const matrixResult = await window.PanmapApp.analysisClient.createSpatialTimeAccessibility(baseResult, minuteIsochrones);
+    const matrixResult = await window.PanmapApp.analysisClient.createMinuteAccessibility(baseResult, { approved });
+    matrixButton?.removeAttribute('data-approval-required');
+    setSpatialTimeProgress(1, 1, `已完成 ${batchCount}/${batchCount} 批`);
     if (publish) {
       analysisStore?.setResult(matrixResult);
       applyAnalysisResultToTraditionalMap(matrixResult);
@@ -1710,6 +1698,12 @@ async function runSpatialTimeAccessibility(baseResultOverride = null, { publish 
     showToast(`分钟等时圈补时完成：${matrixResult.metadata?.spatialTime?.withinRangeCount || 0} 个 POI 已获得 1 分钟精度时间`);
     return matrixResult;
   } catch (error) {
+    if (error.code === 'APPROVAL_REQUIRED') {
+      if (matrixButton) matrixButton.dataset.approvalRequired = 'true';
+      showToast(`${error.message} 再次点击即可确认继续。`);
+      if (analysisStatusCopy) analysisStatusCopy.textContent = '分钟级请求超过自动预算 · 再次点击确认继续';
+      return null;
+    }
     showToast(`分钟等时圈补时失败：${error.message || '服务不可用'}（已保留 POI 查询结果）`);
     if (analysisStatusCopy) analysisStatusCopy.textContent = '分钟等时圈请求失败 · 已保留 POI 查询结果';
     return null;
@@ -2032,7 +2026,7 @@ let activeGeocoderControl = geocoderControls[0];
 
 function setDraftCenterFromSearch(item, source = 'geocoder') {
   const center = setCenterSelection(item, {
-    source: source === 'geolocation' ? 'geolocation' : 'search',
+    source: source === 'geolocation' ? 'geolocation' : 'geocoder',
     district: item.admin?.join(' · ') || '搜索结果',
   });
   if (centerSearchInput) centerSearchInput.value = '';
@@ -2392,7 +2386,9 @@ function bindThresholdRow(row) {
   const deleteButton = row.querySelector('.threshold-delete');
 
   function syncThresholdLabel() {
-    const value = Math.max(1, Math.min(60, Number(thresholdInput.value) || 1));
+    const maximum = currentProfileMaxMinutes();
+    const value = Math.max(1, Math.min(maximum, Number(thresholdInput.value) || 1));
+    thresholdInput.max = String(maximum);
     thresholdInput.value = value;
     thresholdLabel.textContent = `${value} 分钟`;
     row.dataset.threshold = String(value);
@@ -2414,7 +2410,7 @@ function bindThresholdRow(row) {
   row.querySelectorAll('[data-step]').forEach((stepButton) => {
     stepButton.addEventListener('click', () => {
       const delta = stepButton.dataset.step === 'up' ? 5 : -5;
-      thresholdInput.value = Math.max(1, Math.min(60, Number(thresholdInput.value) + delta));
+      thresholdInput.value = Math.max(1, Math.min(currentProfileMaxMinutes(), Number(thresholdInput.value) + delta));
       syncThresholdLabel();
       syncParameterDraftFromUI();
     });
@@ -2462,7 +2458,14 @@ confirmThresholdButton.addEventListener('click', () => {
     showToast('最多添加 10 个时间阈值');
     return;
   }
-  const value = Math.max(1, Math.min(60, Number(newThresholdInput.value) || 45));
+  const maximum = currentProfileMaxMinutes();
+  const rawValue = Number(newThresholdInput.value) || 45;
+  if (rawValue > maximum) {
+    const profile = analysisStore?.getState().data.parameterDraft?.profile || 'foot-walking';
+    showToast(`当前 ORS 公共 ${profile} 最大时间范围为 ${maximum} 分钟`);
+    return;
+  }
+  const value = Math.max(1, rawValue);
   if ([...thresholdList.querySelectorAll('.time-input input')].some((input) => Number(input.value) === value)) {
     showToast(`${value} 分钟阈值已存在`);
     return;
@@ -2516,6 +2519,8 @@ async function loadOnlineProviderStatus() {
   if (!window.PanmapApp?.analysisClient?.getHealth || !onlineProviderStatus) return;
   try {
     const health = await window.PanmapApp.analysisClient.getHealth();
+    providerCapabilities = health.providerCapabilities || null;
+    document.querySelectorAll('#thresholdList input[type="number"], #newThresholdInput').forEach((input) => { input.max = String(currentProfileMaxMinutes()); });
     const ready = health.status === 'ready' && health.networkProbePerformed === false && health.mockFallback === false;
     onlineProviderStatus.classList.toggle('is-ready', ready);
     onlineProviderStatus.classList.toggle('is-not-ready', !ready);

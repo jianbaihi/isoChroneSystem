@@ -38,10 +38,8 @@ test('online workflow separates isochrones, POI, minute spatial timing and local
   assert.doesNotMatch(reachability, /runNameCloud|runMatrixAccessibility|publishProfileJob/);
   assert.match(app, /poiQueryButton\?\.addEventListener\('click', runNameCloud\)/);
   assert.match(app, /matrixButton\?\.addEventListener\('click', runSpatialTimeAccessibility\)/);
-  assert.match(app, /index \+= 10/);
-  assert.match(app, /60000/);
-  assert.match(app, /ranges\.length > 1/);
-  assert.match(app, /createSpatialTimeAccessibility/);
+  assert.match(app, /createMinuteAccessibility/);
+  assert.doesNotMatch(app, /requestMinuteIsochroneBatch/);
   const body = app.slice(app.indexOf('async function runPanmapWorkflow'), app.indexOf("document.querySelectorAll('[data-nav=\"settings\"]')"));
   assert.match(body, /result\?\.metadata\?\.spatialTime/);
   assert.match(body, /applyAnalysisResultToPanmap\(result\)/);

@@ -15,7 +15,7 @@ test('keeps a parameter draft separate from submitted and successful result stat
   assert.deepEqual([initial.data.parameterDraft.center.lon, initial.data.parameterDraft.center.lat], [114.296944, 30.546944]);
   assert.equal(initial.data.parameterDraft.center.label, '武汉·黄鹤楼');
 
-  store.setDraftCenter({ lon: 116.4, lat: 39.9, crs: 'EPSG:4326', label: '地图选点' }, 'map');
+  store.setDraftCenter({ lon: 116.4, lat: 39.9, crs: 'EPSG:4326', label: '地图选点' }, 'map-pick');
   store.setParameterDraft({ profile: 'cycling-regular', rangesMinutes: [5, 15, 30] });
   const draft = store.getState().data.parameterDraft;
   assert.equal(draft.centerSource, 'map-pick');

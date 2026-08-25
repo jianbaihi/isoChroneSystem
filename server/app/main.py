@@ -8,7 +8,8 @@ from fastapi.responses import JSONResponse
 
 from app.config import settings
 from app.errors import ApiError, FeatureNotAvailableError, InvalidProviderParameterError
-from app.models import AnalysisRequest, MatrixAccessibilityRequest, NameCloudRequest, PoiPreviewRequest, SpatialTimeAccessibilityRequest
+from app.models import AnalysisRequest, MatrixAccessibilityRequest, MinuteAccessibilityRequest, NameCloudRequest, PoiPreviewRequest, SpatialTimeAccessibilityRequest
+from app.provider_capabilities import public_provider_capabilities
 from app.providers.geocoder import OrsGeocoder
 from app.providers.poi.ors_remote import OrsRemotePoiProvider
 from app.repositories.local_poi import LocalPoiRepository
@@ -16,6 +17,7 @@ from app.services.analysis import create_analysis as build_analysis
 from app.services.analysis import create_name_cloud
 from app.services.cycling_job_ledger import CyclingJobLedger, cycling_input_fingerprint
 from app.services.matrix_accessibility import calculate_matrix_accessibility
+from app.services.minute_accessibility import calculate_minute_accessibility
 from app.services.spatial_time_accessibility import calculate_spatial_time_accessibility
 from app.services.poi_batch_planner import build_poi_query_plan, public_plan
 from app.services.quota import QuotaObserver
@@ -137,6 +139,7 @@ async def health(raw_request: Request) -> JSONResponse:
             "service": "panmap-analysis-api",
             "mode": runtime_settings.analysis_provider,
             "providerReady": runtime_settings.provider_ready,
+            "providerCapabilities": public_provider_capabilities(),
         },
         headers={"X-Request-ID": request_id},
     )
@@ -323,6 +326,27 @@ async def create_spatial_time_accessibility_endpoint(request: SpatialTimeAccessi
         status_code=200,
         content=result.model_dump(mode="json") if hasattr(result, "model_dump") else result.dict(),
         headers={"X-Request-ID": request_id, "X-Upstream-Request-Count": "0"},
+    )
+
+
+@app.post("/api/v1/minute-accessibility", response_model=None, response_model_exclude_none=False)
+async def create_minute_accessibility_endpoint(request: MinuteAccessibilityRequest, raw_request: Request):
+    request_id = request_id_for(raw_request)
+    runtime_settings = getattr(raw_request.app.state, "settings", settings)
+    result = await calculate_minute_accessibility(
+        request,
+        runtime_settings,
+        adapter=getattr(raw_request.app.state, "ors_adapter", None),
+        quota_observer=getattr(raw_request.app.state, "quota_observer", None),
+    )
+    metadata = result.metadata.spatialTime or {}
+    return JSONResponse(
+        status_code=200,
+        content=result.model_dump(mode="json") if hasattr(result, "model_dump") else result.dict(),
+        headers={
+            "X-Request-ID": request_id,
+            "X-Upstream-Request-Count": str(metadata.get("upstreamRequestCount", 0)),
+        },
     )
 
 

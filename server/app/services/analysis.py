@@ -150,7 +150,7 @@ async def create_name_cloud(
         options={"includePois": True, "calculateTravelTimes": False},
     )
     remote_provider = poi_provider or OrsRemotePoiProvider(settings, quota_observer=quota_observer)
-    selection = await remote_provider.fetch(analysis_request, outer_geometry, ring_geometries, single_polygon=False)
+    selection = await remote_provider.fetch(analysis_request, outer_geometry, ring_geometries, single_polygon=False, approved=request.approved)
     rings = [
         Ring(
             ringId=ring["ringId"],

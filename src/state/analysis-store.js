@@ -263,7 +263,7 @@
         }));
       },
       setDraftCenter(center, source = 'map') {
-        const normalizedSource = ['map', 'map-click', 'map-pick'].includes(source) ? 'map-pick' : source;
+        const normalizedSource = source === 'map-pick' ? 'map-pick' : source === 'search' ? 'geocoder' : source;
         return update((current) => ({
           ...current,
           data: {

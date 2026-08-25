@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "foot-walking": {"maxTimeMinutes": 1200},
+    "cycling-regular": {"maxTimeMinutes": 300},
+    "driving-car": {"maxTimeMinutes": 60}
+  },
+  "isochroneMaxIntervalsPerRequest": 10,
+  "poiProviderMaxAreaKm2": 50,
+  "poiSafeAreaKm2": 45,
+  "minuteIsochroneAutoRequestLimit": 6
+}

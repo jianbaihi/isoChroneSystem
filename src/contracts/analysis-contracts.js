@@ -22,7 +22,7 @@
       crs: 'EPSG:4326',
       ...(center.label ? { label: String(center.label) } : {}),
       ...(center.id ? { id: String(center.id) } : {}),
-      source: ['preset', 'geocoder', 'geolocation', 'map-click'].includes(center.source) ? center.source : 'preset',
+      source: ['preset', 'geocoder', 'geolocation', 'map-pick'].includes(center.source) ? center.source : 'preset',
       ...(center.accuracyMeters == null ? {} : { accuracyMeters: assertFiniteNumber(Number(center.accuracyMeters), 'center.accuracyMeters') }),
     };
   }
@@ -310,7 +310,7 @@
       geometry: ring?.geometry ? normalizeGeoJsonGeometry(ring.geometry, `rings[${index}].geometry`) : null,
     }));
     const poiIds = new Set();
-    const isSpatialTimeResult = result.metadata?.spatialTime?.method === 'minute-isochrone-spatial';
+    const isSpatialTimeResult = result.metadata?.spatialTime?.method === 'isochrone-minute-band';
     normalized.pois = normalized.pois.map((poi, index) => {
       if (!poi || !poi.poiId || poiIds.has(poi.poiId)) throw new Error(`pois[${index}].poiId 必须稳定且唯一。`);
       poiIds.add(poi.poiId);

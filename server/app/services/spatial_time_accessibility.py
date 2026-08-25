@@ -21,32 +21,32 @@ def calculate_spatial_time_accessibility(request: SpatialTimeAccessibilityReques
         raise ValueError("minuteIsochrones 必须覆盖到当前最大时间阈值。")
 
     polygons = [(item.rangeMinutes, shape(item.geometry)) for item in minute_isochrones]
+    non_nested = sum(1 for index in range(1, len(polygons)) if not polygons[index][1].covers(polygons[index - 1][1]))
     counts = {ring.ringId: 0 for ring in result.rings}
     within = 0
     outside = 0
+    boundary = 0
     calculated_at = datetime.now(timezone.utc).isoformat()
     for poi in result.pois:
         point = Point(poi.location.lon, poi.location.lat)
         minute = next((value for value, polygon in polygons if polygon.covers(point)), None)
         if minute is None:
-            poi.travelTimeSeconds = None
-            poi.networkDistanceMeters = None
-            poi.ringId = "matrix-out-of-range"
-            poi.matrixBandId = "matrix-out-of-range"
-            poi.matrixStatus = "unreachable"
-            poi.reachable = False
+            poi.travelTimeMinuteEstimate = None
+            poi.travelTimeBand = None
+            poi.travelTimeMethod = None
             outside += 1
             continue
         ring_id = _ring_for_minute(result, minute)
-        poi.travelTimeSeconds = float(minute * 60)
-        poi.networkDistanceMeters = 0
         poi.ringId = ring_id
-        poi.matrixBandId = ring_id
-        poi.bandAssignmentMethod = "minute-isochrone-spatial"
-        poi.matrixStatus = "ok"
+        poi.travelTimeMinuteEstimate = minute
+        poi.travelTimeBand = {"lowerExclusiveMinutes": minute - 1, "upperInclusiveMinutes": minute}
+        poi.travelTimeMethod = "isochrone-minute-band"
+        poi.bandAssignmentMethod = None
         poi.reachable = True
         poi.routingProvider = "ors-public-api"
         poi.calculatedAt = calculated_at
+        if polygons[minute - 1][1].boundary.covers(point):
+            boundary += 1
         counts[ring_id] = counts.get(ring_id, 0) + 1
         within += 1
 
@@ -55,10 +55,8 @@ def calculate_spatial_time_accessibility(request: SpatialTimeAccessibilityReques
     if result.nameCloud:
         result.nameCloud.setdefault("stats", {})["eligibleCount"] = within
         result.nameCloud["stats"]["bandCounts"] = counts
-    result.accessibility = []
-    result.metadata.matrix = None
     result.metadata.spatialTime = {
-        "method": "minute-isochrone-spatial",
+        "method": "isochrone-minute-band",
         "precisionMinutes": 1,
         "requestedPoiCount": len(result.pois),
         "withinRangeCount": within,
@@ -67,9 +65,14 @@ def calculate_spatial_time_accessibility(request: SpatialTimeAccessibilityReques
         "maxRangeMinutes": max_minute,
         "calculatedAt": calculated_at,
         "upstreamRequestCount": 0,
+        "cacheHitCount": 0,
+        "batchCount": 0,
+        "boundaryPoiCount": boundary,
+        "nonNestedContourPairCount": non_nested,
     }
     selection = result.metadata.poiSelection if isinstance(result.metadata.poiSelection, dict) else {}
-    result.metadata.poiSelection = {**selection, "travelTimesCalculated": True, "bandAssignmentMethod": "minute-isochrone-spatial"}
-    result.metadata.warnings = [warning for warning in result.metadata.warnings if "Matrix" not in warning]
-    result.metadata.warnings.append("POI 时间由 1 分钟累计等时圈的空间包含关系判定，不使用 Matrix。")
+    result.metadata.poiSelection = {**selection, "travelTimesCalculated": True, "bandAssignmentMethod": "isochrone-minute-band"}
+    minute_warning = "POI 时间为 1 分钟累计等时圈区间估计；仅本方法产生的结果不填写 Matrix 秒数与距离字段。"
+    if minute_warning not in result.metadata.warnings:
+        result.metadata.warnings.append(minute_warning)
     return result

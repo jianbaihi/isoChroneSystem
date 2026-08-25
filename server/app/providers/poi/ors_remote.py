@@ -11,6 +11,7 @@ from shapely.geometry import Point, shape
 
 from app.config import Settings
 from app.errors import (
+    ApprovalRequiredError,
     InvalidProviderParameterError,
     InvalidPoiProviderResponseError,
     PoiCandidateLimitError,
@@ -142,6 +143,7 @@ class OrsRemotePoiProvider:
         rings: list[Any],
         *,
         single_polygon: bool = False,
+        approved: bool = False,
     ) -> dict[str, Any]:
         self.validate_request(request)
         cells: list[PoiCell] = []
@@ -154,6 +156,11 @@ class OrsRemotePoiProvider:
             )
             initial_cell_count = len(cells)
             if initial_cell_count > self.settings.ors_poi_max_requests_per_analysis:
+                if not approved:
+                    raise ApprovalRequiredError(
+                        f"POI 查询预计需要 {initial_cell_count} 个基础分片，超过自动执行预算 {self.settings.ors_poi_max_requests_per_analysis}。",
+                        [{"field": "poiPlan", "reason": "request_budget", "outerIsochroneAreaKm2": round(sum(item.area_km2 for item in cells), 4), "estimatedTileCount": initial_cell_count, "baseRequestCount": initial_cell_count, "maxAdaptiveRequests": self.settings.ors_poi_max_requests_per_analysis}],
+                    )
                 center_point = Point(request.center.lon, request.center.lat)
                 cells = sorted(cells, key=lambda item: shape(item.geometry).distance(center_point))[:self.settings.ors_poi_max_requests_per_analysis]
 
@@ -299,6 +306,9 @@ class OrsRemotePoiProvider:
             "coverage": {
                 "strategy": "outer-isochrone-single-polygon" if single_polygon else self.settings.ors_poi_query_strategy,
                 "cells": len(cells),
+                "estimatedTileCount": initial_cell_count if not single_polygon else 1,
+                "baseRequestCount": initial_cell_count if not single_polygon else 1,
+                "maxAdaptiveRequests": self.settings.ors_poi_max_requests_per_analysis,
                 "requests": request_count,
                 "cacheHits": cache_hits,
                 "complete": not bool(upstream_limit_hit),

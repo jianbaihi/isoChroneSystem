@@ -2,6 +2,8 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field, validator
 
+from app.provider_capabilities import PROFILE_MAX_TIME_MINUTES
+
 
 SCHEMA_VERSION = "1.0"
 Profile = Literal["foot-walking", "cycling-regular", "driving-car"]
@@ -13,7 +15,7 @@ class Center(BaseModel):
     crs: Literal["EPSG:4326"] = "EPSG:4326"
     label: Optional[str] = None
     id: Optional[str] = None
-    source: Literal["preset", "geocoder", "geolocation", "map-click"] = "preset"
+    source: Literal["preset", "geocoder", "geolocation", "map-pick"] = "preset"
     accuracyMeters: Optional[float] = Field(default=None, ge=0)
 
 
@@ -33,11 +35,15 @@ class AnalysisRequest(BaseModel):
     options: AnalysisOptions = Field(default_factory=AnalysisOptions)
 
     @validator("rangesMinutes")
-    def validate_ranges(cls, value: list[int]) -> list[int]:
+    def validate_ranges(cls, value: list[int], values: dict) -> list[int]:
         if any(not isinstance(item, int) or isinstance(item, bool) or item <= 0 for item in value):
             raise ValueError("rangesMinutes 必须是正整数。")
         if any(value[index] <= value[index - 1] for index in range(1, len(value))):
             raise ValueError("rangesMinutes 必须严格升序且不能重复。")
+        profile = values.get("profile")
+        maximum = PROFILE_MAX_TIME_MINUTES.get(profile)
+        if maximum is not None and max(value) > maximum:
+            raise ValueError(f"当前 ORS 公共 {profile} 最大时间范围为 {maximum} 分钟。")
         return value
 
     @validator("categoryIds")
@@ -92,6 +98,7 @@ class NameCloudRequest(BaseModel):
     rangesMinutes: list[int] = Field(..., min_items=1, max_items=10)
     categoryIds: list[str] = Field(default_factory=list)
     cumulativeIsochrones: list[CumulativeIsochrone] = Field(..., min_items=1, max_items=10)
+    approved: bool = False
 
     @validator("rangesMinutes")
     def validate_ranges(cls, value: list[int]) -> list[int]:
@@ -141,6 +148,9 @@ class Poi(BaseModel):
     # to perform a second join merely to show time, distance, or ring.
     travelTimeSeconds: Optional[float] = Field(default=None, ge=0)
     networkDistanceMeters: Optional[float] = Field(default=None, ge=0)
+    travelTimeMinuteEstimate: Optional[int] = Field(default=None, ge=1)
+    travelTimeBand: Optional[dict[str, int]] = None
+    travelTimeMethod: Optional[Literal["isochrone-minute-band"]] = None
     ringId: str
     matrixBandId: Optional[str] = None
     spatialBandId: Optional[str] = None
@@ -240,6 +250,12 @@ class SpatialTimeAccessibilityRequest(BaseModel):
         if ranges != list(range(1, max(ranges) + 1)):
             raise ValueError("minuteIsochrones 必须从 1 分钟开始连续递增。")
         return value
+
+
+class MinuteAccessibilityRequest(BaseModel):
+    schemaVersion: Literal["1.0"] = SCHEMA_VERSION
+    baseResult: AnalysisResult
+    approved: bool = False
 
 
 class ErrorDetail(BaseModel):

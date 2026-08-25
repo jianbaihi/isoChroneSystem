@@ -34,7 +34,7 @@ def polygon(delta: float) -> dict:
 
 
 class FakePoiProvider:
-    async def fetch(self, request, outer_geometry, rings, *, single_polygon=False):
+    async def fetch(self, request, outer_geometry, rings, *, single_polygon=False, approved=False):
         self.request = request
         self.single_polygon = single_polygon
         poi = Poi(

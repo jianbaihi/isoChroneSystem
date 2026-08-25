@@ -97,6 +97,7 @@
         rangesMinutes: request.rangesMinutes,
         categoryIds: request.categoryIds || [],
         cumulativeIsochrones: request.cumulativeIsochrones || [],
+        approved: request.approved === true,
       }),
       signal,
     });
@@ -144,6 +145,25 @@
       const errorPayload = payload?.error || {};
       const error = new Error(errorPayload.message || `空间补时请求失败（${response.status}）。`);
       error.code = errorPayload.code || 'HTTP_ERROR';
+      error.status = response.status;
+      throw error;
+    }
+    return app.contracts.normalizeAnalysisResult(payload);
+  }
+
+  async function createMinuteAccessibility(baseResult, { signal, approved = false } = {}) {
+    const response = await fetch(`${app.config.apiBaseUrl}/minute-accessibility`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ schemaVersion: '1.0', baseResult, approved }),
+      signal,
+    });
+    const payload = await parseJson(response);
+    if (!response.ok) {
+      const errorPayload = payload?.error || {};
+      const error = new Error(errorPayload.message || `分钟级可达性请求失败（${response.status}）。`);
+      error.code = errorPayload.code || 'HTTP_ERROR';
+      error.details = errorPayload.details || [];
       error.status = response.status;
       throw error;
     }
@@ -212,7 +232,7 @@
   }
 
   app.analysisClient = Object.freeze({
-    getHealth, createAnalysis, createPoiPreview, createNameCloud, createMatrixAccessibility, createSpatialTimeAccessibility,
+    getHealth, createAnalysis, createPoiPreview, createNameCloud, createMatrixAccessibility, createSpatialTimeAccessibility, createMinuteAccessibility,
     getWalkingJobLedger, publishWalkingJob, getCyclingJobLedger, publishCyclingJob,
     publishProfileJob, listPoiDatasets, geocode, reverseGeocode,
   });
