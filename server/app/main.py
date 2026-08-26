@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 
 from app.config import settings
 from app.errors import ApiError, FeatureNotAvailableError, InvalidProviderParameterError
-from app.models import AnalysisRequest, MatrixAccessibilityRequest, MinuteAccessibilityRequest, NameCloudRequest, PoiPreviewRequest, SpatialTimeAccessibilityRequest
+from app.models import AnalysisRequest, MatrixAccessibilityRequest, MinuteAccessibilityRequest, NameCloudRequest, PoiPreviewRequest, PoiQueryRequest, SpatialTimeAccessibilityRequest
 from app.provider_capabilities import public_provider_capabilities
 from app.providers.geocoder import OrsGeocoder
 from app.providers.poi.ors_remote import OrsRemotePoiProvider
@@ -18,6 +18,7 @@ from app.services.analysis import create_name_cloud
 from app.services.cycling_job_ledger import CyclingJobLedger, cycling_input_fingerprint
 from app.services.matrix_accessibility import calculate_matrix_accessibility
 from app.services.minute_accessibility import calculate_minute_accessibility
+from app.services.poi_query import query_pois
 from app.services.spatial_time_accessibility import calculate_spatial_time_accessibility
 from app.services.poi_batch_planner import build_poi_query_plan, public_plan
 from app.services.quota import QuotaObserver
@@ -268,6 +269,22 @@ async def create_name_cloud_endpoint(request: NameCloudRequest, raw_request: Req
         hits = int(coverage.get("cacheHits", int(bool(coverage.get("cacheHit")))))
         ledger.record(job_id, "pois", attempted=attempted, cache_hits=hits, upstream=max(0, attempted - hits))
         ledger.transition(job_id, "poi-ready")
+    return JSONResponse(
+        status_code=200,
+        content=result.model_dump(mode="json") if hasattr(result, "model_dump") else result.dict(),
+        headers={"X-Request-ID": request_id},
+    )
+
+
+@app.post("/api/v1/poi-query", response_model=None, response_model_exclude_none=False)
+async def create_poi_query_endpoint(request: PoiQueryRequest, raw_request: Request):
+    request_id = request_id_for(raw_request)
+    runtime_settings = getattr(raw_request.app.state, "settings", settings)
+    quota_observer = getattr(raw_request.app.state, "quota_observer", None)
+    provider = getattr(raw_request.app.state, "poi_provider", None)
+    if not isinstance(provider, OrsRemotePoiProvider):
+        provider = OrsRemotePoiProvider(runtime_settings, quota_observer=quota_observer)
+    result = await query_pois(request, runtime_settings, provider, quota_observer)
     return JSONResponse(
         status_code=200,
         content=result.model_dump(mode="json") if hasattr(result, "model_dump") else result.dict(),

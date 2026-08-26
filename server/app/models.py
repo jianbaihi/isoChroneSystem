@@ -113,6 +113,21 @@ class NameCloudRequest(BaseModel):
         return list(dict.fromkeys(item.strip() for item in value if item and item.strip()))
 
 
+class PoiQueryRequest(BaseModel):
+    schemaVersion: Literal["1.0"] = SCHEMA_VERSION
+    analysisFingerprint: str = Field(..., min_length=8, max_length=128)
+    center: Center
+    profile: Profile
+    rangesMinutes: list[int] = Field(..., min_items=1, max_items=10)
+    categoryIds: list[str] = Field(default_factory=list)
+    cumulativeIsochrones: list[CumulativeIsochrone] = Field(..., min_items=1, max_items=10)
+    outerIsochrone: CumulativeIsochrone
+    approved: bool = False
+
+    _validate_ranges = validator("rangesMinutes", allow_reuse=True)(NameCloudRequest.validate_ranges.__func__)
+    _normalize_categories = validator("categoryIds", allow_reuse=True)(NameCloudRequest.normalize_category_ids.__func__)
+
+
 class Category(BaseModel):
     categoryId: str
     parentCategoryId: Optional[str] = None
@@ -232,6 +247,21 @@ class AnalysisResult(BaseModel):
     categories: list[Category] = Field(default_factory=list)
     nameCloud: Optional[dict[str, Any]] = None
     metadata: AnalysisMetadata
+
+
+class PoiQueryResult(BaseModel):
+    schemaVersion: Literal["1.0"] = SCHEMA_VERSION
+    poiQueryId: str
+    analysisFingerprint: str
+    center: Center
+    profile: Profile
+    rangesMinutes: list[int]
+    outerRangeMinutes: int = Field(..., gt=0)
+    pois: list[Poi] = Field(default_factory=list)
+    categories: list[Category] = Field(default_factory=list)
+    ringStatistics: dict[str, Any] = Field(default_factory=dict)
+    coverage: dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class MatrixAccessibilityRequest(BaseModel):

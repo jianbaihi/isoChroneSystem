@@ -30,6 +30,16 @@ class ApprovalRequiredError(ApiError):
         super().__init__("APPROVAL_REQUIRED", message, details, status_code=409)
 
 
+class AnalysisStaleError(ApiError):
+    def __init__(self, reason: str) -> None:
+        super().__init__(
+            "ANALYSIS_STALE",
+            "POI 请求与当前可达域参数不一致。",
+            [{"field": "analysisFingerprint", "reason": reason}],
+            status_code=409,
+        )
+
+
 class ProviderNotConfiguredError(ApiError):
     def __init__(self) -> None:
         super().__init__(

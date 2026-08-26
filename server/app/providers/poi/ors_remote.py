@@ -77,12 +77,16 @@ def _name(properties: dict[str, Any]) -> tuple[str | None, str | None]:
     return None, None
 
 
-def _stable_id(feature: dict[str, Any], properties: dict[str, Any]) -> str | None:
+def _stable_id(feature: dict[str, Any], properties: dict[str, Any], name: str, lon: float, lat: float) -> str:
     osm_type = _string_value(properties.get("osm_type") or properties.get("osmType") or feature.get("osm_type"))
     osm_id = _string_value(properties.get("osm_id") or properties.get("osmId") or feature.get("osm_id"))
     if osm_id:
         return f"ors-poi:{osm_type or 'osm'}:{osm_id}"
-    return None
+    feature_id = _string_value(feature.get("id") or properties.get("id"))
+    if feature_id:
+        return f"ors-poi:feature:{feature_id}"
+    normalized_name = unicodedata.normalize("NFKC", name).casefold().strip()
+    return f"ors-poi:fallback:{normalized_name}:{lon:.6f}:{lat:.6f}"
 
 
 def _normalize_feature(feature: Any) -> tuple[_NormalizedPoi | None, str | None]:
@@ -102,12 +106,10 @@ def _normalize_feature(feature: Any) -> tuple[_NormalizedPoi | None, str | None]
         return None, "point_coordinates_out_of_range"
     properties = feature.get("properties") if isinstance(feature.get("properties"), dict) else {}
     properties = {**properties, **(properties.get("osm_tags") if isinstance(properties.get("osm_tags"), dict) else {})}
-    poi_id = _stable_id(feature, properties)
-    if poi_id is None:
-        return None, "stable_osm_identity_missing"
     name, locale = _name(properties)
     if not name:
         return None, "name_missing"
+    poi_id = _stable_id(feature, properties, name, lon, lat)
     group_id, category_id, hierarchy = category_hierarchy(properties)
     return _NormalizedPoi(poi_id, name, locale, lon, lat, group_id, category_id, hierarchy, properties), None
 
@@ -225,6 +227,7 @@ class OrsRemotePoiProvider:
 
         diagnostics: defaultdict[str, int] = defaultdict(int)
         normalized: dict[str, _NormalizedPoi] = {}
+        parsed_count = 0
         requested_groups = category_filter_groups(request.categoryIds)
         for feature in raw_features:
             item, reason = _normalize_feature(feature)
@@ -236,6 +239,9 @@ class OrsRemotePoiProvider:
             if not outer_geometry.covers(Point(item.lon, item.lat)):
                 diagnostics["outside_outer_isochrone"] += 1
                 continue
+            parsed_count += 1
+            if item.poi_id in normalized:
+                diagnostics["duplicate_removed"] += 1
             normalized.setdefault(item.poi_id, item)
         matches = sorted(normalized.values(), key=lambda item: (item.group_id or "", item.category_id or "", item.poi_id))
         if len(matches) > self.settings.poi_max_candidates:
@@ -322,10 +328,12 @@ class OrsRemotePoiProvider:
                 "matched": len(matches),
                 "returned": len(pois),
                 "rawPoiCount": len(raw_features),
-                "parsedPoiCount": len(normalized),
+                "parsedPoiCount": parsed_count,
                 "namedPoiCount": len(matches),
                 "unnamedCount": diagnostics.get("name_missing", 0),
                 "deduplicatedPoiCount": len(normalized),
+                "duplicateRemovedCount": diagnostics.get("duplicate_removed", 0),
+                "outsideRemovedCount": diagnostics.get("outside_outer_isochrone", 0),
                 "resultLimit": selection_limit,
                 "resultTruncated": bool(upstream_limit_hit or len(selected) < len(matches)),
             },
