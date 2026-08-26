@@ -1,0 +1,5 @@
+[
+  {"timestamp":"2026-08-26T09:54:00+08:00","centerSource":"preset","center":{"lon":114.296944,"lat":30.546944},"profile":"foot-walking","rangesMinutes":[10,20,30],"outerRangeMinutes":30,"categoryIds":[],"tileCount":null,"upstreamRequestCount":0,"cacheHitCount":1,"poiCount":284,"durationMs":null,"status":"completed-cache"},
+  {"timestamp":"2026-08-26T09:55:00+08:00","centerSource":"preset","center":{"lon":114.296944,"lat":30.546944},"profile":"foot-walking","rangesMinutes":[7,13,18],"outerRangeMinutes":18,"categoryIds":[],"tileCount":null,"upstreamRequestCount":null,"cacheHitCount":null,"poiCount":141,"durationMs":27.4,"status":"completed"},
+  {"timestamp":"2026-08-26T09:58:00+08:00","centerSource":"preset","center":{"lon":114.296944,"lat":30.546944},"profile":"cycling-regular","rangesMinutes":[7,13,18],"outerRangeMinutes":18,"categoryIds":[],"tileCount":null,"upstreamRequestCount":null,"cacheHitCount":null,"poiCount":600,"durationMs":96.7,"status":"completed-truncated"}
+]

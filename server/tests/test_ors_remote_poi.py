@@ -99,12 +99,13 @@ class OrsRemotePoiTest(unittest.TestCase):
         ring = {"ringId": "ring-0-30", "innerRangeMinutes": 0, "outerRangeMinutes": 30, "geometry": mapping(outer)}
         result = asyncio.run(OrsRemotePoiProvider(settings(), client).fetch(request(), outer, [ring]))
         self.assertGreaterEqual(client.calls, 1)
-        self.assertEqual(result["matchedCount"], 1)
-        self.assertEqual(result["returnedCount"], 1)
-        self.assertEqual(result["pois"][0].poiId, "ors-poi:node:1")
-        self.assertEqual(result["pois"][0].categoryId, "ors:category:570")
+        self.assertEqual(result["matchedCount"], 2)
+        self.assertEqual(result["returnedCount"], 2)
+        osm_poi = next(poi for poi in result["pois"] if poi.poiId == "ors-poi:node:1")
+        self.assertEqual(osm_poi.categoryId, "ors:category:570")
         self.assertEqual(result["categories"][0].categoryId, "ors:group:560")
-        self.assertGreaterEqual(result["diagnostics"]["stable_osm_identity_missing"], 1)
+        self.assertTrue(any(poi.poiId.startswith("ors-poi:fallback:no osm:") for poi in result["pois"]))
+        self.assertGreaterEqual(result["coverage"]["duplicateRemovedCount"], 1)
         self.assertGreaterEqual(result["diagnostics"]["name_missing"], 1)
         self.assertTrue(result["coverage"]["fullyCovered"])
 

@@ -1,0 +1,10 @@
+{
+  "searchGeometry": "current largest cumulative isochrone",
+  "predicate": "outerPolygon.covers(point)",
+  "boundarySemantics": "kept",
+  "displayRingClassification": "first ascending cumulative contour covering the point",
+  "minuteFieldsWritten": false,
+  "deduplication": ["stable OSM/provider ID", "feature ID", "normalized name + coordinates rounded to 6 decimals"],
+  "statistics": ["rawPoiCount", "duplicateRemovedCount", "uniquePoiCount", "candidatePoiCount", "insideOuterIsochroneCount", "outsideRemovedCount"],
+  "testStatus": "passed"
+}

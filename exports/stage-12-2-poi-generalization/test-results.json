@@ -1,0 +1,6 @@
+{
+  "frontend": {"passed":122,"failed":0},
+  "backendFocused": {"passed":8,"failed":0},
+  "backendFull": {"attempted":128,"stage12_2FailuresAfterUpdate":0,"historicalImportErrors":1,"historicalIssue":"Stage 59 test imports a missing ignored cache JSON"},
+  "coverage": ["independent POI contract","stale fingerprint rejected before provider","zero POI ready result","fallback dedup identity","strict polygon covers","bounded render batches 50/250/500/1000","no minute/matrix/panmap calls"]
+}

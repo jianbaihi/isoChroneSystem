@@ -1,0 +1,8 @@
+{
+  "cases": [
+    {"profile":"foot-walking","rangesMinutes":[7,13,18],"poiCount":141,"renderDurationMs":27.4,"mapZoomResponsive":true,"mapKeyboardPanResponsive":true},
+    {"profile":"cycling-regular","rangesMinutes":[7,13,18],"poiCount":600,"renderDurationMs":96.7}
+  ],
+  "maxLongTaskMs": null,
+  "longTaskNote": "Long Task observer was added after these live captures; no visible freeze occurred, but a numeric live long-task sample was not fabricated."
+}

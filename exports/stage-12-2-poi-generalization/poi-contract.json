@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0",
+  "request": {
+    "analysisFingerprint": "fnv1a-xxxxxxxx",
+    "center": {"lon": 114.296944, "lat": 30.546944, "crs": "EPSG:4326", "source": "preset"},
+    "profile": "foot-walking",
+    "rangesMinutes": [7, 13, 18],
+    "categoryIds": [],
+    "cumulativeIsochrones": "current reachability contours",
+    "outerIsochrone": "the contour whose rangeMinutes equals max(rangesMinutes)",
+    "approved": false
+  },
+  "result": {
+    "poiQueryId": "poi-query-uuid",
+    "analysisFingerprint": "fnv1a-xxxxxxxx",
+    "outerRangeMinutes": 18,
+    "pois": [],
+    "categories": [],
+    "ringStatistics": {},
+    "coverage": {},
+    "metadata": {}
+  },
+  "forbiddenResultFields": ["nameCloud", "panmapLayout", "forceLayout", "KDE", "minuteIsochrones", "Matrix"]
+}

@@ -1,0 +1,4 @@
+[
+  {"profile":"foot-walking","outerRangeMinutes":18,"safeTileAreaKm2":45,"execution":"backend bounded concurrency","approval":"required when estimated tiles exceed configured automatic limit"},
+  {"profile":"cycling-regular","outerRangeMinutes":18,"safeTileAreaKm2":45,"execution":"backend bounded concurrency","resultLimitObserved":600}
+]

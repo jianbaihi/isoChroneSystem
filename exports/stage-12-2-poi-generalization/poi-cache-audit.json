@@ -1,0 +1,7 @@
+{
+  "identityIncludes": ["analysisFingerprint", "center", "profile", "rangesMinutes", "categoryIds", "outer geometry through provider request body", "provider"],
+  "sameRequestObserved": {"case":"Huanghelou walking 10/20/30","cacheHit":true,"upstreamRequestCount":0,"poiCount":284},
+  "profileChange": {"walkingFingerprintDifferentFromCycling":true,"oldPoiImmediatelyStale":true},
+  "rangeChange": {"10/20/30To7/13/18CreatesNewFingerprint":true,"oldPoiImmediatelyStale":true},
+  "categoryChange": {"reachabilityRemainsReady":true,"poiBecomesStale":true}
+}
