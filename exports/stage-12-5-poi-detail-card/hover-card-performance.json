@@ -1,0 +1,9 @@
+{
+  "scene": "cycling, 600 POIs",
+  "hoverOpenMs": {"min": 2.4, "max": 5.3},
+  "hoverCloseMs": {"min": 0.0, "max": 0.1},
+  "maxLongTaskMs": 0,
+  "singleCardInstance": true,
+  "fullMapRerender": false
+}
+

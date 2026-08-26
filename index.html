@@ -372,6 +372,28 @@
                 <div id="traditionalMap" class="traditional-map" aria-label="MapLibre 传统地图"></div>
                 <div id="traditionalMapStatus" class="map-status" role="status" aria-live="polite"></div>
                 <div id="mapPickCoordinate" class="map-pick-coordinate" aria-hidden="true"></div>
+                <aside id="poiHoverCard" class="poi-hover-card" role="tooltip" aria-hidden="true">
+                  <strong data-poi-card-field="name"></strong>
+                  <span class="poi-card-category" data-poi-card-field="categoryLabel"></span>
+                  <span class="poi-hover-time" data-poi-card-field="travelTimePrimary"></span>
+                  <span class="poi-hover-ring" data-poi-card-field="displayRingLabel"></span>
+                  <small data-poi-card-field="hoverHint">点击查看详情</small>
+                </aside>
+                <aside id="poiDetailCard" class="poi-detail-card" role="dialog" aria-modal="false" aria-labelledby="poiDetailTitle" aria-hidden="true">
+                  <header><div><span class="poi-card-category" data-poi-card-field="categoryLabel"></span><h2 id="poiDetailTitle" data-poi-card-field="name"></h2></div><button id="poiDetailClose" type="button" aria-label="关闭 POI 详情">×</button></header>
+                  <section class="poi-detail-time"><strong data-poi-card-field="travelTimePrimary"></strong><span data-poi-card-field="travelTimeSecondary"></span><small data-poi-card-field="travelTimeMethodLabel"></small></section>
+                  <dl class="poi-detail-facts">
+                    <div data-poi-card-row="displayRingLabel"><dt>所属圈层</dt><dd data-poi-card-field="displayRingLabel"></dd></div>
+                    <div data-poi-card-row="profileLabel"><dt>交通方式</dt><dd data-poi-card-field="profileLabel"></dd></div>
+                    <div data-poi-card-row="address"><dt>地址</dt><dd data-poi-card-field="address"></dd></div>
+                    <div data-poi-card-row="coordinateLabel"><dt>坐标</dt><dd data-poi-card-field="coordinateLabel"></dd></div>
+                    <div data-poi-card-row="rating"><dt>评分</dt><dd data-poi-card-field="rating"></dd></div>
+                    <div data-poi-card-row="phone"><dt>电话</dt><dd data-poi-card-field="phone"></dd></div>
+                    <div data-poi-card-row="website"><dt>网站</dt><dd><a data-poi-card-field="website" target="_blank" rel="noopener noreferrer"></a></dd></div>
+                    <div data-poi-card-row="openingHours"><dt>营业时间</dt><dd data-poi-card-field="openingHours"></dd></div>
+                  </dl>
+                  <footer>数据来源：<span data-poi-card-field="providerLabel"></span><small data-poi-card-field="sourceCategory"></small></footer>
+                </aside>
               </div>
               <div class="stale-result-banner" id="staleResultBanner" role="status" aria-live="polite" hidden>中心点已改变：地图上的圈层与 POI 是上一中心点的旧结果，请重新生成可达域。</div>
               <svg class="map-art" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" aria-label="武汉·黄鹤楼区域等时圈地图">
@@ -803,6 +825,7 @@
     <script src="./src/contracts/research-evaluation-contract.js?v=20260804-stage39research"></script>
     <script src="./src/taxonomy/category-tree.js?v=20260728-stage5a"></script>
     <script src="./src/state/analysis-store.js?v=20260826-stage12-4"></script>
+    <script src="./src/state/poi-interaction-state.js?v=20260826-stage12-5"></script>
     <script src="./src/state/panmap-control-state.js?v=20260804-stage41directional"></script>
     <script src="./src/state/panmap-mode-state.js?v=20260806-stage47workspace"></script>
     <script src="./src/view/radial-view-contract.js?v=20260802-stage33viewcontract"></script>

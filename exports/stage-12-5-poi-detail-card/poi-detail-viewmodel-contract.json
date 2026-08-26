@@ -1,0 +1,12 @@
+{
+  "contract": "PoiDetailViewModel",
+  "required": ["id", "name", "category", "displayRingLabel", "profileLabel", "coordinateLabel", "provider"],
+  "nullable": ["address", "rating", "phone", "website", "openingHours", "travelTimePrimary", "travelTimeSecondary", "travelTimeMethod"],
+  "minuteExample": {
+    "travelTimePrimary": "约 21 分钟",
+    "travelTimeSecondary": "(20, 21] 分钟",
+    "travelTimeMethod": "1 分钟等时圈估计"
+  },
+  "withoutMinute": {"travelTimePrimary": "尚未补齐分钟级时间"}
+}
+

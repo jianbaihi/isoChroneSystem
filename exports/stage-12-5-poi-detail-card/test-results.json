@@ -1,0 +1,9 @@
+{
+  "command": "node --test src/state/*.test.js src/contracts/*.test.js",
+  "tests": 58,
+  "passed": 58,
+  "failed": 0,
+  "syntaxCheck": "passed",
+  "diffCheck": "passed",
+  "browserScenario": "passed"
+}

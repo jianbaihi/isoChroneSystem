@@ -1,0 +1,8 @@
+{
+  "contract": "NormalizedPoi",
+  "identity": ["id", "name", "category", "longitude", "latitude"],
+  "optional": ["address", "rating", "phone", "website", "openingHours"],
+  "provenance": ["provider", "sourceCategory"],
+  "rule": "UI never reads provider-native payload fields"
+}
+

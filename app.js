@@ -48,6 +48,9 @@ const matrixButton = document.getElementById('matrixButton');
 const matrixButtonLabel = matrixButton?.querySelector('.matrix-button-label');
 const matrixResultSummary = document.getElementById('matrixResultSummary');
 const matrixPoiDetail = document.getElementById('matrixPoiDetail');
+const poiHoverCard = document.getElementById('poiHoverCard');
+const poiDetailCard = document.getElementById('poiDetailCard');
+const poiDetailClose = document.getElementById('poiDetailClose');
 const prepareAllProfilesButton = document.getElementById('prepareAllProfilesButton');
 const quotaButton = document.getElementById('quotaButton');
 const quotaPanel = document.getElementById('quotaPanel');
@@ -94,6 +97,19 @@ let analysisAbortController = null;
 let poiAbortController = null;
 let minuteAbortController = null;
 let minuteAssignmentByPoiId = new Map();
+const poiInteractionState = window.PanmapApp.createPoiInteractionState?.()
+  || { hoveredPoiId: null, selectedPoiId: null, hoverCardVisible: false, detailCardVisible: false };
+window.poiInteractionState = poiInteractionState;
+window.poiCardPerformance = { hover: [], detail: [], maxLongTaskMs: 0, singleCardInstance: true };
+
+function publishPoiCardPerformance() {
+  window.poiCardPerformance.maxLongTaskMs = poiLongTaskMetrics.maxLongTaskMs || 0;
+  document.documentElement.dataset.poiCardPerformance = JSON.stringify(window.poiCardPerformance);
+}
+let poiHoverOpenTimer = null;
+let poiHoverCloseTimer = null;
+let poiHoverPoint = null;
+let renderedDetailKey = null;
 let lastDraftAnalysisFingerprint = null;
 let isDraggingSplitter = false;
 let isPanningPanmap = false;
@@ -423,6 +439,132 @@ window.buildPoiDetailViewModel = function buildPoiDetailViewModel(poiId) {
   ) || null;
 };
 
+function setCardField(card, field, value) {
+  card?.querySelectorAll(`[data-poi-card-field="${field}"]`).forEach((element) => {
+    element.textContent = value == null ? '' : String(value);
+  });
+}
+
+function positionPoiHoverCard(point) {
+  if (!poiHoverCard || !point) return;
+  const shell = traditionalMapShell?.getBoundingClientRect();
+  if (!shell) return;
+  const width = 244;
+  const height = poiHoverCard.offsetHeight || 150;
+  const safe = 12;
+  let left = point.x + 16;
+  let top = point.y - height - 14;
+  if (left + width > shell.width - safe) left = point.x - width - 16;
+  if (top < safe) top = point.y + 18;
+  left = Math.max(safe, Math.min(left, shell.width - width - safe));
+  top = Math.max(safe, Math.min(top, shell.height - height - safe));
+  poiHoverCard.style.left = `${left}px`;
+  poiHoverCard.style.top = `${top}px`;
+}
+
+function showPoiHoverCard(poiId, point) {
+  const started = performance.now();
+  const view = window.buildPoiDetailViewModel(poiId);
+  if (!view || !poiHoverCard) return;
+  setCardField(poiHoverCard, 'name', view.name);
+  setCardField(poiHoverCard, 'categoryLabel', view.categoryLabel);
+  setCardField(poiHoverCard, 'travelTimePrimary', view.travelTimePrimary || view.displayRingLabel || '当前可达域内');
+  setCardField(poiHoverCard, 'displayRingLabel', view.travelTimePrimary ? view.displayRingLabel : '尚未补齐分钟级时间');
+  positionPoiHoverCard(point);
+  poiHoverCard.classList.add('is-visible');
+  poiHoverCard.setAttribute('aria-hidden', 'false');
+  poiHoverCard.dataset.poiId = poiId;
+  poiInteractionState.hover?.(poiId) || Object.assign(poiInteractionState, { hoveredPoiId: poiId, hoverCardVisible: true });
+  window.poiCardPerformance.hover.push({ action: 'open', poiId, durationMs: performance.now() - started });
+  publishPoiCardPerformance();
+}
+
+function hidePoiHoverCard() {
+  const started = performance.now();
+  if (!poiHoverCard) return;
+  poiHoverCard.classList.remove('is-visible');
+  poiHoverCard.setAttribute('aria-hidden', 'true');
+  poiInteractionState.leave?.() || Object.assign(poiInteractionState, { hoveredPoiId: null, hoverCardVisible: false });
+  window.poiCardPerformance.hover.push({ action: 'close', durationMs: performance.now() - started });
+  publishPoiCardPerformance();
+}
+
+function handlePoiHover(poiId, point) {
+  poiInteractionState.hoveredPoiId = poiId || null;
+  poiHoverPoint = point || poiHoverPoint;
+  window.clearTimeout(poiHoverOpenTimer);
+  window.clearTimeout(poiHoverCloseTimer);
+  if (!poiId) {
+    poiHoverCloseTimer = window.setTimeout(hidePoiHoverCard, 90);
+    return;
+  }
+  if (poiHoverCard?.dataset.poiId === poiId && poiInteractionState.hoverCardVisible) {
+    positionPoiHoverCard(point);
+    return;
+  }
+  poiHoverOpenTimer = window.setTimeout(() => showPoiHoverCard(poiId, poiHoverPoint), 100);
+}
+
+function renderPoiDetailCard(poiId) {
+  if (!poiDetailCard) return;
+  if (!poiId) {
+    if (!poiInteractionState.detailCardVisible && poiDetailCard.getAttribute('aria-hidden') === 'true') return;
+    const started = performance.now();
+    poiDetailCard.classList.remove('is-visible');
+    poiDetailCard.setAttribute('aria-hidden', 'true');
+    poiInteractionState.close?.() || Object.assign(poiInteractionState, { selectedPoiId: null, detailCardVisible: false });
+    renderedDetailKey = null;
+    window.poiCardPerformance.detail.push({ action: 'close', durationMs: performance.now() - started });
+    return;
+  }
+  const state = analysisStore?.getState();
+  const key = `${poiId}|${state?.data?.workflow?.minuteResult?.minuteAccessibilityId || 'no-minute'}`;
+  if (renderedDetailKey === key && poiInteractionState.detailCardVisible) return;
+  const started = performance.now();
+  const view = window.buildPoiDetailViewModel(poiId);
+  if (!view) return;
+  const fields = ['name', 'categoryLabel', 'travelTimeSecondary', 'travelTimeMethodLabel', 'displayRingLabel',
+    'profileLabel', 'address', 'coordinateLabel', 'rating', 'phone', 'openingHours', 'providerLabel'];
+  fields.forEach((field) => setCardField(poiDetailCard, field, view[field]));
+  setCardField(poiDetailCard, 'travelTimePrimary', view.travelTimePrimary || '尚未补齐分钟级时间');
+  setCardField(poiDetailCard, 'sourceCategory', view.sourceCategory ? `Provider 类别：${view.sourceCategory}` : '');
+  poiDetailCard.querySelectorAll('[data-poi-card-row]').forEach((row) => {
+    const field = row.dataset.poiCardRow;
+    row.hidden = view[field] == null || view[field] === '';
+  });
+  const website = poiDetailCard.querySelector('[data-poi-card-field="website"]');
+  let safeWebsite = null;
+  try {
+    const parsed = view.website ? new URL(view.website) : null;
+    if (parsed && ['http:', 'https:'].includes(parsed.protocol)) safeWebsite = parsed.href;
+  } catch (error) { safeWebsite = null; }
+  website.textContent = safeWebsite || '';
+  website.removeAttribute('href');
+  if (safeWebsite) website.href = safeWebsite;
+  website.closest('[data-poi-card-row]').hidden = !safeWebsite;
+  poiDetailCard.querySelector('.poi-detail-time')?.classList.toggle('is-unavailable', !view.travelTimePrimary);
+  poiDetailCard.classList.add('is-visible');
+  poiDetailCard.setAttribute('aria-hidden', 'false');
+  poiDetailCard.dataset.poiId = poiId;
+  poiInteractionState.select?.(poiId) || Object.assign(poiInteractionState, { selectedPoiId: poiId, detailCardVisible: true });
+  const action = renderedDetailKey ? 'switch' : 'open';
+  renderedDetailKey = key;
+  window.poiCardPerformance.detail.push({ action, poiId, durationMs: performance.now() - started });
+  publishPoiCardPerformance();
+}
+
+function closePoiDetailCard() {
+  analysisStore?.setSelectedPoiId(null);
+  renderPoiDetailCard(null);
+}
+
+poiDetailClose?.addEventListener('click', closePoiDetailCard);
+poiHoverCard?.addEventListener('mouseenter', () => window.clearTimeout(poiHoverCloseTimer));
+poiHoverCard?.addEventListener('mouseleave', () => { poiHoverCloseTimer = window.setTimeout(hidePoiHoverCard, 70); });
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && poiInteractionState.detailCardVisible) closePoiDetailCard();
+});
+
 function updateResultCard(result) {
   const rings = Array.isArray(result?.rings) ? result.rings : [];
   const pois = Array.isArray(result?.pois) ? result.pois : [];
@@ -612,6 +754,8 @@ analysisStore?.subscribe((state) => {
   traditionalMapAdapter?.setHoveredRingId(interaction.hoveredRingId || null);
   traditionalMapAdapter?.setSelectedPoiId(interaction.selectedPoiId || null);
   traditionalMapAdapter?.setHoveredPoiId(interaction.hoveredPoiId || null);
+  renderPoiDetailCard(interaction.selectedPoiId || null);
+  if (!interaction.hoveredPoiId && poiInteractionState.hoverCardVisible) hidePoiHoverCard();
   traditionalMapAdapter?.setVisibleTopLevelCategoryIds(interaction.visibleTopLevelCategoryIds);
   traditionalMapAdapter?.setBasemapId(interaction.activeBasemapId || 'osm-standard');
   traditionalMapAdapter?.setMapPickMode(Boolean(interaction.isMapPickMode));
@@ -1602,8 +1746,14 @@ function initializeTraditionalMap() {
       renderIsochronePalette();
     },
     onRingHover: (ringId) => analysisStore?.setHoveredRingId(ringId),
-    onPoiClick: (poiId) => analysisStore?.setSelectedPoiId(poiId),
-    onPoiHover: (poiId) => analysisStore?.setHoveredPoiId(poiId),
+    onPoiClick: (poiId) => {
+      hidePoiHoverCard();
+      analysisStore?.setSelectedPoiId(poiId);
+    },
+    onPoiHover: (poiId, point) => {
+      if (poiInteractionState.hoveredPoiId !== (poiId || null)) analysisStore?.setHoveredPoiId(poiId);
+      handlePoiHover(poiId, point);
+    },
     onMapPointSelected: updateDraftCenterFromMap,
     onMapCoordinate: updateMapPickCoordinate,
     onMapStatus: setMapStatus,

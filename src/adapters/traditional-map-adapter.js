@@ -242,6 +242,12 @@
       map.setPaintProperty(POI_LAYER_ID, 'circle-opacity', resultStale ? 0 : 0.78);
     }
 
+    function updatePoiInteractionFilters() {
+      if (!isReady) return;
+      map.setFilter(POI_SELECTED_LAYER_ID, ['==', ['get', 'poiId'], selectedPoiId || '__none__']);
+      map.setFilter(POI_HOVER_LAYER_ID, ['==', ['get', 'poiId'], hoveredPoiId || '__none__']);
+    }
+
     function updatePoiVisibility() {
       if (!isReady) return;
       [POI_LAYER_ID, POI_HOVER_LAYER_ID, POI_SELECTED_LAYER_ID].forEach((layerId) => {
@@ -407,15 +413,24 @@
         if (isPickMode) return;
         map.getCanvas().style.cursor = 'pointer';
         hoveredPoiId = event.features?.[0]?.properties?.poiId || null;
-        updateRingFilters();
-        if (typeof onPoiHover === 'function') onPoiHover(hoveredPoiId);
+        updatePoiInteractionFilters();
+        if (typeof onPoiHover === 'function') onPoiHover(hoveredPoiId, { x: event.point.x, y: event.point.y });
+      });
+      map.on('mousemove', POI_LAYER_ID, (event) => {
+        if (isPickMode) return;
+        const poiId = event.features?.[0]?.properties?.poiId || null;
+        if (poiId !== hoveredPoiId) {
+          hoveredPoiId = poiId;
+          updatePoiInteractionFilters();
+        }
+        if (typeof onPoiHover === 'function') onPoiHover(poiId, { x: event.point.x, y: event.point.y });
       });
       map.on('mouseleave', POI_LAYER_ID, () => {
         if (isPickMode) return;
         map.getCanvas().style.cursor = '';
         hoveredPoiId = null;
-        updateRingFilters();
-        if (typeof onPoiHover === 'function') onPoiHover(null);
+        updatePoiInteractionFilters();
+        if (typeof onPoiHover === 'function') onPoiHover(null, null);
       });
       map.on('error', () => status('传统地图底图或 MapLibre 图层加载失败，分析结果仍会保留。'));
     }
@@ -507,11 +522,11 @@
       },
       setSelectedPoiId(poiId) {
         selectedPoiId = poiId || null;
-        updateRingFilters();
+        updatePoiInteractionFilters();
       },
       setHoveredPoiId(poiId) {
         hoveredPoiId = poiId || null;
-        updateRingFilters();
+        updatePoiInteractionFilters();
       },
       setVisibleTopLevelCategoryIds(ids) {
         visibleTopLevelCategoryIds = ids == null ? null : [...new Set(ids.map(String))];

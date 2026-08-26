@@ -39,11 +39,17 @@
     const assignment = minuteResult?.assignments?.find((item) => item.poiId === poiId) || null;
     const minute = assignment?.travelTimeMinuteEstimate ?? null;
     const band = assignment?.travelTimeBand || null;
+    const profileLabels = { 'foot-walking': '步行', 'cycling-regular': '骑行', 'driving-car': '驾车' };
+    const lat = Number(poi.location.lat);
+    const lon = Number(poi.location.lon);
     return {
       poiId: poi.poiId, name: poi.name, categoryLabel: poi.category.label, address: poi.address,
       location: poi.location, displayRingId: poi.displayRingId,
       displayRingLabel: poi.displayRingId ? `${poi.displayRingId.replace(/^ring-/, '').replaceAll('-', '–')} 分钟圈层` : null,
-      profile, travelTimePrimary: minute == null ? null : `约 ${minute} 分钟`,
+      profile, profileLabel: profileLabels[profile] || profile || null,
+      coordinateLabel: Number.isFinite(lat) && Number.isFinite(lon) ? `${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E` : null,
+      sourceCategory: poi.category.sourceCategory,
+      travelTimePrimary: minute == null ? null : `约 ${minute} 分钟`,
       travelTimeSecondary: band ? `(${band.lowerExclusiveMinutes}, ${band.upperInclusiveMinutes}] 分钟` : null,
       travelTimeMethodLabel: assignment ? '1 分钟等时圈估计' : '尚未补齐',
       rating: poi.rating, phone: poi.phone, website: poi.website, openingHours: poi.openingHours,

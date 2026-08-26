@@ -1,0 +1,15 @@
+{
+  "state": ["hoveredPoiId", "selectedPoiId", "hoverCardVisible", "detailCardVisible"],
+  "transitions": {
+    "hover": "sets hoveredPoiId and hoverCardVisible",
+    "leave": "clears hoveredPoiId and hoverCardVisible",
+    "select": "sets selectedPoiId and detailCardVisible",
+    "close": "clears selectedPoiId and detailCardVisible"
+  },
+  "singleHoverCardInstance": true,
+  "singleDetailCardInstance": true,
+  "hoverMapOperation": "setFilter only",
+  "selectMapOperation": "setFilter only",
+  "fullPoiSetDataOnInteraction": false
+}
+
