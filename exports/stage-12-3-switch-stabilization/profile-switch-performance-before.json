@@ -1,0 +1,8 @@
+{
+  "baselineCommit": "ad627782e8b71fb74ef6b47bd0bc29e0b11beb4f",
+  "observedSymptom": "cycling profile click exceeded the 10000 ms browser interaction deadline in Stage 12.2 acceptance",
+  "switchDurationMs": ">10000 or unresolved",
+  "instrumentationAvailable": false,
+  "confirmedSynchronousWork": ["sessionStorage.getItem", "JSON.parse full result", "store publish", "traditional map full result render", "POI source rewrite", "panmap layout"],
+  "note": "The baseline did not expose numeric marks, so the interaction deadline and static call graph are retained rather than inventing a duration."
+}

@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f7f9fc" />
     <title>IsoTagMap · 等时圈层标签云泛地图</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260806-stage49shell" />
+    <link rel="stylesheet" href="./styles.css?v=20260826-stage12-3" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
   </head>
   <body>
@@ -215,6 +215,7 @@
                 <button class="analysis-step-button matrix-button" id="matrixButton" type="button" disabled><span class="analysis-step-icon" aria-hidden="true">◎</span><span class="matrix-button-copy"><span class="matrix-button-label">按分钟补齐时间</span><small class="matrix-progress-label" hidden>准备计算</small></span><span class="button-arrow">→</span><span class="matrix-progress-track" aria-hidden="true"><i></i></span></button>
                 <button class="name-cloud-button explore-panmap-button" id="nameCloudButton" type="button" disabled><span class="name-cloud-icon" aria-hidden="true">⌖</span><span class="name-cloud-button-label">探索泛地图</span><span class="button-arrow">→</span></button>
               </div>
+              <div id="poiQuerySummary" class="workflow-poi-summary" role="status" aria-live="polite">尚未查询 POI</div>
               <p class="matrix-result-summary" id="matrixResultSummary" hidden>尚未按分钟等时圈补齐时间</p>
               <p class="matrix-poi-detail" id="matrixPoiDetail" hidden></p>
               <div class="progress-note" role="status" aria-live="polite"><span class="progress-line"></span><span id="analysisStatusCopy">设置参数后生成可达域</span></div>
@@ -822,7 +823,7 @@
     <script src="./src/adapters/traditional-map-adapter.js?v=20260826-stage12-2"></script>
     <script src="./panmap-layout.js?v=20260805-stage43research"></script>
     <script src="./src/research/research-mode.js?v=20260806-stage47workspace"></script>
-    <script src="./app.js?v=20260825-acceptance-fix2"></script>
+    <script src="./app.js?v=20260826-stage12-3"></script>
     <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
     <script src="./src/map/maplibre-loader.js?v=20260727-stage4b"></script>
   </body>

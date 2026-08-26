@@ -140,6 +140,7 @@ button { border: 0; cursor: pointer; }
 .poi-explore-button { height: 36px; margin-top: 7px; color: var(--blue); background: #f5f8ff; border: 1px solid #cfe0ff; }
 .sparkle { font-size: 15px; }
 .progress-note { display: flex; align-items: center; gap: 7px; margin-top: 9px; color: #a0adbd; font-size: 10px; }
+.workflow-poi-summary { min-height: 18px; margin: 0; padding: 2px 4px 0; color: #8a94a6; font-size: 12px; font-weight: 400; line-height: 18px; }
 .poi-preview-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; color: #718198; font-size: 10px; }
 .poi-preview-row select { height: 25px; padding: 0 7px; color: #50637a; background: #fff; border: 1px solid #dbe4ef; border-radius: 5px; font-size: 10px; }
 .time-quick-list { display: flex; align-items: center; gap: 4px; margin-top: 8px; color: #98a5b5; font-size: 9px; }

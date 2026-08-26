@@ -21,12 +21,13 @@ test('walking and cycling completed results use different session cache keys', (
   assert.match(app, /PROFILE_RESULT_CACHE_KEYS/);
 });
 
-test('profile switching marks an unmatched previous result stale and only restores a local archive', () => {
+test('profile switching is a lightweight state transition without cache hydration or upstream work', () => {
   const body = app.slice(app.indexOf('async function switchActiveProfile'), app.indexOf('function buildAnalysisRequestFromUI'));
   assert.match(body, /setResultStale\(true\)/);
-  assert.match(body, /旧结果已标记 stale/);
-  assert.match(body, /fetch\(PROFILE_RESULT_ARCHIVE_PATHS\[profile\]/);
-  assert.doesNotMatch(body, /createAnalysis|createNameCloud|createMatrixAccessibility|geocode/);
+  assert.match(body, /旧结果已标记为 stale/);
+  assert.match(body, /setPoiVisibility\(false\)/);
+  assert.doesNotMatch(body, /sessionStorage\.getItem|JSON\.parse|fetch\(|applyAnalysisResultToPanmap/);
+  assert.doesNotMatch(body, /createAnalysis|createNameCloud|createMatrixAccessibility|createMinuteAccessibility|geocode/);
 });
 
 test('online workflow separates isochrones, POI, minute spatial timing and local panmap layout', () => {

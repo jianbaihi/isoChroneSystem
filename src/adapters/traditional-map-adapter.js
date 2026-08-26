@@ -210,6 +210,7 @@
     let paletteRanges = [10, 20, 30];
     let resultStale = false;
     let poiRenderToken = 0;
+    let poiVisible = true;
 
     function status(message) {
       if (typeof onMapStatus === 'function') onMapStatus(message || '');
@@ -239,6 +240,15 @@
         ? ['case', ['==', ['get', 'ringId'], activeRingId], resultStale ? 0.58 : 1, resultStale ? 0.2 : 0.34]
         : (resultStale ? 0.32 : 0.92));
       map.setPaintProperty(POI_LAYER_ID, 'circle-opacity', resultStale ? 0 : 0.78);
+    }
+
+    function updatePoiVisibility() {
+      if (!isReady) return;
+      [POI_LAYER_ID, POI_HOVER_LAYER_ID, POI_SELECTED_LAYER_ID].forEach((layerId) => {
+        if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', poiVisible ? 'visible' : 'none');
+      });
+      if (map.getLayer(POI_LABEL_LAYER_ID)) map.setLayoutProperty(POI_LABEL_LAYER_ID, 'visibility', 'none');
+      container.dataset.poiVisible = String(poiVisible);
     }
 
     function updateBasemapVisibility() {
@@ -311,6 +321,8 @@
         if (token === poiRenderToken) setSourceData(map, POI_SOURCE_ID, published);
       }, { batchSize: POI_RENDER_BATCH_SIZE });
       if (token !== poiRenderToken) return { cancelled: true, poiCount: 0, renderDurationMs: metrics.renderDurationMs };
+      poiVisible = true;
+      updatePoiVisibility();
       container.dataset.poiFeatureCount = String(full.features.length);
       container.dataset.poiQueryId = poiResult?.poiQueryId || '';
       if (diagnostics.length) container.dataset.poiDiagnostics = diagnostics.join('|');
@@ -359,7 +371,7 @@
         if (typeof onMapCoordinate === 'function') onMapCoordinate(null);
       });
       map.on('mouseenter', RING_FILL_LAYER_ID, (event) => {
-        if (isPickMode) return;
+        if (isPickMode || resultStale) return;
         map.getCanvas().style.cursor = 'pointer';
         const ringId = event.features?.[0]?.properties?.ringId || null;
         hoveredRingId = ringId;
@@ -367,7 +379,7 @@
         if (typeof onRingHover === 'function') onRingHover(ringId);
       });
       map.on('mousemove', RING_FILL_LAYER_ID, (event) => {
-        if (isPickMode) return;
+        if (isPickMode || resultStale) return;
         const ringId = event.features?.[0]?.properties?.ringId || null;
         if (ringId === hoveredRingId) return;
         hoveredRingId = ringId;
@@ -382,7 +394,7 @@
         if (typeof onRingHover === 'function') onRingHover(null);
       });
       map.on('click', RING_FILL_LAYER_ID, (event) => {
-        if (isPickMode) return;
+        if (isPickMode || resultStale) return;
         const ringId = event.features?.[0]?.properties?.ringId || null;
         if (typeof onRingClick === 'function') onRingClick(ringId);
       });
@@ -419,6 +431,7 @@
         setPaletteRanges(ranges) { paletteRanges = ranges || [10, 20, 30]; },
         setResultStale(active) { resultStale = Boolean(active); },
         setPois() { return Promise.resolve({ cancelled: false, poiCount: 0, renderDurationMs: 0 }); },
+        setPoiVisibility(active) { poiVisible = Boolean(active); },
         setSelectedPoiId(poiId) { selectedPoiId = poiId || null; },
         setHoveredPoiId(poiId) { hoveredPoiId = poiId || null; },
         setVisibleTopLevelCategoryIds(ids) { visibleTopLevelCategoryIds = ids; },
@@ -470,6 +483,10 @@
         if (isReady) applyResult(result, true);
       },
       setPois,
+      setPoiVisibility(active) {
+        poiVisible = Boolean(active);
+        updatePoiVisibility();
+      },
       setDraftCenter(center) {
         applyDraftCenter(center);
         if (!isReady || !center || !Number.isFinite(Number(center.lon)) || !Number.isFinite(Number(center.lat))) return;

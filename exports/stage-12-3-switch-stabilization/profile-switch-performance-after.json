@@ -1,0 +1,14 @@
+{
+  "scenario": "six alternating profile clicks after page load",
+  "runs": [
+    {"from":"cycling-regular","to":"driving-car","switchDurationMs":31.4,"storeMs":0.4,"poiHideMs":0.1},
+    {"from":"driving-car","to":"foot-walking","switchDurationMs":31.0,"storeMs":0.4,"poiHideMs":0.1},
+    {"from":"foot-walking","to":"cycling-regular","switchDurationMs":30.0,"storeMs":0.6,"poiHideMs":0.0},
+    {"from":"cycling-regular","to":"driving-car","switchDurationMs":30.6,"storeMs":0.4,"poiHideMs":0.0},
+    {"from":"driving-car","to":"foot-walking","switchDurationMs":31.1,"storeMs":0.6,"poiHideMs":0.0},
+    {"from":"foot-walking","to":"cycling-regular","switchDurationMs":29.9,"storeMs":0.5,"poiHideMs":0.0}
+  ],
+  "minMs":29.9,"maxMs":31.4,"meanMs":30.67,
+  "maxLongTaskMs":0,"longTaskCount":0,
+  "upstreamApiCalls":0,"cachePayloadHydrations":0,"poiRenderCalls":0,"panmapLayoutCalls":0
+}

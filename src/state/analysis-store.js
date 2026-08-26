@@ -60,6 +60,27 @@
       && Math.abs(Number(left.lat) - Number(right.lat)) < 1e-9);
   }
 
+  function resultIndex(result, profile) {
+    if (!result) return null;
+    return {
+      analysisId: result.analysisId || null,
+      profile,
+      status: result.status || null,
+      poiCount: Array.isArray(result.pois) ? result.pois.length : 0,
+      rangesMinutes: clone(result.rangesMinutes || []),
+    };
+  }
+
+  function staleReachabilitySnapshot(result) {
+    if (!result) return null;
+    const snapshot = clone(result);
+    snapshot.pois = [];
+    snapshot.categories = [];
+    snapshot.accessibility = [];
+    snapshot.nameCloud = null;
+    return snapshot;
+  }
+
   function createAnalysisStore() {
     let state = initialState();
     const listeners = new Set();
@@ -120,7 +141,7 @@
             result: profileResult,
             lastSuccessfulResult: profileResult,
             activeProfile: profile,
-            resultsByProfile: { ...current.data.resultsByProfile, [profile]: profileResult },
+            resultsByProfile: { ...current.data.resultsByProfile, [profile]: resultIndex(profileResult, profile) },
             status: 'success',
             requestStatus: 'success',
             error: null,
@@ -140,12 +161,9 @@
           },
           interaction: {
             ...current.interaction,
-            activeRingId: result?.rings?.some((ring) => ring.ringId === current.interaction.activeRingId)
-              ? current.interaction.activeRingId
-              : null,
-            focusedRingId: result?.rings?.some((ring) => ring.ringId === current.interaction.focusedRingId)
-              ? current.interaction.focusedRingId
-              : null,
+            activeRingId: null,
+            hoveredRingId: null,
+            focusedRingId: null,
             selectedPoiId: poiIds.has(current.interaction.selectedPoiId) ? current.interaction.selectedPoiId : null,
             hoveredPoiId: poiIds.has(current.interaction.hoveredPoiId) ? current.interaction.hoveredPoiId : null,
             selectedCategoryId: categoryIds.has(current.interaction.selectedCategoryId) ? current.interaction.selectedCategoryId : null,
@@ -232,30 +250,33 @@
       setActiveProfile(profile) {
         if (!supportedProfiles.has(profile)) throw new Error('当前数据源不支持');
         return update((current) => {
-          const result = current.data.resultsByProfile[profile] || null;
-          const previousResult = current.data.lastSuccessfulResult || current.data.result || null;
+          const previousResult = current.data.workflow.reachabilityResult
+            || current.data.lastSuccessfulResult || current.data.result || null;
+          const staleResult = staleReachabilitySnapshot(previousResult);
           const job = current.data.jobsByProfile[profile] || null;
-          const poiIds = new Set((result?.pois || []).map((poi) => poi.poiId));
           return {
             ...current,
             data: {
               ...current.data,
               activeProfile: profile,
               parameterDraft: { ...current.data.parameterDraft, profile },
-              result: clone(result || previousResult),
-              lastSuccessfulResult: clone(result || previousResult),
-              status: result ? 'success' : (job?.status === 'partial' ? 'partial' : 'idle'),
-              requestStatus: result ? 'success' : 'idle',
+              result: staleResult,
+              lastSuccessfulResult: staleResult,
+              status: job?.status === 'partial' ? 'partial' : 'idle',
+              requestStatus: 'idle',
               error: null,
-              resultStale: !result && Boolean(previousResult),
-              staleReason: !result && previousResult ? 'profile-changed' : null,
-              workflow: { ...current.data.workflow, reachabilityResult: result, poiResult: null, minuteResult: null },
-              workflowStatus: { reachability: result ? 'ready' : 'stale', poi: 'stale', minute: 'stale' },
+              resultStale: Boolean(previousResult),
+              staleReason: previousResult ? 'profile-changed' : null,
+              workflow: { ...current.data.workflow, reachabilityResult: null, poiResult: null, minuteResult: null },
+              workflowStatus: { reachability: 'stale', poi: 'stale', minute: 'stale' },
             },
             interaction: {
               ...current.interaction,
-              selectedPoiId: poiIds.has(current.interaction.selectedPoiId) ? current.interaction.selectedPoiId : null,
-              hoveredPoiId: poiIds.has(current.interaction.hoveredPoiId) ? current.interaction.hoveredPoiId : null,
+              activeRingId: null,
+              hoveredRingId: null,
+              focusedRingId: null,
+              selectedPoiId: null,
+              hoveredPoiId: null,
             },
           };
         });
@@ -296,7 +317,7 @@
             ...current,
             data: {
               ...current.data,
-              resultsByProfile: { ...current.data.resultsByProfile, [profile]: clone(result) },
+              resultsByProfile: { ...current.data.resultsByProfile, [profile]: resultIndex(result, profile) },
               jobsByProfile: {
                 ...current.data.jobsByProfile,
                 [profile]: { ...current.data.jobsByProfile[profile], status: 'completed', published: true },

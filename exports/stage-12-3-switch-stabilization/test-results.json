@@ -1,0 +1,8 @@
+{
+  "command":"node --test src/state/*.test.js",
+  "tests":38,"passed":38,"failed":0,"durationMs":130.532334,
+  "syntax":"JavaScript syntax OK",
+  "backendHealth":"ready",
+  "frontendHttpStatus":200,
+  "providers":{"isochrones":"configured","pois":"configured","matrix":"configured","geocoder":"configured"}
+}

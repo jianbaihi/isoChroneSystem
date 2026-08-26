@@ -1,0 +1,12 @@
+{
+  "placement":"below follow-up action buttons and above provider/status copy",
+  "complete":"本次搜索到 N 个 POI",
+  "truncated":"本次返回 N 个 POI · 结果已截断",
+  "empty":"本次未搜索到 POI",
+  "stale":"尚未查询当前范围 POI",
+  "idle":"尚未查询 POI",
+  "buttonComplete":"POI 查询完成",
+  "browserObserved":"本次未搜索到 POI",
+  "countDuplicatedInButton":false,
+  "parameterChangeInvalidatesSummary":true
+}

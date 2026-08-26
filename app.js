@@ -39,6 +39,7 @@ const generateButton = document.getElementById('generateButton');
 const generateButtonLabel = generateButton?.querySelector('.generate-button-label');
 const poiQueryButton = document.getElementById('poiQueryButton');
 const poiQueryButtonLabel = poiQueryButton?.querySelector('.poi-query-button-label');
+const poiQuerySummary = document.getElementById('poiQuerySummary');
 const poiPreviewLabel = poiPreviewButton?.querySelector('.poi-explore-label');
 const nameCloudButton = document.getElementById('nameCloudButton');
 const nameCloudButtonLabel = nameCloudButton?.querySelector('.name-cloud-button-label');
@@ -114,12 +115,19 @@ let lastQuotaSnapshot = { services: {} };
 let primaryWorkflowActive = null;
 let providerCapabilities = null;
 const poiLongTaskMetrics = { longTaskCount: 0, maxLongTaskMs: 0, totalLongTaskMs: 0 };
+let profileSwitchLongTaskWindow = null;
+window.profileSwitchPerformance = [];
 if (window.PerformanceObserver && ['localhost', '127.0.0.1'].includes(window.location.hostname)) {
   try {
     new PerformanceObserver((list) => list.getEntries().forEach((entry) => {
       poiLongTaskMetrics.longTaskCount += 1;
       poiLongTaskMetrics.maxLongTaskMs = Math.max(poiLongTaskMetrics.maxLongTaskMs, entry.duration);
       poiLongTaskMetrics.totalLongTaskMs += entry.duration;
+      if (profileSwitchLongTaskWindow && performance.now() <= profileSwitchLongTaskWindow.endsAt) {
+        profileSwitchLongTaskWindow.longTaskCount += 1;
+        profileSwitchLongTaskWindow.maxLongTaskMs = Math.max(profileSwitchLongTaskWindow.maxLongTaskMs, entry.duration);
+        profileSwitchLongTaskWindow.totalLongTaskMs += entry.duration;
+      }
     })).observe({ type: 'longtask', buffered: true });
   } catch (error) {
     // Long Task API is optional; render batching remains active without it.
@@ -359,6 +367,27 @@ function canCalculateSpatialTime(state) {
     && Array.isArray(result.pois) && result.pois.length > 0);
 }
 
+function renderPoiQuerySummary(state) {
+  if (!poiQuerySummary) return;
+  const status = state?.data?.workflowStatus?.poi || 'idle';
+  const result = state?.data?.workflow?.poiResult;
+  if (status === 'loading') {
+    poiQuerySummary.textContent = '正在查询范围内 POI…';
+  } else if (status === 'ready' && result) {
+    const count = result.pois?.length || 0;
+    const truncated = Boolean(result.coverage?.resultTruncated || result.coverage?.truncated);
+    poiQuerySummary.textContent = truncated
+      ? `本次返回 ${count} 个 POI · 结果已截断`
+      : `本次搜索到 ${count} 个 POI`;
+  } else if (status === 'ready-empty') {
+    poiQuerySummary.textContent = '本次未搜索到 POI';
+  } else if (status === 'stale') {
+    poiQuerySummary.textContent = '尚未查询当前范围 POI';
+  } else {
+    poiQuerySummary.textContent = '尚未查询 POI';
+  }
+}
+
 function updateMatrixPresentation(result, interaction = {}) {
   const contracts = window.PanmapApp?.contracts;
   const hasNameCloud = isNameCloudResult(result);
@@ -498,7 +527,7 @@ analysisStore?.subscribe((state) => {
     poiAbortController.abort();
   }
   if (lastDraftAnalysisFingerprint && nextDraftFingerprint !== lastDraftAnalysisFingerprint) {
-    traditionalMapAdapter?.setPois(null);
+    traditionalMapAdapter?.setPoiVisibility(false);
   }
   lastDraftAnalysisFingerprint = nextDraftFingerprint;
   document.documentElement.dataset.analysisStatus = state.data.status;
@@ -546,8 +575,9 @@ analysisStore?.subscribe((state) => {
     const poiReady = state.data.workflowStatus?.poi === 'ready';
     const poiEmpty = state.data.workflowStatus?.poi === 'ready-empty';
     setPoiQueryButtonState(poiReady || poiEmpty ? 'complete' : canGenerateNameCloud(state) ? 'idle' : 'disabled',
-      poiReady ? `已获取 ${poiResult.pois.length} 个 POI` : poiEmpty ? '未发现 POI' : '查询等时圈内 POI');
+      poiReady || poiEmpty ? 'POI 查询完成' : '查询等时圈内 POI');
   }
+  renderPoiQuerySummary(state);
   if (matrixButton) matrixButton.disabled = !canCalculateSpatialTime(state) || matrixButton.classList.contains('is-loading');
   updateNameCloudStats(state.data.lastSuccessfulResult);
   updateNameCloudPresentation(state.data.lastSuccessfulResult);
@@ -1312,44 +1342,45 @@ function syncParameterDraftFromUI() {
 }
 
 async function switchActiveProfile(profile, label) {
+  const started = performance.now();
+  const fromProfile = analysisStore?.getState().data.parameterDraft?.profile || null;
   const previousResult = analysisStore?.getState().data.lastSuccessfulResult;
-  const cacheKey = PROFILE_RESULT_CACHE_KEYS[profile];
-  const existingProfileResult = analysisStore?.getState().data.resultsByProfile?.[profile];
-  if (!existingProfileResult && cacheKey) {
-    try {
-      const cached = sessionStorage.getItem(cacheKey);
-      if (cached) analysisStore?.setResult(window.PanmapApp.contracts.normalizeAnalysisResult(JSON.parse(cached)));
-    } catch (error) {
-      sessionStorage.removeItem(cacheKey);
-    }
-  }
-  if (!analysisStore?.getState().data.resultsByProfile?.[profile] && PROFILE_RESULT_ARCHIVE_PATHS[profile]) {
-    try {
-      const response = await fetch(PROFILE_RESULT_ARCHIVE_PATHS[profile], { cache: 'no-store' });
-      if (response.ok) analysisStore?.setResult(window.PanmapApp.contracts.normalizeAnalysisResult(await response.json()));
-    } catch (error) {
-      // Local archive restoration is best-effort; the profile remains stale if unavailable.
-    }
-  }
+  profileSwitchLongTaskWindow = { endsAt: started + 1000, longTaskCount: 0, maxLongTaskMs: 0, totalLongTaskMs: 0 };
+  performance.mark('profile.switch.store.start');
   analysisStore?.setActiveProfile(profile);
+  performance.mark('profile.switch.store.end');
+  performance.measure('profile.switch.store', 'profile.switch.store.start', 'profile.switch.store.end');
   const state = analysisStore?.getState();
-  const result = state?.data?.lastSuccessfulResult;
-  if (result?.profile === profile && !state.data.resultStale) {
-    await applyAnalysisResultToPanmap(result);
-    showToast(`已切换为${label}缓存结果，未发起网络请求`);
-    return;
-  }
+  performance.mark('profile.switch.poi-clear.start');
+  traditionalMapAdapter?.setPoiVisibility(false);
+  performance.mark('profile.switch.poi-clear.end');
+  performance.measure('profile.switch.poi-clear', 'profile.switch.poi-clear.start', 'profile.switch.poi-clear.end');
+  activeThresholdRange = null;
+  renderIsochronePalette();
   if (previousResult) {
-    traditionalMapAdapter?.setAnalysisResult(previousResult);
     traditionalMapAdapter?.setResultStale(true);
-  } else {
-    traditionalMapAdapter?.setAnalysisResult(null);
   }
   const job = state?.data?.jobsByProfile?.[profile];
   if (analysisStatusCopy) analysisStatusCopy.textContent = job?.status === 'partial'
     ? `${label}任务已中止 · 可从检查点恢复`
     : `${label}参数已选择 · 旧结果已标记为 stale，请生成新的可达域`;
-  showToast(job?.status === 'partial' ? `${label}任务可恢复` : `${label}尚未生成；旧结果已标记 stale，未发起网络请求`);
+  showToast(job?.status === 'partial' ? `${label}任务可恢复` : `${label}参数已切换；请显式生成可达域`);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const switchDurationMs = performance.now() - started;
+    const metrics = {
+      fromProfile, toProfile: profile, switchDurationMs,
+      cacheHydrationMs: 0, mapUpdateMs: 0,
+      poiHideMs: performance.getEntriesByName('profile.switch.poi-clear').at(-1)?.duration || 0,
+      storeMs: performance.getEntriesByName('profile.switch.store').at(-1)?.duration || 0,
+      longTaskCount: profileSwitchLongTaskWindow?.longTaskCount || 0,
+      maxLongTaskMs: profileSwitchLongTaskWindow?.maxLongTaskMs || 0,
+      totalLongTaskMs: profileSwitchLongTaskWindow?.totalLongTaskMs || 0,
+      upstreamApiCalls: 0, cachePayloadHydrations: 0, poiRenderCalls: 0, panmapLayoutCalls: 0,
+    };
+    window.profileSwitchPerformance.push(metrics);
+    document.documentElement.dataset.profileSwitchDurationMs = switchDurationMs.toFixed(2);
+    document.documentElement.dataset.profileSwitchMetrics = JSON.stringify(metrics);
+  }));
 }
 
 function buildAnalysisRequestFromUI() {
@@ -1487,7 +1518,10 @@ function applyAnalysisResultToTraditionalMap(result) {
   traditionalMapAdapter?.setAnalysisResult(result);
   activeThresholdRange = null;
   analysisStore?.setActiveRingId(null);
+  analysisStore?.setHoveredRingId(null);
   traditionalMapAdapter?.setActiveRingId(null);
+  traditionalMapAdapter?.setHoveredRingId(null);
+  traditionalMapAdapter?.setPoiVisibility(false);
   renderIsochronePalette();
 }
 
@@ -1625,7 +1659,7 @@ function setNameCloudLoadingState(isLoading) {
   const approvalRequired = poiQueryButton?.dataset.approvalRequired === 'true';
   setPoiQueryButtonState(
     isLoading ? 'loading' : approvalRequired || queryError ? 'error' : hasPois || readyEmpty ? 'complete' : canGenerateNameCloud(currentState) ? 'idle' : 'disabled',
-    isLoading ? '正在查询 POI…' : approvalRequired ? '请求较大 · 再次点击确认' : queryError ? 'POI 查询失败 · 点击重试' : hasPois ? `已获取 ${poiResult.pois.length} 个 POI` : readyEmpty ? '未发现 POI' : '查询等时圈内 POI',
+    isLoading ? '正在查询 POI…' : approvalRequired ? '请求较大 · 再次点击确认' : queryError ? 'POI 查询失败 · 点击重试' : hasPois || readyEmpty ? 'POI 查询完成' : '查询等时圈内 POI',
   );
   if (analysisStatusCopy && isLoading) analysisStatusCopy.textContent = '正在查询最外层等时圈 Polygon 内的 POI…';
 }
@@ -1685,7 +1719,7 @@ async function runNameCloud({ publish = true, jobId = null } = {}) {
     performance.mark('poi.total.end');
     performance.measure('poi.total', 'poi.total.start', 'poi.total.end');
     renderQuota(poiResult.metadata?.apiQuota, poiResult.metadata?.cacheHit ? 'cache' : '');
-    setPoiQueryButtonState('complete', poiResult.pois.length ? `已获取 ${poiResult.pois.length} 个 POI` : '未发现 POI');
+    setPoiQueryButtonState('complete', 'POI 查询完成');
     poiQueryButton?.removeAttribute('data-approval-required');
     const truncated = Boolean(poiResult.coverage?.resultTruncated);
     showToast(!poiResult.pois.length ? '当前可达域未查询到符合条件的 POI' : poiResult.metadata?.cacheHit
@@ -1698,6 +1732,7 @@ async function runNameCloud({ publish = true, jobId = null } = {}) {
       return null;
     }
     if (error.code === 'APPROVAL_REQUIRED') {
+      analysisStore?.cancelPoi('approval-required');
       if (poiQueryButton) poiQueryButton.dataset.approvalRequired = 'true';
       setPoiQueryButtonState('error', '请求较大 · 再次点击确认');
       showToast(`${error.message} 再次点击即可确认继续。`);
@@ -1802,7 +1837,7 @@ async function runAnalysis({ jobId = null } = {}) {
       metadata: { ...responseResult.metadata, analysisFingerprint: window.PanmapApp.contracts.analysisFingerprint(request) },
     };
     analysisStore?.setResult(result);
-    await applyAnalysisResultToPanmap(result);
+    applyAnalysisResultToTraditionalMap(result);
     showToast(analysisSuccessMessage(result));
     return result;
   } catch (error) {

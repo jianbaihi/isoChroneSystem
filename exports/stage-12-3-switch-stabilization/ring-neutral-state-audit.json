@@ -1,0 +1,8 @@
+{
+  "setResult":{"activeRingId":null,"hoveredRingId":null,"focusedRingId":null},
+  "setActiveProfile":{"activeRingId":null,"hoveredRingId":null,"focusedRingId":null},
+  "browserCyclingGenerate":{"activeRingId":"","legendAriaPressed":["false"]},
+  "hover":"temporary hoveredRingId only; stale results ignore hover",
+  "click":"persistent activeRingId/focusedRingId; second click restores neutral",
+  "crossProfileFocusRestore":false
+}

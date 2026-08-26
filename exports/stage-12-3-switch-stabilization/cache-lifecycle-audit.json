@@ -1,0 +1,10 @@
+{
+  "before":"profile switch synchronously restored the full cached/archive result",
+  "after":"profile switch only updates draft/stale/interaction state",
+  "resultsByProfile":"lightweight index: analysisId, profile, status, poiCount, rangesMinutes",
+  "staleSnapshot":"reachability geometry retained; pois/categories/accessibility/nameCloud removed",
+  "fullPayloadReadOnSwitch":false,
+  "cachePayloadHydrationOnSwitch":false,
+  "cacheFilesRemoved":false,
+  "lazyRestorationPolicy":"full result restoration is no longer coupled to the mode click; explicit generation/query workflows own payload loading"
+}
