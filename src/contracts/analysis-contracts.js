@@ -57,6 +57,43 @@
     return [...new Set(categoryIds.map((value) => String(value).trim()).filter(Boolean))];
   }
 
+  function analysisFingerprint({ center, profile, rangesMinutes, categoryIds = [] }) {
+    const normalizedCenter = normalizeCenter(center);
+    const text = ['v1', normalizedCenter.lon.toFixed(6), normalizedCenter.lat.toFixed(6), String(profile),
+      normalizeRanges(rangesMinutes).join(','), normalizeCategoryIds(categoryIds).sort().join(',')].join('|');
+    let hash = 0x811c9dc5;
+    for (const byte of new TextEncoder().encode(text)) {
+      hash ^= byte;
+      hash = Math.imul(hash, 0x01000193) >>> 0;
+    }
+    return `fnv1a-${hash.toString(16).padStart(8, '0')}`;
+  }
+
+  function normalizePoiResult(result) {
+    if (!result || typeof result !== 'object' || !result.poiQueryId) throw new Error('PoiResult 无效。');
+    const pois = Array.isArray(result.pois) ? result.pois : [];
+    const ids = new Set();
+    const normalizedPois = pois.map((poi, index) => {
+      if (!poi?.poiId || ids.has(String(poi.poiId))) throw new Error(`pois[${index}].poiId 必须稳定且唯一。`);
+      ids.add(String(poi.poiId));
+      if (poi.travelTimeMinuteEstimate != null || poi.travelTimeSeconds != null || poi.networkDistanceMeters != null) {
+        throw new Error('普通 PoiResult 不得携带分钟或 Matrix 时间字段。');
+      }
+      return { ...poi, poiId: String(poi.poiId) };
+    });
+    return {
+      ...result,
+      center: normalizeCenter(result.center),
+      rangesMinutes: normalizeRanges(result.rangesMinutes),
+      outerRangeMinutes: Number(result.outerRangeMinutes),
+      pois: normalizedPois,
+      categories: Array.isArray(result.categories) ? result.categories : [],
+      ringStatistics: result.ringStatistics && typeof result.ringStatistics === 'object' ? result.ringStatistics : {},
+      coverage: result.coverage && typeof result.coverage === 'object' ? result.coverage : {},
+      metadata: result.metadata && typeof result.metadata === 'object' ? result.metadata : {},
+    };
+  }
+
   function normalizePoiDatasetId(value) {
     if (value == null || value === '') return null;
     const normalized = String(value).trim();
@@ -377,6 +414,8 @@
     enrichPoisWithMatrix,
     matrixBandForDuration,
     normalizePoiPreview,
+    normalizePoiResult,
+    analysisFingerprint,
     normalizeGeoJsonGeometry,
     formatMatrixDuration,
     formatMatrixDistance,

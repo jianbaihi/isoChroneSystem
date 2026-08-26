@@ -113,6 +113,25 @@
     return app.contracts.normalizeAnalysisResult(payload);
   }
 
+  async function createPoiQuery(request, { signal } = {}) {
+    const response = await fetch(`${app.config.apiBaseUrl}/poi-query`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ ...request, schemaVersion: '1.0' }),
+      signal,
+    });
+    const payload = await parseJson(response);
+    if (!response.ok) {
+      const errorPayload = payload?.error || {};
+      const error = new Error(errorPayload.message || `POI 查询失败（${response.status}）。`);
+      error.code = errorPayload.code || 'HTTP_ERROR';
+      error.details = errorPayload.details || [];
+      error.status = response.status;
+      throw error;
+    }
+    return app.contracts.normalizePoiResult(payload);
+  }
+
   async function createMatrixAccessibility(baseResult, { signal, jobId } = {}) {
     const response = await fetch(`${app.config.apiBaseUrl}/matrix-accessibility`, {
       method: 'POST',
@@ -232,7 +251,7 @@
   }
 
   app.analysisClient = Object.freeze({
-    getHealth, createAnalysis, createPoiPreview, createNameCloud, createMatrixAccessibility, createSpatialTimeAccessibility, createMinuteAccessibility,
+    getHealth, createAnalysis, createPoiPreview, createNameCloud, createPoiQuery, createMatrixAccessibility, createSpatialTimeAccessibility, createMinuteAccessibility,
     getWalkingJobLedger, publishWalkingJob, getCyclingJobLedger, publishCyclingJob,
     publishProfileJob, listPoiDatasets, geocode, reverseGeocode,
   });

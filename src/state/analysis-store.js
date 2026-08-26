@@ -28,6 +28,8 @@
       resultsByProfile: {},
       jobsByProfile: {},
       multimodePreparation: null,
+      workflow: { reachabilityResult: null, poiResult: null, minuteResult: null },
+      workflowStatus: { reachability: 'idle', poi: 'idle', minute: 'idle' },
     },
     interaction: {
       activeRingId: null,
@@ -124,6 +126,17 @@
             error: null,
             resultStale: false,
             staleReason: null,
+            workflow: {
+              ...current.data.workflow,
+              reachabilityResult: profileResult,
+              poiResult: null,
+              minuteResult: result?.metadata?.spatialTime ? profileResult : null,
+            },
+            workflowStatus: {
+              reachability: 'ready',
+              poi: 'idle',
+              minute: result?.metadata?.spatialTime ? 'ready' : 'idle',
+            },
           },
           interaction: {
             ...current.interaction,
@@ -143,6 +156,39 @@
           },
         }));
       },
+      setPoiLoading() {
+        return update((current) => ({ ...current, data: {
+          ...current.data,
+          workflowStatus: { ...current.data.workflowStatus, poi: 'loading' },
+        } }));
+      },
+      setPoiResult(poiResult) {
+        const reachability = state.data.workflow.reachabilityResult || state.data.lastSuccessfulResult;
+        if (!reachability || poiResult?.analysisFingerprint !== reachability.metadata?.analysisFingerprint) {
+          return { accepted: false, state: getState() };
+        }
+        const next = update((current) => ({ ...current, data: {
+          ...current.data,
+          workflow: { ...current.data.workflow, poiResult: clone(poiResult), minuteResult: null },
+          workflowStatus: { ...current.data.workflowStatus, poi: poiResult.pois?.length ? 'ready' : 'ready-empty', minute: 'idle' },
+        } }));
+        return { accepted: true, state: next };
+      },
+      setPoiError(error) {
+        return update((current) => ({ ...current, data: {
+          ...current.data,
+          workflowStatus: { ...current.data.workflowStatus, poi: 'error' },
+          error: clone(error),
+        } }));
+      },
+      cancelPoi(reason = 'parameters-changed') {
+        return update((current) => ({ ...current, data: {
+          ...current.data,
+          workflow: { ...current.data.workflow, poiResult: null, minuteResult: null },
+          workflowStatus: { ...current.data.workflowStatus, poi: 'stale', minute: 'stale' },
+          staleReason: reason,
+        } }));
+      },
       setError(error) {
         return update((current) => ({
           ...current,
@@ -161,7 +207,21 @@
               ? { ...current.data.parameterDraft.options, ...clone(patch.options) }
               : current.data.parameterDraft.options,
           };
-          return { ...current, data: { ...current.data, parameterDraft: nextDraft } };
+          const reachabilityChanged = !sameCenter(current.data.parameterDraft.center, nextDraft.center)
+            || current.data.parameterDraft.profile !== nextDraft.profile
+            || JSON.stringify(current.data.parameterDraft.rangesMinutes) !== JSON.stringify(nextDraft.rangesMinutes);
+          const categoriesChanged = JSON.stringify(current.data.parameterDraft.categoryIds || []) !== JSON.stringify(nextDraft.categoryIds || []);
+          return { ...current, data: {
+            ...current.data,
+            parameterDraft: nextDraft,
+            ...(reachabilityChanged ? { resultStale: Boolean(current.data.lastSuccessfulResult), staleReason: 'parameters-changed' } : {}),
+            workflow: (reachabilityChanged || categoriesChanged)
+              ? { ...current.data.workflow, poiResult: null, minuteResult: null }
+              : current.data.workflow,
+            workflowStatus: (reachabilityChanged || categoriesChanged)
+              ? { ...current.data.workflowStatus, poi: 'stale', minute: 'stale', ...(reachabilityChanged ? { reachability: 'stale' } : {}) }
+              : current.data.workflowStatus,
+          } };
         });
       },
       profileAvailability(profile) {
@@ -189,6 +249,8 @@
               error: null,
               resultStale: !result && Boolean(previousResult),
               staleReason: !result && previousResult ? 'profile-changed' : null,
+              workflow: { ...current.data.workflow, reachabilityResult: result, poiResult: null, minuteResult: null },
+              workflowStatus: { reachability: result ? 'ready' : 'stale', poi: 'stale', minute: 'stale' },
             },
             interaction: {
               ...current.interaction,
@@ -274,6 +336,8 @@
               && !sameCenter(current.data.lastSuccessfulResult.center, center)
               ? 'center-changed'
               : null,
+            workflow: { ...current.data.workflow, poiResult: null, minuteResult: null },
+            workflowStatus: { ...current.data.workflowStatus, reachability: 'stale', poi: 'stale', minute: 'stale' },
             parameterDraft: {
               ...current.data.parameterDraft,
               center: { ...clone(center), source: normalizedSource },

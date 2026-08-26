@@ -21,6 +21,7 @@
   const TIANDITU_LABEL_LAYER_ID = 'tianditu-vector-label';
   const RING_TOKENS = app.ringTokens || {};
   const ISOCHRONE_PALETTE = app.isochronePalette || null;
+  const POI_RENDER_BATCH_SIZE = 100;
 
   const EMPTY_COLLECTION = { type: 'FeatureCollection', features: [] };
 
@@ -208,6 +209,7 @@
     let lastFitAnalysisId = null;
     let paletteRanges = [10, 20, 30];
     let resultStale = false;
+    let poiRenderToken = 0;
 
     function status(message) {
       if (typeof onMapStatus === 'function') onMapStatus(message || '');
@@ -236,7 +238,7 @@
       map.setPaintProperty(RING_OUTLINE_LAYER_ID, 'line-opacity', activeRingId
         ? ['case', ['==', ['get', 'ringId'], activeRingId], resultStale ? 0.58 : 1, resultStale ? 0.2 : 0.34]
         : (resultStale ? 0.32 : 0.92));
-      map.setPaintProperty(POI_LAYER_ID, 'circle-opacity', resultStale ? 0.26 : 0.9);
+      map.setPaintProperty(POI_LAYER_ID, 'circle-opacity', resultStale ? 0 : 0.78);
     }
 
     function updateBasemapVisibility() {
@@ -297,6 +299,24 @@
           lastFitAnalysisId = result.analysisId;
         }
       }
+    }
+
+    async function setPois(poiResult) {
+      const token = ++poiRenderToken;
+      if (!isReady || !app.analysisPoiGeoJson) return { cancelled: false, poiCount: 0, renderDurationMs: 0 };
+      const started = global.performance?.now?.() ?? Date.now();
+      const diagnostics = [];
+      const full = app.analysisPoiGeoJson.buildPoiFeatures({ pois: poiResult?.pois || [] }, diagnostics);
+      const metrics = await app.poiRenderBatcher.renderFeatures(full.features, (published) => {
+        if (token === poiRenderToken) setSourceData(map, POI_SOURCE_ID, published);
+      }, { batchSize: POI_RENDER_BATCH_SIZE });
+      if (token !== poiRenderToken) return { cancelled: true, poiCount: 0, renderDurationMs: metrics.renderDurationMs };
+      container.dataset.poiFeatureCount = String(full.features.length);
+      container.dataset.poiQueryId = poiResult?.poiQueryId || '';
+      if (diagnostics.length) container.dataset.poiDiagnostics = diagnostics.join('|');
+      const duration = (global.performance?.now?.() ?? Date.now()) - started;
+      container.dataset.poiRenderDurationMs = duration.toFixed(2);
+      return { cancelled: false, poiCount: full.features.length, renderDurationMs: duration, frameCount: metrics.frameCount, batchSize: metrics.batchSize };
     }
 
     function setPickMode(active) {
@@ -398,6 +418,7 @@
         setMapPickMode(active) { isPickMode = Boolean(active); },
         setPaletteRanges(ranges) { paletteRanges = ranges || [10, 20, 30]; },
         setResultStale(active) { resultStale = Boolean(active); },
+        setPois() { return Promise.resolve({ cancelled: false, poiCount: 0, renderDurationMs: 0 }); },
         setSelectedPoiId(poiId) { selectedPoiId = poiId || null; },
         setHoveredPoiId(poiId) { hoveredPoiId = poiId || null; },
         setVisibleTopLevelCategoryIds(ids) { visibleTopLevelCategoryIds = ids; },
@@ -448,6 +469,7 @@
         pendingResult = result || null;
         if (isReady) applyResult(result, true);
       },
+      setPois,
       setDraftCenter(center) {
         applyDraftCenter(center);
         if (!isReady || !center || !Number.isFinite(Number(center.lon)) || !Number.isFinite(Number(center.lat))) return;
