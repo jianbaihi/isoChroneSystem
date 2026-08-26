@@ -7,7 +7,7 @@ from shapely.geometry import shape
 from app.config import Settings
 from app.errors import AnalysisStaleError, InvalidProviderParameterError
 from app.models import AnalysisRequest, PoiQueryRequest, PoiQueryResult
-from app.providers.poi.ors_remote import OrsRemotePoiProvider
+from app.providers.poi.base import PoiProviderAdapter
 from app.services.analysis import build_exclusive_rings, geodesic_area_km2
 from app.services.quota import QuotaObserver
 
@@ -31,7 +31,7 @@ def analysis_fingerprint(center, profile: str, ranges: list[int], category_ids: 
 async def query_pois(
     request: PoiQueryRequest,
     settings: Settings,
-    poi_provider: OrsRemotePoiProvider,
+    poi_provider: PoiProviderAdapter,
     quota_observer: QuotaObserver | None = None,
 ) -> PoiQueryResult:
     ranges = list(request.rangesMinutes)
@@ -82,6 +82,7 @@ async def query_pois(
         center=request.center,
         profile=request.profile,
         rangesMinutes=ranges,
+        categoryIds=request.categoryIds,
         outerRangeMinutes=max(ranges),
         pois=selection["pois"],
         categories=selection.get("categories", []),

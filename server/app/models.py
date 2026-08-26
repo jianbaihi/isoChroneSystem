@@ -180,6 +180,11 @@ class Poi(BaseModel):
     confidence: Optional[float] = Field(default=None, ge=0, le=1)
     address: Optional[str] = None
     importance: Optional[float] = None
+    rating: Optional[float] = None
+    phone: Optional[str] = None
+    website: Optional[str] = None
+    openingHours: Optional[str] = None
+    brand: Optional[str] = None
 
 
 class PoiAccessibility(BaseModel):
@@ -256,6 +261,7 @@ class PoiQueryResult(BaseModel):
     center: Center
     profile: Profile
     rangesMinutes: list[int]
+    categoryIds: list[str] = Field(default_factory=list)
     outerRangeMinutes: int = Field(..., gt=0)
     pois: list[Poi] = Field(default_factory=list)
     categories: list[Category] = Field(default_factory=list)
@@ -284,8 +290,64 @@ class SpatialTimeAccessibilityRequest(BaseModel):
 
 class MinuteAccessibilityRequest(BaseModel):
     schemaVersion: Literal["1.0"] = SCHEMA_VERSION
-    baseResult: AnalysisResult
+    analysisFingerprint: str = Field(..., min_length=8, max_length=128)
+    poiQueryId: str = Field(..., min_length=8, max_length=128)
+    center: Center
+    profile: Profile
+    rangesMinutes: list[int] = Field(..., min_items=1, max_items=10)
+    categoryIds: list[str] = Field(default_factory=list)
+    maxRangeMinutes: int = Field(..., gt=0)
+    resolutionMinutes: Literal[1] = 1
+    pois: list[dict[str, Any]] = Field(default_factory=list, max_items=5000)
     approved: bool = False
+
+    _validate_ranges = validator("rangesMinutes", allow_reuse=True)(NameCloudRequest.validate_ranges.__func__)
+    _normalize_categories = validator("categoryIds", allow_reuse=True)(NameCloudRequest.normalize_category_ids.__func__)
+
+    @validator("maxRangeMinutes")
+    def validate_maximum(cls, value: int, values: dict[str, Any]) -> int:
+        ranges = values.get("rangesMinutes") or []
+        if ranges and value != max(ranges):
+            raise ValueError("maxRangeMinutes 必须等于 rangesMinutes 最大值。")
+        return value
+
+    @validator("pois")
+    def validate_poi_references(cls, value: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        seen: set[str] = set()
+        normalized: list[dict[str, Any]] = []
+        for item in value:
+            poi_id = str(item.get("poiId") or "").strip()
+            location = item.get("location") if isinstance(item.get("location"), dict) else {}
+            if not poi_id or poi_id in seen:
+                raise ValueError("pois 必须包含唯一且非空的 poiId。")
+            point = Location(**location)
+            seen.add(poi_id)
+            normalized.append({"poiId": poi_id, "location": point.model_dump() if hasattr(point, "model_dump") else point.dict()})
+        return normalized
+
+
+class MinuteAccessibilityAssignment(BaseModel):
+    poiId: str
+    travelTimeMinuteEstimate: Optional[int] = Field(default=None, ge=1)
+    travelTimeBand: Optional[dict[str, int]] = None
+    travelTimeMethod: Literal["isochrone-minute-band"] = "isochrone-minute-band"
+    status: Literal["classified", "unassigned"]
+    reason: Optional[Literal["not-covered-by-minute-contours"]] = None
+
+
+class MinuteAccessibilityResult(BaseModel):
+    schemaVersion: Literal["1.0"] = SCHEMA_VERSION
+    minuteAccessibilityId: str
+    analysisFingerprint: str
+    poiQueryId: str
+    center: Center
+    profile: Profile
+    rangesMinutes: list[int]
+    maxRangeMinutes: int
+    resolutionMinutes: Literal[1] = 1
+    assignments: list[MinuteAccessibilityAssignment] = Field(default_factory=list)
+    statistics: dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class ErrorDetail(BaseModel):

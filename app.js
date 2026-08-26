@@ -92,6 +92,8 @@ const CATEGORY_ID_BY_LABEL = {
 let toastTimer;
 let analysisAbortController = null;
 let poiAbortController = null;
+let minuteAbortController = null;
+let minuteAssignmentByPoiId = new Map();
 let lastDraftAnalysisFingerprint = null;
 let isDraggingSplitter = false;
 let isPanningPanmap = false;
@@ -389,25 +391,37 @@ function renderPoiQuerySummary(state) {
 }
 
 function updateMatrixPresentation(result, interaction = {}) {
-  const contracts = window.PanmapApp?.contracts;
-  const hasNameCloud = isNameCloudResult(result);
+  const state = analysisStore?.getState();
+  const minuteResult = state?.data?.workflow?.minuteResult;
+  const minuteStatus = state?.data?.workflowStatus?.minute || 'idle';
   if (matrixResultSummary) {
-    matrixResultSummary.hidden = !hasNameCloud;
-    const spatial = result?.metadata?.spatialTime;
-    matrixResultSummary.textContent = spatial
-      ? `1 分钟精度已完成 · 圈内 ${spatial.withinRangeCount}/${spatial.requestedPoiCount} · ${spatial.minuteIsochroneCount} 个累计等时圈`
-      : '尚未按分钟等时圈补齐时间';
+    const stats = minuteResult?.statistics || {};
+    matrixResultSummary.hidden = false;
+    matrixResultSummary.textContent = minuteStatus === 'running' || minuteStatus === 'planning' || minuteStatus === 'classifying'
+      ? '正在按分钟补齐通行时间…'
+      : minuteStatus === 'ready' && stats.unassignedPoiCount
+        ? `已补齐 ${stats.classifiedPoiCount} / ${stats.totalPoiCount} 个 POI · ${stats.unassignedPoiCount} 个暂未匹配`
+        : minuteStatus === 'ready'
+          ? `已补齐 ${stats.classifiedPoiCount} / ${stats.totalPoiCount} 个 POI 的分钟级通行时间`
+          : minuteStatus === 'stale' ? '尚未补齐当前结果的分钟级通行时间' : '尚未补齐分钟级通行时间';
   }
   const poiId = interaction.selectedPoiId || interaction.hoveredPoiId || null;
-  const poi = result?.pois?.find((item) => item.poiId === poiId);
-  const detail = poi?.travelTimeMethod === 'isochrone-minute-band'
-    ? `${poi.name || '当前 POI'} · ${poi.travelTimeBand?.lowerExclusiveMinutes ?? Number(poi.travelTimeMinuteEstimate) - 1}–${poi.travelTimeBand?.upperInclusiveMinutes ?? poi.travelTimeMinuteEstimate} 分钟 · 约 ${poi.travelTimeMinuteEstimate} 分钟 · 方法：1 min Isochrone`
-    : '';
+  const detailView = poiId ? window.buildPoiDetailViewModel?.(poiId) : null;
+  const detail = detailView?.travelTimePrimary
+    ? `${detailView.name} · ${detailView.travelTimeSecondary} · ${detailView.travelTimePrimary} · ${detailView.travelTimeMethodLabel}` : '';
   if (matrixPoiDetail) {
     matrixPoiDetail.hidden = !detail;
     matrixPoiDetail.textContent = detail;
   }
 }
+
+window.buildPoiDetailViewModel = function buildPoiDetailViewModel(poiId) {
+  const state = analysisStore?.getState();
+  return window.PanmapApp.poiDetailContract?.buildPoiDetailViewModel(
+    poiId, state?.data?.workflow?.poiResult, state?.data?.workflow?.minuteResult,
+    state?.data?.parameterDraft?.profile,
+  ) || null;
+};
 
 function updateResultCard(result) {
   const rings = Array.isArray(result?.rings) ? result.rings : [];
@@ -526,6 +540,10 @@ analysisStore?.subscribe((state) => {
   if (lastDraftAnalysisFingerprint && nextDraftFingerprint !== lastDraftAnalysisFingerprint && poiAbortController) {
     poiAbortController.abort();
   }
+  if (lastDraftAnalysisFingerprint && nextDraftFingerprint !== lastDraftAnalysisFingerprint && minuteAbortController) {
+    minuteAbortController.abort();
+    analysisStore?.cancelMinute('parameters-changed');
+  }
   if (lastDraftAnalysisFingerprint && nextDraftFingerprint !== lastDraftAnalysisFingerprint) {
     traditionalMapAdapter?.setPoiVisibility(false);
   }
@@ -578,7 +596,12 @@ analysisStore?.subscribe((state) => {
       poiReady || poiEmpty ? 'POI 查询完成' : '查询等时圈内 POI');
   }
   renderPoiQuerySummary(state);
-  if (matrixButton) matrixButton.disabled = !canCalculateSpatialTime(state) || matrixButton.classList.contains('is-loading');
+  if (matrixButton) {
+    matrixButton.disabled = !canCalculateSpatialTime(state) || matrixButton.classList.contains('is-loading');
+    if (!matrixButton.classList.contains('is-loading') && matrixButtonLabel) {
+      matrixButtonLabel.textContent = state.data.workflowStatus?.minute === 'ready' ? '通行时间补齐完成' : '按分钟补齐时间';
+    }
+  }
   updateNameCloudStats(state.data.lastSuccessfulResult);
   updateNameCloudPresentation(state.data.lastSuccessfulResult);
   updateUnifiedPanmapSummary(state.data.lastSuccessfulResult);
@@ -1767,7 +1790,9 @@ function setSpatialTimeProgress(completed, total, message = '') {
 function setMatrixLoadingState(isLoading) {
   matrixButton?.classList.toggle('is-loading', isLoading);
   matrixButton?.setAttribute('aria-busy', String(isLoading));
-  if (matrixButtonLabel) matrixButtonLabel.textContent = isLoading ? '正在生成分钟等时圈…' : '按分钟补齐时间';
+  if (matrixButtonLabel) matrixButtonLabel.textContent = isLoading
+    ? '正在生成分钟等时圈…'
+    : analysisStore?.getState().data.workflowStatus?.minute === 'ready' ? '通行时间补齐完成' : '按分钟补齐时间';
   if (matrixButton) matrixButton.disabled = isLoading || !canCalculateSpatialTime(analysisStore?.getState());
   if (!isLoading) setSpatialTimeProgress(0, 1);
   if (analysisStatusCopy && isLoading) analysisStatusCopy.textContent = '正在分批生成 1 分钟精度累计等时圈…';
@@ -1775,39 +1800,80 @@ function setMatrixLoadingState(isLoading) {
 
 async function runSpatialTimeAccessibility(baseResultOverride = null, { publish = true } = {}) {
   const state = analysisStore?.getState();
-  if (!baseResultOverride && !canCalculateSpatialTime(state)) {
+  if (!canCalculateSpatialTime(state)) {
     showToast('请先查询当前等时圈内的 POI');
     return null;
   }
-  const reachability = state.data.workflow?.reachabilityResult || state.data.lastSuccessfulResult;
   const poiResult = state.data.workflow?.poiResult;
-  const baseResult = baseResultOverride || { ...reachability, pois: poiResult?.pois || [], categories: poiResult?.categories || [] };
-  const total = Math.max(...baseResult.rangesMinutes);
-  const batchCount = Math.ceil(total / 10);
+  const total = Math.max(...poiResult.rangesMinutes);
+  const intervalLimit = Number(providerCapabilities?.isochrones?.maxIntervalsPerRequest || 10);
+  const batchCount = Math.ceil(total / intervalLimit);
   const approved = matrixButton?.dataset.approvalRequired === 'true';
+  if (minuteAbortController) minuteAbortController.abort();
+  const controller = new AbortController();
+  minuteAbortController = controller;
+  analysisStore?.setMinuteStatus('planning');
   setMatrixLoadingState(true);
-  setSpatialTimeProgress(0, 1, `后端规划 ${batchCount} 个批次`);
+  if (matrixButtonLabel) matrixButtonLabel.textContent = `正在计算 1–${Math.min(intervalLimit, total)} 分钟…`;
+  performance.mark('minute.total.start');
   try {
-    const matrixResult = await window.PanmapApp.analysisClient.createMinuteAccessibility(baseResult, { approved });
+    analysisStore?.setMinuteStatus('running');
+    performance.mark('minute.fetch.start');
+    const minuteResult = await window.PanmapApp.analysisClient.createMinuteAccessibility(poiResult, { signal: controller.signal, approved });
+    performance.mark('minute.fetch.end');
+    performance.measure('minute.fetch', 'minute.fetch.start', 'minute.fetch.end');
+    const currentPoi = analysisStore?.getState().data.workflow?.poiResult;
+    if (!currentPoi || minuteResult.analysisFingerprint !== currentPoi.analysisFingerprint
+      || minuteResult.poiQueryId !== currentPoi.poiQueryId) return null;
     matrixButton?.removeAttribute('data-approval-required');
-    setSpatialTimeProgress(1, 1, `已完成 ${batchCount}/${batchCount} 批`);
+    analysisStore?.setMinuteStatus('classifying');
     if (publish) {
-      analysisStore?.setResult(matrixResult);
-      applyAnalysisResultToTraditionalMap(matrixResult);
+      performance.mark('minute.store.start');
+      const accepted = analysisStore?.setMinuteResult(minuteResult);
+      performance.mark('minute.store.end');
+      performance.measure('minute.store', 'minute.store.start', 'minute.store.end');
+      if (!accepted?.accepted) return null;
+      performance.mark('minute.index.start');
+      minuteAssignmentByPoiId = new Map(minuteResult.assignments.map((item) => [item.poiId, item]));
+      const firstPoiId = poiResult.pois?.[0]?.poiId || null;
+      const debugDetail = firstPoiId ? window.PanmapApp.poiDetailContract?.buildPoiDetailViewModel(
+        firstPoiId, poiResult, minuteResult, poiResult.profile,
+      ) : null;
+      document.documentElement.dataset.minuteResultAudit = JSON.stringify({
+        statistics: minuteResult.statistics, metadata: minuteResult.metadata,
+      });
+      document.documentElement.dataset.minuteDebugPoiDetail = JSON.stringify(debugDetail);
+      performance.mark('minute.index.end');
+      performance.measure('minute.index', 'minute.index.start', 'minute.index.end');
     }
-    showToast(`分钟等时圈补时完成：${matrixResult.metadata?.spatialTime?.withinRangeCount || 0} 个 POI 已获得 1 分钟精度时间`);
-    return matrixResult;
+    performance.mark('minute.total.end');
+    performance.measure('minute.total', 'minute.total.start', 'minute.total.end');
+    const storeMs = performance.getEntriesByName('minute.store').at(-1)?.duration || 0;
+    const indexMs = performance.getEntriesByName('minute.index').at(-1)?.duration || 0;
+    document.documentElement.dataset.minuteFrontendPerformance = JSON.stringify({
+      responseParseMs: 0, storePublishMs: storeMs, uiUpdateMs: 0, detailIndexBuildMs: indexMs,
+      maxLongTaskMs: poiLongTaskMetrics.maxLongTaskMs || 0, mapRebuildCalls: 0, poiRenderCalls: 0, panmapLayoutCalls: 0,
+    });
+    showToast(`分钟等时圈补时完成：${minuteResult.statistics?.classifiedPoiCount || 0} 个 POI 已获得 1 分钟精度时间`);
+    return minuteResult;
   } catch (error) {
+    if (error.name === 'AbortError') {
+      analysisStore?.setMinuteStatus('cancelled');
+      return null;
+    }
     if (error.code === 'APPROVAL_REQUIRED') {
       if (matrixButton) matrixButton.dataset.approvalRequired = 'true';
+      analysisStore?.setMinuteStatus('approval-required');
       showToast(`${error.message} 再次点击即可确认继续。`);
       if (analysisStatusCopy) analysisStatusCopy.textContent = '分钟级请求超过自动预算 · 再次点击确认继续';
       return null;
     }
+    analysisStore?.setMinuteError({ code: error.code || 'MINUTE_ACCESSIBILITY_FAILED', message: error.message });
     showToast(`分钟等时圈补时失败：${error.message || '服务不可用'}（已保留 POI 查询结果）`);
     if (analysisStatusCopy) analysisStatusCopy.textContent = '分钟等时圈请求失败 · 已保留 POI 查询结果';
     return null;
   } finally {
+    if (minuteAbortController === controller) minuteAbortController = null;
     setMatrixLoadingState(false);
   }
 }
@@ -1815,6 +1881,7 @@ async function runSpatialTimeAccessibility(baseResultOverride = null, { publish 
 async function runAnalysis({ jobId = null } = {}) {
   if (analysisAbortController) analysisAbortController.abort();
   if (poiAbortController) poiAbortController.abort();
+  if (minuteAbortController) minuteAbortController.abort();
   const controller = new AbortController();
   analysisAbortController = controller;
   let request;

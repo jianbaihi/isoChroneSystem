@@ -1,0 +1,1 @@
+{"frontend":{"tests":52,"passed":52,"failed":0},"backendMinutePlanner":{"tests":8,"passed":8,"failed":0},"backendPoiContract":{"tests":4,"passed":4,"failed":0},"fullBackend":{"executed":132,"functionalFailures":0,"environmentalErrors":1,"environmentalError":"pre-existing Stage59 archived cache fixture is absent"},"javascriptSyntax":"PASS","gitDiffCheck":"PASS"}

@@ -15,6 +15,7 @@ class MinuteIsochronePlan:
     maxRangeMinutes: int
     rangeCount: int
     batchSize: int
+    maxIntervalsPerRequest: int
     batchCount: int
     batches: list[list[int]]
     autoRequestLimit: int
@@ -26,6 +27,7 @@ class MinuteIsochronePlan:
             "maxRangeMinutes": self.maxRangeMinutes,
             "rangeCount": self.rangeCount,
             "batchSize": self.batchSize,
+            "maxIntervalsPerRequest": self.maxIntervalsPerRequest,
             "batchCount": self.batchCount,
             "batches": self.batches,
             "autoRequestLimit": self.autoRequestLimit,
@@ -48,6 +50,7 @@ def build_minute_isochrone_plan(profile: str, max_range_minutes: int) -> MinuteI
         maxRangeMinutes=max_range_minutes,
         rangeCount=len(ranges),
         batchSize=ISOCHRONE_MAX_INTERVALS_PER_REQUEST,
+        maxIntervalsPerRequest=ISOCHRONE_MAX_INTERVALS_PER_REQUEST,
         batchCount=len(batches),
         batches=batches,
         autoRequestLimit=MINUTE_ISOCHRONE_AUTO_REQUEST_LIMIT,

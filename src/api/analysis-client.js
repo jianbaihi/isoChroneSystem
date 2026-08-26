@@ -170,11 +170,24 @@
     return app.contracts.normalizeAnalysisResult(payload);
   }
 
-  async function createMinuteAccessibility(baseResult, { signal, approved = false } = {}) {
+  async function createMinuteAccessibility(poiResult, { signal, approved = false } = {}) {
+    const rangesMinutes = [...(poiResult?.rangesMinutes || [])];
     const response = await fetch(`${app.config.apiBaseUrl}/minute-accessibility`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ schemaVersion: '1.0', baseResult, approved }),
+      body: JSON.stringify({
+        schemaVersion: '1.0',
+        analysisFingerprint: poiResult.analysisFingerprint,
+        poiQueryId: poiResult.poiQueryId,
+        center: poiResult.center,
+        profile: poiResult.profile,
+        rangesMinutes,
+        categoryIds: poiResult.categoryIds || [],
+        maxRangeMinutes: Math.max(...rangesMinutes),
+        resolutionMinutes: 1,
+        pois: (poiResult.pois || []).map((poi) => ({ poiId: poi.poiId, location: poi.location })),
+        approved,
+      }),
       signal,
     });
     const payload = await parseJson(response);
@@ -186,7 +199,7 @@
       error.status = response.status;
       throw error;
     }
-    return app.contracts.normalizeAnalysisResult(payload);
+    return payload;
   }
 
   async function geocode(operation, params, { signal } = {}) {

@@ -1,0 +1,1 @@
+{"ids":["food","shopping","attraction","lodging","health","education","transport","service","entertainment","other"],"fields":["id","label","sourceCategory"],"unknownProviderCategory":"other","sourceCategoryPurpose":"audit only"}

@@ -356,7 +356,7 @@ async def create_minute_accessibility_endpoint(request: MinuteAccessibilityReque
         adapter=getattr(raw_request.app.state, "ors_adapter", None),
         quota_observer=getattr(raw_request.app.state, "quota_observer", None),
     )
-    metadata = result.metadata.spatialTime or {}
+    metadata = result.metadata or {}
     return JSONResponse(
         status_code=200,
         content=result.model_dump(mode="json") if hasattr(result, "model_dump") else result.dict(),

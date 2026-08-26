@@ -151,12 +151,12 @@
               ...current.data.workflow,
               reachabilityResult: profileResult,
               poiResult: null,
-              minuteResult: result?.metadata?.spatialTime ? profileResult : null,
+              minuteResult: null,
             },
             workflowStatus: {
               reachability: 'ready',
               poi: 'idle',
-              minute: result?.metadata?.spatialTime ? 'ready' : 'idle',
+              minute: 'idle',
             },
           },
           interaction: {
@@ -191,6 +191,42 @@
           workflowStatus: { ...current.data.workflowStatus, poi: poiResult.pois?.length ? 'ready' : 'ready-empty', minute: 'idle' },
         } }));
         return { accepted: true, state: next };
+      },
+      setMinuteStatus(status) {
+        return update((current) => ({ ...current, data: {
+          ...current.data,
+          workflowStatus: { ...current.data.workflowStatus, minute: status },
+        } }));
+      },
+      setMinuteResult(minuteResult) {
+        const poiResult = state.data.workflow.poiResult;
+        if (!poiResult
+          || minuteResult?.analysisFingerprint !== poiResult.analysisFingerprint
+          || minuteResult?.poiQueryId !== poiResult.poiQueryId
+          || minuteResult?.profile !== poiResult.profile) {
+          return { accepted: false, state: getState() };
+        }
+        const next = update((current) => ({ ...current, data: {
+          ...current.data,
+          workflow: { ...current.data.workflow, minuteResult: clone(minuteResult) },
+          workflowStatus: { ...current.data.workflowStatus, minute: 'ready' },
+        } }));
+        return { accepted: true, state: next };
+      },
+      setMinuteError(error) {
+        return update((current) => ({ ...current, data: {
+          ...current.data,
+          workflowStatus: { ...current.data.workflowStatus, minute: 'error' },
+          error: clone(error),
+        } }));
+      },
+      cancelMinute(reason = 'parameters-changed') {
+        return update((current) => ({ ...current, data: {
+          ...current.data,
+          workflow: { ...current.data.workflow, minuteResult: null },
+          workflowStatus: { ...current.data.workflowStatus, minute: 'stale' },
+          staleReason: reason,
+        } }));
       },
       setPoiError(error) {
         return update((current) => ({ ...current, data: {

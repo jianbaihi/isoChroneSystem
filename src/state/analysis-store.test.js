@@ -117,3 +117,17 @@ test('prepare all is plan-only and unsupported modes are disabled', () => {
   assert.deepEqual(store.profileAvailability('subway'), { supported: false, profile: 'subway', reason: '当前数据源不支持' });
   assert.throws(() => store.setActiveProfile('subway'), /当前数据源不支持/);
 });
+
+test('minute result is independent, identity guarded, and invalidated by a new POI result', () => {
+  const store = createStore();
+  store.setResult({ analysisId: 'reach', profile: 'foot-walking', rings: [], pois: [], categories: [], metadata: { analysisFingerprint: 'fnv1a-current' } });
+  store.setPoiResult({ poiQueryId: 'poi-query-current', analysisFingerprint: 'fnv1a-current', profile: 'foot-walking', pois: [{ poiId: 'p1' }] });
+  const minute = { minuteAccessibilityId: 'minute-1', analysisFingerprint: 'fnv1a-current', poiQueryId: 'poi-query-current', profile: 'foot-walking', assignments: [{ poiId: 'p1' }] };
+  assert.equal(store.setMinuteResult(minute).accepted, true);
+  assert.equal(store.getState().data.workflow.poiResult.poiQueryId, 'poi-query-current');
+  assert.equal(store.getState().data.workflow.minuteResult.minuteAccessibilityId, 'minute-1');
+  assert.equal(store.setMinuteResult({ ...minute, poiQueryId: 'stale' }).accepted, false);
+  store.setPoiResult({ poiQueryId: 'poi-query-new', analysisFingerprint: 'fnv1a-current', profile: 'foot-walking', pois: [] });
+  assert.equal(store.getState().data.workflow.minuteResult, null);
+  assert.equal(store.getState().data.workflowStatus.minute, 'idle');
+});

@@ -1,0 +1,1 @@
+{"required":["poiId","name","location","source.provider"],"recommended":["category","displayRingId"],"optionalNullable":["address","rating","phone","website","openingHours","brand"],"source":{"provider":"openpoiservice","providerPoiId":"provider identity","attribution":[]},"rawProviderResponseExposed":false}
