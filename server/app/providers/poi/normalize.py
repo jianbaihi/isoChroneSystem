@@ -30,11 +30,14 @@ def assign_provider_pois(records: list[dict], outer_geometry, rings, provider: s
             poiId=f"{provider}:{record['providerPoiId']}", providerPoiId=record["providerPoiId"],
             source=provider, name=record["name"], location=Location(**record["location"]),
             sourceLocation=SourceLocation(**record["sourceLocation"]), categoryId=category_id,
-            category=record["category"], ringId=ring_id, address=record.get("address"),
+            category=record["category"], providerCategory=record.get("providerCategory"),
+            semanticCategory=record.get("semanticCategory"), categoryStyleKey=record.get("categoryStyleKey"),
+            ringId=ring_id, address=record.get("address"),
             rating=record.get("rating"), phone=record.get("phone"), website=record.get("website"),
             openingHours=record.get("openingHours"), attribution=attribution,
         ))
-    categories = [Category(categoryId=k, label=LABELS[k], level=1, matchedPoiCount=v, returnedPoiCount=v) for k, v in sorted(counts.items())]
+    labels = {record["category"]["id"]: record["category"].get("label", record["category"]["id"]) for record in records}
+    categories = [Category(categoryId=k, label=labels.get(k, LABELS.get(k, k)), level=1, matchedPoiCount=v, returnedPoiCount=v) for k, v in sorted(counts.items())]
     return {
         "pois": pois, "categories": categories, "matchedCount": len(pois),
         "ringCounts": Counter(p.ringId for p in pois), "attribution": attribution,

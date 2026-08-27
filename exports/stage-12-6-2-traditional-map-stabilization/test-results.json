@@ -1,0 +1,2 @@
+{"frontend":{"passed":148,"failed":0,"command":"node --test src/**/*.test.js"},"backendFocused":{"passed":20,"failed":0},"backendFull":{"passedBeforeFixtureError":145,"failed":0,"environmentError":"historical stage59 cache fixture is absent from data/generated; unrelated to this stage"},"pythonCompile":"PASS"}
+

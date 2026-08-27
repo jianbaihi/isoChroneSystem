@@ -1,0 +1,11 @@
+{
+  "status":"PASS",
+  "schemaVersion":"amap-poi-l1-v1",
+  "styleVersion":"amap-category-style-v1",
+  "categoryCount":20,
+  "consumers":["category chip","MapLibre marker","hover badge","detail badge","ResearchPoiDataset"],
+  "dataDrivenMarker":true,
+  "arrayIndexColoring":false,
+  "selectedRetainsCategoryFill":true
+}
+

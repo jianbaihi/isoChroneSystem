@@ -57,16 +57,23 @@
     return [...new Set(categoryIds.map((value) => String(value).trim()).filter(Boolean))];
   }
 
-  function analysisFingerprint({ center, profile, rangesMinutes, categoryIds = [] }) {
+  function analysisFingerprint({ center, profile, rangesMinutes }) {
     const normalizedCenter = normalizeCenter(center);
     const text = ['v1', normalizedCenter.lon.toFixed(6), normalizedCenter.lat.toFixed(6), String(profile),
-      normalizeRanges(rangesMinutes).join(','), normalizeCategoryIds(categoryIds).sort().join(',')].join('|');
+      normalizeRanges(rangesMinutes).join(',')].join('|');
     let hash = 0x811c9dc5;
     for (const byte of new TextEncoder().encode(text)) {
       hash ^= byte;
       hash = Math.imul(hash, 0x01000193) >>> 0;
     }
     return `fnv1a-${hash.toString(16).padStart(8, '0')}`;
+  }
+
+  function poiQueryFingerprint({ reachabilityFingerprint, provider = 'auto', categoryIds = [], categorySchemaVersion = 'amap-poi-l1-v1', queryStrategyVersion = 'amap-query-v1', coordinatePolicyVersion = 'wgs84-gcj02-v1' }) {
+    const text = [reachabilityFingerprint, provider, normalizeCategoryIds(categoryIds).sort().join(','), categorySchemaVersion, queryStrategyVersion, coordinatePolicyVersion].join('|');
+    let hash = 0x811c9dc5;
+    for (const byte of new TextEncoder().encode(text)) { hash ^= byte; hash = Math.imul(hash, 0x01000193) >>> 0; }
+    return `poi-fnv1a-${hash.toString(16).padStart(8, '0')}`;
   }
 
   function normalizePoiResult(result) {
@@ -415,7 +422,7 @@
     matrixBandForDuration,
     normalizePoiPreview,
     normalizePoiResult,
-    analysisFingerprint,
+    analysisFingerprint, poiQueryFingerprint,
     normalizeGeoJsonGeometry,
     formatMatrixDuration,
     formatMatrixDistance,

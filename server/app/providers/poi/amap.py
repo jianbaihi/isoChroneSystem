@@ -9,7 +9,7 @@ import httpx
 from app.errors import PoiProviderError
 from app.providers.poi.amap_cache import AmapQueryCache
 from app.providers.poi.amap_query_planner import area_km2, build_category_jobs, cache_identity, load_query_mapping, split_job
-from app.providers.poi.category_mapping import amap_category, category_payload
+from app.providers.poi.category_mapping import LABELS, amap_category, category_payload
 from app.providers.poi.coordinate_policy import gcj02_to_wgs84, geometry_wgs84_to_gcj02
 from app.providers.poi.normalize import assign_provider_pois
 
@@ -177,10 +177,15 @@ class AmapPoiAdapter:
         actual_category = amap_category(source_code, source_category)
         if requested_category == "attraction" and actual_category == "nature":
             return None
-        category = "nature" if actual_category == "nature" else requested_category
+        mapping = load_query_mapping()["categories"]
+        requested = mapping.get(requested_category, {})
+        is_level1 = requested_category.isdigit() and len(requested_category) == 6
+        category = requested_category if is_level1 else ("nature" if actual_category == "nature" else requested_category)
+        semantic_id = requested.get("semanticId", actual_category)
+        category_data = {"id": category, "label": requested.get("label", category), "sourceCategory": source_category, "sourceCategoryCode": source_code}
         lon, lat = gcj02_to_wgs84(source_lon, source_lat)
         business = item.get("business") if isinstance(item.get("business"), dict) else {}
-        return {"providerPoiId": str(item.get("id") or f"{item.get('name')}:{source_lon}:{source_lat}"), "name": str(item.get("name") or "未命名地点"), "location": {"lon": lon, "lat": lat, "crs": "EPSG:4326"}, "sourceLocation": {"lon": source_lon, "lat": source_lat, "crs": "GCJ-02"}, "category": category_payload(category, source_category, source_code), "address": item.get("address") or business.get("business_area"), "rating": business.get("rating"), "phone": business.get("tel"), "openingHours": business.get("opentime_today")}
+        return {"providerPoiId": str(item.get("id") or f"{item.get('name')}:{source_lon}:{source_lat}"), "name": str(item.get("name") or "未命名地点"), "location": {"lon": lon, "lat": lat, "crs": "EPSG:4326"}, "sourceLocation": {"lon": source_lon, "lat": source_lat, "crs": "GCJ-02"}, "category": category_data if is_level1 else category_payload(category, source_category, source_code), "providerCategory": {"provider":"amap","level1Code": requested_category if is_level1 else f"{(source_code or '000000')[:2]}0000","level1Label": requested.get("label", source_category or category),"typecode":source_code,"typeLabel":source_category}, "semanticCategory": {"id":semantic_id,"label": LABELS.get(semantic_id, semantic_id)}, "categoryStyleKey": f"amap-l1-{requested_category}" if is_level1 else f"semantic-{semantic_id}", "address": item.get("address") or business.get("business_area"), "rating": business.get("rating"), "phone": business.get("tel"), "openingHours": business.get("opentime_today")}
 
     async def _get(self, endpoint, params):
         try:

@@ -50,6 +50,7 @@ const matrixButton = document.getElementById('matrixButton');
 const matrixButtonLabel = matrixButton?.querySelector('.matrix-button-label');
 const matrixResultSummary = document.getElementById('matrixResultSummary');
 const matrixPoiDetail = document.getElementById('matrixPoiDetail');
+const thresholdList = document.getElementById('thresholdList');
 const poiHoverCard = document.getElementById('poiHoverCard');
 const poiDetailCard = document.getElementById('poiDetailCard');
 const poiDetailClose = document.getElementById('poiDetailClose');
@@ -83,11 +84,7 @@ const PLACE_COORDINATES = window.PanmapApp?.centerPresets || {};
 const DEFAULT_CENTER = window.PanmapApp?.centerPreset?.('wuhan-huanghelou') || { lon: 114.296944, lat: 30.546944, district: '武汉市武昌区', label: '武汉·黄鹤楼' };
 const PROFILE_BY_MODE = { walk: 'foot-walking', bike: 'cycling-regular', car: 'driving-car' };
 const MODE_BY_LABEL = { 步行: 'walk', 骑行: 'bike', 驾车: 'car' };
-const CATEGORY_ID_BY_LABEL = {
-  food: 'food', shopping: 'shopping', attraction: 'attraction', nature: 'nature', lodging: 'lodging',
-  health: 'health', education: 'education', transport: 'transport', service: 'service',
-  entertainment: 'entertainment', public: 'public', other: 'other',
-};
+const CATEGORY_SCHEMA_VERSION = 'amap-poi-l1-v1';
 let toastTimer;
 let analysisAbortController = null;
 let poiAbortController = null;
@@ -412,10 +409,12 @@ function renderPoiQuerySummary(state) {
   if (poiProviderStatus) {
     const regionLabel = result?.metadata?.region === 'cn-mainland' ? '中国大陆' : result?.metadata?.region === 'global' ? '海外' : null;
     const providerLabel = result?.metadata?.providerLabel || null;
-    poiProviderStatus.textContent = providerLabel ? `POI 数据源：自动 · ${providerLabel}${regionLabel ? ` · ${regionLabel}` : ''}` : 'POI 数据源：自动选择';
+    const center = state?.data?.parameterDraft?.center;
+    const likelyChina = center && center.lon >= 73 && center.lon <= 136 && center.lat >= 18 && center.lat <= 54;
+    poiProviderStatus.textContent = providerLabel ? `POI · ${providerLabel}${regionLabel ? ` · ${regionLabel}` : ''}` : likelyChina ? 'POI · 高德地图' : 'POI · Foursquare';
   }
   const byCategory = result?.statistics?.byCategory || {};
-  const categoryLabels = { attraction: '景点', nature: '公园', food: '餐饮', lodging: '酒店', transport: '交通', education: '学校', health: '医疗', shopping: '购物', entertainment: '休闲', service: '生活', public: '公共设施', other: '其他' };
+  const categoryLabels = Object.fromEntries(Object.entries(window.PanmapApp.categoryStyleRegistry?.styles || {}).map(([code, style]) => [code, style.label]));
   document.querySelectorAll('.poi-chip').forEach((chip) => {
     const count = byCategory[chip.dataset.poi];
     const target = chip.querySelector('[data-category-count]');
@@ -487,11 +486,12 @@ function positionPoiHoverCard(point) {
 function showPoiHoverCard(poiId, point) {
   const started = performance.now();
   const view = window.buildPoiDetailViewModel(poiId);
-  if (!view || !poiHoverCard) return;
+  if (!view || !poiHoverCard || poiInteractionState.detailCardVisible) return;
   setCardField(poiHoverCard, 'name', view.name);
   setCardField(poiHoverCard, 'categoryLabel', view.categoryLabel);
   setCardField(poiHoverCard, 'travelTimePrimary', view.travelTimePrimary || view.displayRingLabel || '当前可达域内');
   setCardField(poiHoverCard, 'displayRingLabel', view.travelTimePrimary ? view.displayRingLabel : '尚未补齐分钟级时间');
+  poiHoverCard.style.setProperty('--poi-category-color', window.PanmapApp.categoryStyleRegistry?.forCode(view.categoryLevel1Code)?.color || '#64748B');
   positionPoiHoverCard(point);
   poiHoverCard.classList.add('is-visible');
   poiHoverCard.setAttribute('aria-hidden', 'false');
@@ -516,6 +516,10 @@ function handlePoiHover(poiId, point) {
   poiHoverPoint = point || poiHoverPoint;
   window.clearTimeout(poiHoverOpenTimer);
   window.clearTimeout(poiHoverCloseTimer);
+  if (poiInteractionState.detailCardVisible) {
+    hidePoiHoverCard();
+    return;
+  }
   if (!poiId) {
     poiHoverCloseTimer = window.setTimeout(hidePoiHoverCard, 90);
     return;
@@ -543,6 +547,9 @@ function renderPoiDetailCard(poiId) {
   const key = `${poiId}|${state?.data?.workflow?.minuteResult?.minuteAccessibilityId || 'no-minute'}`;
   if (renderedDetailKey === key && poiInteractionState.detailCardVisible) return;
   const started = performance.now();
+  window.clearTimeout(poiHoverOpenTimer);
+  window.clearTimeout(poiHoverCloseTimer);
+  hidePoiHoverCard();
   const view = window.buildPoiDetailViewModel(poiId);
   if (!view) return;
   const fields = ['name', 'categoryLabel', 'travelTimeSecondary', 'travelTimeMethodLabel', 'displayRingLabel',
@@ -568,16 +575,20 @@ function renderPoiDetailCard(poiId) {
   poiDetailCard.classList.add('is-visible');
   poiDetailCard.setAttribute('aria-hidden', 'false');
   poiDetailCard.dataset.poiId = poiId;
+  const style = window.PanmapApp.categoryStyleRegistry?.forCode(view.categoryLevel1Code);
+  poiDetailCard.style.setProperty('--poi-category-color', style?.color || '#64748B');
   poiInteractionState.select?.(poiId) || Object.assign(poiInteractionState, { selectedPoiId: poiId, detailCardVisible: true });
   const action = renderedDetailKey ? 'switch' : 'open';
   renderedDetailKey = key;
   window.poiCardPerformance.detail.push({ action, poiId, durationMs: performance.now() - started });
   publishPoiCardPerformance();
+  traditionalMapAdapter?.focusPoi?.(view.location, { detailWidth: poiDetailCard.offsetWidth || 336 });
 }
 
 function closePoiDetailCard() {
   analysisStore?.setSelectedPoiId(null);
   renderPoiDetailCard(null);
+  traditionalMapAdapter?.clearPoiFocus?.();
 }
 
 poiDetailClose?.addEventListener('click', closePoiDetailCard);
@@ -1517,7 +1528,7 @@ function syncParameterDraftFromUI() {
   const selectedCategoryLabels = [...document.querySelectorAll('.poi-chip.is-checked')]
     .map((chip) => chip.dataset.poi)
     .filter(Boolean);
-  const categoryIds = selectedCategoryLabels.map((label) => CATEGORY_ID_BY_LABEL[label]).filter(Boolean);
+  const categoryIds = selectedCategoryLabels;
   analysisStore?.setParameterDraft({
     profile: PROFILE_BY_MODE[selectedMode] || null,
     rangesMinutes,
@@ -1766,6 +1777,8 @@ function initializeTraditionalMap() {
     },
     onRingHover: (ringId) => analysisStore?.setHoveredRingId(ringId),
     onPoiClick: (poiId) => {
+      window.clearTimeout(poiHoverOpenTimer);
+      window.clearTimeout(poiHoverCloseTimer);
       hidePoiHoverCard();
       analysisStore?.setSelectedPoiId(poiId);
     },
@@ -1773,6 +1786,7 @@ function initializeTraditionalMap() {
       if (poiInteractionState.hoveredPoiId !== (poiId || null)) analysisStore?.setHoveredPoiId(poiId);
       handlePoiHover(poiId, point);
     },
+    onMapBlankClick: closePoiDetailCard,
     onMapPointSelected: updateDraftCenterFromMap,
     onMapCoordinate: updateMapPickCoordinate,
     onMapStatus: setMapStatus,
@@ -2240,25 +2254,58 @@ document.querySelectorAll('.mode-chip').forEach((button) => {
   });
 });
 
-document.querySelectorAll('.poi-chip').forEach((button) => {
-  button.addEventListener('click', () => {
-    button.classList.toggle('is-checked');
-    const matchingInput = poiMenuChecks.find((input) => input.dataset.poiMenu === button.dataset.poi);
-    if (matchingInput) matchingInput.checked = button.classList.contains('is-checked');
-    updatePoiToolbarLabel();
-    syncParameterDraftFromUI();
-  });
+document.getElementById('poiType')?.addEventListener('click', (event) => {
+  const button = event.target.closest('.poi-chip');
+  if (!button) return;
+  button.classList.toggle('is-checked');
+  updatePoiToolbarLabel();
+  syncParameterDraftFromUI();
 });
 
-document.querySelector('.link-button').addEventListener('click', (event) => {
-  const buttons = document.querySelectorAll('.poi-chip');
+document.getElementById('poiSelectAll')?.addEventListener('click', (event) => {
+  const buttons = document.querySelectorAll('#amapCategoryGrid .poi-chip');
   const allChecked = [...buttons].every((button) => button.classList.contains('is-checked'));
   buttons.forEach((button) => button.classList.toggle('is-checked', !allChecked));
-  poiMenuChecks.forEach((input) => { input.checked = !allChecked; });
   event.currentTarget.textContent = allChecked ? '全选' : '取消全选';
   updatePoiToolbarLabel();
   syncParameterDraftFromUI();
 });
+
+async function initializeAmapCategoryUi() {
+  const grid = document.getElementById('amapCategoryGrid');
+  const expand = document.getElementById('amapCategoryExpand');
+  if (!grid) return;
+  try {
+    const response = await fetch('./data/provider-taxonomy/amap/level1.json');
+    const schema = await response.json();
+    const render = (expanded = false) => {
+      const categories = expanded ? schema.categories : schema.categories.filter((item) => item.common);
+      grid.replaceChildren(...categories.map((item) => {
+        const style = window.PanmapApp.categoryStyleRegistry.forCode(item.code);
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `poi-chip${item.common ? ' is-checked' : ''}`;
+        button.dataset.poi = item.code;
+        button.dataset.semanticCategory = item.semanticId;
+        button.style.setProperty('--poi-color', style.color);
+        button.innerHTML = `<span class="poi-check">✓</span><i class="poi-color-dot"></i>${item.label} <small data-category-count></small>`;
+        return button;
+      }));
+      syncParameterDraftFromUI();
+    };
+    render(false);
+    expand?.addEventListener('click', () => {
+      const expanded = expand.getAttribute('aria-expanded') !== 'true';
+      expand.setAttribute('aria-expanded', String(expanded));
+      expand.textContent = expanded ? '− 收起全部类别' : '＋ 展开全部类别';
+      render(expanded);
+    });
+  } catch (error) {
+    grid.textContent = '高德分类资源加载失败';
+  }
+}
+
+window.setTimeout(initializeAmapCategoryUi, 0);
 
 document.getElementById('generateButton').addEventListener('click', runReachabilityWorkflow);
 
@@ -2659,7 +2706,6 @@ toolbarMenuSelectAll.addEventListener('click', () => {
   syncParameterDraftFromUI();
 });
 
-const thresholdList = document.getElementById('thresholdList');
 
 function thresholdRangesFromUI() {
   return [...thresholdList.querySelectorAll('.threshold-item')]

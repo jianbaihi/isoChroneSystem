@@ -24,7 +24,9 @@
     const provider = typeof poi.source === 'string' ? poi.source : poi.source?.provider || 'unknown';
     return {
       poiId: poi.poiId, name: poi.name, location: { ...poi.location, crs: poi.location.crs || 'EPSG:4326' },
-      category: normalizedCategory(poi), address: poi.address ?? null, rating: poi.rating ?? null,
+      category: normalizedCategory(poi), providerCategory: poi.providerCategory || null,
+      semanticCategory: poi.semanticCategory || normalizedCategory(poi), categoryStyleKey: poi.categoryStyleKey || null,
+      address: poi.address ?? null, rating: poi.rating ?? null,
       phone: poi.phone ?? null, website: poi.website ?? null, openingHours: poi.openingHours ?? null,
       brand: poi.brand ?? null,
       source: { provider, providerPoiId: poi.source?.providerPoiId || poi.poiId, attribution: poi.source?.attribution || [] },
@@ -43,7 +45,9 @@
     const lat = Number(poi.location.lat);
     const lon = Number(poi.location.lon);
     return {
-      poiId: poi.poiId, name: poi.name, categoryLabel: poi.category.label, address: poi.address,
+      poiId: poi.poiId, name: poi.name, categoryLabel: poi.providerCategory?.level1Label || poi.category.label,
+      categoryLevel1Code: poi.providerCategory?.level1Code || null, categoryStyleKey: poi.categoryStyleKey,
+      semanticCategory: poi.semanticCategory, address: poi.address,
       location: poi.location, displayRingId: poi.displayRingId,
       displayRingLabel: poi.displayRingId ? `${poi.displayRingId.replace(/^ring-/, '').replaceAll('-', '–')} 分钟圈层` : null,
       profile, profileLabel: profileLabels[profile] || profile || null,

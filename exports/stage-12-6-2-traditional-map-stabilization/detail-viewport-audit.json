@@ -1,0 +1,10 @@
+{
+  "status":"IMPLEMENTED",
+  "desktopSafeArea":"right",
+  "narrowSafeArea":"bottom",
+  "openDurationMs":280,
+  "closePaddingDurationMs":200,
+  "detailViewportMetric":"traditionalMap.dataset.detailViewportAdjustMs",
+  "behavior":"easeTo selected POI with responsive padding; preserve category marker fill"
+}
+

@@ -1,0 +1,7 @@
+{
+  "status":"PASS_BY_AUTOMATED_CONTRACT",
+  "rules":{"clickCancelsPendingHover":true,"selectedSuppressesHoverCard":true,"pointerleaveKeepsDetail":true,"escapeClosesDetail":true,"blankClickClosesDetail":true,"dragDoesNotCloseDetail":true,"switchSelectionWithoutCardRemount":true},
+  "businessDataMutation":false,
+  "sourceRebuildOnInteraction":false
+}
+

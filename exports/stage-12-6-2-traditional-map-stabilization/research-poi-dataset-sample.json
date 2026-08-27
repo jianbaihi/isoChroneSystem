@@ -1,0 +1,6 @@
+{
+  "schemaVersion":"research-poi-dataset-v1",
+  "pois":[{"poiId":"amap:sample-station","name":"交通设施样例","lon":114.2969,"lat":30.5469,"provider":"amap","providerCategory":{"provider":"amap","level1Code":"150000","level1Label":"交通设施服务","typecode":"150900","typeLabel":"交通设施"},"semanticCategory":{"id":"transport","label":"交通"},"categoryStyleKey":"amap-l1-150000","displayRingId":"ring-5-10","travelTimeMinuteEstimate":9,"travelTimeBand":{"lowerExclusiveMinutes":8,"upperInclusiveMinutes":9}}],
+  "metadata":{"provider":"amap","categorySchemaVersion":"amap-poi-l1-v1","categoryStyleVersion":"amap-category-style-v1","queryCompleteness":"partial-budget"}
+}
+

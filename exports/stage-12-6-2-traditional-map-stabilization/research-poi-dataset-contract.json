@@ -1,0 +1,8 @@
+{
+  "schemaVersion":"research-poi-dataset-v1",
+  "poiRequired":["poiId","name","lon","lat","provider","providerCategory","semanticCategory","categoryStyleKey","displayRingId","travelTimeMinuteEstimate","travelTimeBand"],
+  "metadataRequired":["center","profile","rangesMinutes","reachabilityFingerprint","poiQueryFingerprint","provider","categorySchemaVersion","categoryStyleVersion","coordinatePolicyVersion","queryCompleteness","generatedAt"],
+  "statistics":["categoryStatistics","categoryRingStatistics"],
+  "forbiddenUiState":["hovered","selected","cardOpen","screenX","screenY"]
+}
+

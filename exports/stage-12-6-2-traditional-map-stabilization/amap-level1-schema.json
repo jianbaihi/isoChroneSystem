@@ -1,0 +1,25 @@
+{
+  "version": "amap-poi-l1-v1",
+  "categories": [
+    {"code":"010000","label":"汽车服务","semanticId":"service"},
+    {"code":"020000","label":"汽车销售","semanticId":"shopping"},
+    {"code":"030000","label":"汽车维修","semanticId":"service"},
+    {"code":"040000","label":"摩托车服务","semanticId":"service"},
+    {"code":"050000","label":"餐饮服务","semanticId":"food","common":true},
+    {"code":"060000","label":"购物服务","semanticId":"shopping","common":true},
+    {"code":"070000","label":"生活服务","semanticId":"service","common":true},
+    {"code":"080000","label":"体育休闲服务","semanticId":"entertainment","common":true},
+    {"code":"090000","label":"医疗保健服务","semanticId":"health","common":true},
+    {"code":"100000","label":"住宿服务","semanticId":"lodging","common":true},
+    {"code":"110000","label":"风景名胜","semanticId":"attraction","common":true},
+    {"code":"120000","label":"商务住宅","semanticId":"service"},
+    {"code":"130000","label":"政府机构及社会团体","semanticId":"public"},
+    {"code":"140000","label":"科教文化服务","semanticId":"education","common":true},
+    {"code":"150000","label":"交通设施服务","semanticId":"transport","common":true},
+    {"code":"160000","label":"金融保险服务","semanticId":"service"},
+    {"code":"170000","label":"公司企业","semanticId":"service"},
+    {"code":"180000","label":"道路附属设施","semanticId":"transport"},
+    {"code":"190000","label":"地名地址信息","semanticId":"other"},
+    {"code":"200000","label":"公共设施","semanticId":"public","common":true}
+  ]
+}

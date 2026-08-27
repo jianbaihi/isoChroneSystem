@@ -169,6 +169,9 @@ class Poi(BaseModel):
     attribution: list[str] = Field(default_factory=list)
     categoryId: Optional[str] = None
     category: Optional[dict[str, Any]] = None
+    providerCategory: Optional[dict[str, Any]] = None
+    semanticCategory: Optional[dict[str, Any]] = None
+    categoryStyleKey: Optional[str] = None
     # Published results carry the Matrix fields on the POI itself.  The
     # accessibility array remains an audit trail, but consumers must not have
     # to perform a second join merely to show time, distance, or ring.

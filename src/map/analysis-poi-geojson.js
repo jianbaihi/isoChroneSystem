@@ -25,6 +25,8 @@
           topLevelCategoryId: category.topLevelId || poi.categoryId || '',
           basicCategoryId: category.basicCategoryId || '',
           primaryCategoryId: category.primaryCategoryId || poi.categoryId || '',
+          categoryLevel1Code: poi.providerCategory?.level1Code || poi.categoryId || '',
+          categoryStyleKey: poi.categoryStyleKey || '',
           name: String(poi.name || ''),
           matrixStatus: poi.matrixStatus || '',
           matrixBandId: poi.matrixBandId || '',

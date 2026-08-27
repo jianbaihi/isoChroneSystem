@@ -62,10 +62,7 @@
   }
 
   function poiColorExpression() {
-    return ['match', ['get', 'topLevelCategoryId'],
-      'food_and_drink', '#58a548', 'shopping', '#f05b61', 'lodging', '#7b5ac7',
-      'health_care', '#4d8fef', 'education', '#8b6bd8', 'travel_and_transportation', '#2d7bea',
-      'lifestyle_services', '#34afa5', 'arts_and_entertainment', '#eea22e', '#2d7bea'];
+    return app.categoryStyleRegistry?.maplibreColorExpression?.() || '#64748B';
   }
 
   function addGeoJsonLayers(map, paletteRanges = [10, 20, 30]) {
@@ -176,11 +173,11 @@
     });
     map.addLayer({
       id: POI_HOVER_LAYER_ID, type: 'circle', source: POI_SOURCE_ID, filter: ['==', ['get', 'poiId'], '__none__'],
-      paint: { 'circle-radius': 9, 'circle-color': '#172b4d', 'circle-opacity': 0.2, 'circle-stroke-color': '#172b4d', 'circle-stroke-width': 2 },
+      paint: { 'circle-radius': 8, 'circle-color': poiColorExpression(), 'circle-opacity': 0.32, 'circle-stroke-color': '#172b4d', 'circle-stroke-width': 1.5 },
     });
     map.addLayer({
       id: POI_SELECTED_LAYER_ID, type: 'circle', source: POI_SOURCE_ID, filter: ['==', ['get', 'poiId'], '__none__'],
-      paint: { 'circle-radius': 10, 'circle-color': '#e7474f', 'circle-opacity': 0.14, 'circle-stroke-color': '#e7474f', 'circle-stroke-width': 3 },
+      paint: { 'circle-radius': 10, 'circle-color': poiColorExpression(), 'circle-opacity': 1, 'circle-stroke-color': '#172b4d', 'circle-stroke-width': 3 },
     });
     map.addLayer({
       id: POI_LABEL_LAYER_ID, type: 'symbol', source: POI_SOURCE_ID,
@@ -194,7 +191,7 @@
     source?.setData(data);
   }
 
-  function createTraditionalMap({ container, config, onRingClick, onRingHover, onPoiClick, onPoiHover, onMapPointSelected, onMapCoordinate, onMapStatus }) {
+  function createTraditionalMap({ container, config, onRingClick, onRingHover, onPoiClick, onPoiHover, onMapBlankClick, onMapPointSelected, onMapCoordinate, onMapStatus }) {
     let map = null;
     let isReady = false;
     let isPickMode = false;
@@ -211,6 +208,7 @@
     let resultStale = false;
     let poiRenderToken = 0;
     let poiVisible = true;
+    let mapWasDragged = false;
 
     function status(message) {
       if (typeof onMapStatus === 'function') onMapStatus(message || '');
@@ -359,10 +357,14 @@
     }
 
     function bindEvents() {
+      map.on('dragstart', () => { mapWasDragged = true; });
+      map.on('dragend', () => { global.setTimeout(() => { mapWasDragged = false; }, 0); });
       map.on('click', (event) => {
+        if (event.originalEvent?.__poiHandled) return;
         if (!isPickMode) {
-          const features = map.queryRenderedFeatures(event.point, { layers: [RING_FILL_LAYER_ID] });
+          const features = map.queryRenderedFeatures(event.point, { layers: [RING_FILL_LAYER_ID, POI_LAYER_ID] });
           if (!features.length && typeof onRingClick === 'function') onRingClick(null);
+          if (!features.length && !mapWasDragged && typeof onMapBlankClick === 'function') onMapBlankClick();
           return;
         }
         if (typeof onMapPointSelected === 'function') {
@@ -406,6 +408,7 @@
       });
       map.on('click', POI_LAYER_ID, (event) => {
         if (isPickMode) return;
+        if (event.originalEvent) event.originalEvent.__poiHandled = true;
         const poiId = event.features?.[0]?.properties?.poiId || null;
         if (typeof onPoiClick === 'function') onPoiClick(poiId);
       });
@@ -449,6 +452,7 @@
         setPoiVisibility(active) { poiVisible = Boolean(active); },
         setSelectedPoiId(poiId) { selectedPoiId = poiId || null; },
         setHoveredPoiId(poiId) { hoveredPoiId = poiId || null; },
+        focusPoi() {}, clearPoiFocus() {},
         setVisibleTopLevelCategoryIds(ids) { visibleTopLevelCategoryIds = ids; },
         setBasemapId(basemapId) { if (basemapId === 'osm-standard') activeBasemapId = basemapId; return basemapId === 'osm-standard'; },
         hasBasemap(basemapId) { return basemapId === 'osm-standard'; },
@@ -527,6 +531,22 @@
       setHoveredPoiId(poiId) {
         hoveredPoiId = poiId || null;
         updatePoiInteractionFilters();
+      },
+      focusPoi(location, options = {}) {
+        if (!map || !location) return;
+        const started = performance.now();
+        const narrow = container.clientWidth < 720;
+        const padding = narrow
+          ? { top: 24, right: 24, bottom: Math.min(300, container.clientHeight * 0.42), left: 24 }
+          : { top: 24, right: Math.min(Number(options.detailWidth || 336) + 32, container.clientWidth * 0.48), bottom: 32, left: 24 };
+        map.easeTo({ center: [Number(location.lon), Number(location.lat)], padding, duration: 280, essential: false });
+        container.dataset.detailViewportAdjustMs = String(performance.now() - started);
+        container.dataset.detailSafeArea = narrow ? 'bottom' : 'right';
+      },
+      clearPoiFocus() {
+        if (!map) return;
+        map.easeTo({ padding: { top: 0, right: 0, bottom: 0, left: 0 }, duration: 200, essential: false });
+        delete container.dataset.detailSafeArea;
       },
       setVisibleTopLevelCategoryIds(ids) {
         visibleTopLevelCategoryIds = ids == null ? null : [...new Set(ids.map(String))];

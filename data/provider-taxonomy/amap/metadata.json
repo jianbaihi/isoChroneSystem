@@ -1,0 +1,7 @@
+{
+  "provider": "amap",
+  "schema": "poi-typecode",
+  "source": "Amap official POI category coding table",
+  "sourceUpdatedAt": "2023-10-13",
+  "localSchemaVersion": "amap-poi-l1-v1"
+}

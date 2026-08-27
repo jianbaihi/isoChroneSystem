@@ -1,0 +1,8 @@
+{
+  "status":"PASS",
+  "reachabilityFingerprintIncludes":["center","profile","rangesMinutes"],
+  "reachabilityFingerprintExcludes":["categoryIds","poiProvider","poiQueryStrategy"],
+  "categoryChange":{"reachability":"ready","poi":"stale","minuteAssignment":"stale","minuteGeometryCache":"valid"},
+  "browserEvidence":{"foodPoiCount":497,"reachabilityButton":"complete","poiButtonEnabledAfterCategoryChange":true,"newIsochroneRequests":0}
+}
+

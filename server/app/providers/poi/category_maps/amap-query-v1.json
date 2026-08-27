@@ -1,6 +1,6 @@
 {
   "version": "amap-query-v1",
-  "precedence": ["nature", "attraction", "food", "shopping", "service", "entertainment", "health", "lodging", "education", "transport", "public", "other"],
+  "precedence": ["110000", "050000", "060000", "070000", "080000", "090000", "100000", "120000", "130000", "140000", "150000", "160000", "170000", "180000", "190000", "200000", "010000", "020000", "030000", "040000", "nature", "attraction", "food", "shopping", "service", "entertainment", "health", "lodging", "education", "transport", "public", "other"],
   "categories": {
     "food": {"label": "餐饮", "types": ["050000"]},
     "shopping": {"label": "购物", "types": ["060000"]},
@@ -13,6 +13,26 @@
     "education": {"label": "学校教育", "types": ["140000"]},
     "transport": {"label": "交通站点", "types": ["150000"]},
     "public": {"label": "公共设施", "types": ["200000"]},
-    "other": {"label": "其他", "types": ["010000"]}
+    "other": {"label": "其他", "types": ["010000"]},
+    "010000": {"label":"汽车服务","types":["010000"],"semanticId":"service"},
+    "020000": {"label":"汽车销售","types":["020000"],"semanticId":"shopping"},
+    "030000": {"label":"汽车维修","types":["030000"],"semanticId":"service"},
+    "040000": {"label":"摩托车服务","types":["040000"],"semanticId":"service"},
+    "050000": {"label":"餐饮服务","types":["050000"],"semanticId":"food"},
+    "060000": {"label":"购物服务","types":["060000"],"semanticId":"shopping"},
+    "070000": {"label":"生活服务","types":["070000"],"semanticId":"service"},
+    "080000": {"label":"体育休闲服务","types":["080000"],"semanticId":"entertainment"},
+    "090000": {"label":"医疗保健服务","types":["090000"],"semanticId":"health"},
+    "100000": {"label":"住宿服务","types":["100000"],"semanticId":"lodging"},
+    "110000": {"label":"风景名胜","types":["110000"],"semanticId":"attraction"},
+    "120000": {"label":"商务住宅","types":["120000"],"semanticId":"service"},
+    "130000": {"label":"政府机构及社会团体","types":["130000"],"semanticId":"public"},
+    "140000": {"label":"科教文化服务","types":["140000"],"semanticId":"education"},
+    "150000": {"label":"交通设施服务","types":["150000"],"semanticId":"transport"},
+    "160000": {"label":"金融保险服务","types":["160000"],"semanticId":"service"},
+    "170000": {"label":"公司企业","types":["170000"],"semanticId":"service"},
+    "180000": {"label":"道路附属设施","types":["180000"],"semanticId":"transport"},
+    "190000": {"label":"地名地址信息","types":["190000"],"semanticId":"other"},
+    "200000": {"label":"公共设施","types":["200000"],"semanticId":"public"}
   }
 }

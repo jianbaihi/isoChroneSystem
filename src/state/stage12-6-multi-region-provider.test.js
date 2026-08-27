@@ -15,7 +15,7 @@ function loadContract() {
 
 test('ordinary UI exposes one compact automatic provider status', () => {
   assert.equal((html.match(/id="poiProviderStatus"/g) || []).length, 1);
-  assert.match(app, /POI 数据源：自动 · \$\{providerLabel\}/);
+  assert.match(app, /POI · \$\{providerLabel\}/);
   assert.match(app, /正在通过\$\{likelyChina \? '高德地图' : 'Foursquare'\}查询 POI/);
 });
 

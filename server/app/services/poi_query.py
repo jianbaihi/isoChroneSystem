@@ -19,20 +19,28 @@ from app.providers.poi.category_mapping import CATEGORY_MAPPING_VERSION
 from app.services.poi_query_planner import build_provider_query_plan
 
 
-def analysis_fingerprint(center, profile: str, ranges: list[int], category_ids: list[str]) -> str:
+def analysis_fingerprint(center, profile: str, ranges: list[int], category_ids: list[str] | None = None) -> str:
     text = "|".join([
         "v1",
         f"{float(center.lon):.6f}",
         f"{float(center.lat):.6f}",
         profile,
         ",".join(str(value) for value in ranges),
-        ",".join(sorted(set(category_ids))),
     ])
     value = 2166136261
     for byte in text.encode("utf-8"):
         value ^= byte
         value = (value * 16777619) & 0xFFFFFFFF
     return f"fnv1a-{value:08x}"
+
+
+def poi_query_fingerprint(reachability_fingerprint: str, provider: str, category_ids: list[str]) -> str:
+    text = "|".join([reachability_fingerprint, provider, ",".join(sorted(set(category_ids))), "amap-poi-l1-v1", "amap-query-v1", COORDINATE_POLICY_VERSION])
+    value = 2166136261
+    for byte in text.encode("utf-8"):
+        value ^= byte
+        value = (value * 16777619) & 0xFFFFFFFF
+    return f"poi-fnv1a-{value:08x}"
 
 
 async def query_pois(
@@ -49,7 +57,7 @@ async def query_pois(
         raise AnalysisStaleError("outer_range_not_current_maximum")
     if request.outerIsochrone.geometry != request.cumulativeIsochrones[-1].geometry:
         raise AnalysisStaleError("outer_geometry_not_current_maximum")
-    expected = analysis_fingerprint(request.center, request.profile, ranges, request.categoryIds)
+    expected = analysis_fingerprint(request.center, request.profile, ranges)
     if request.analysisFingerprint != expected:
         raise AnalysisStaleError("fingerprint_mismatch")
 
@@ -70,6 +78,7 @@ async def query_pois(
         provider_id = resolve_provider(region_result["region"], settings, request.providerOverride)
         poi_provider = build_provider(provider_id, settings, quota_observer)
     provider_id = provider_id or "ors_remote"
+    query_fingerprint = poi_query_fingerprint(expected, provider_id, request.categoryIds)
     provider_plan = build_provider_query_plan(provider_id, outer_geometry)
     selection = await poi_provider.fetch(
         provider_request,
@@ -118,6 +127,10 @@ async def query_pois(
             "timings": selection.get("timings", {}),
             "providerQueryPlan": provider_plan,
             "completeness": selection.get("completeness"),
+            "reachabilityFingerprint": expected,
+            "poiQueryFingerprint": query_fingerprint,
+            "categorySchemaVersion": "amap-poi-l1-v1" if provider_id == "amap" else CATEGORY_MAPPING_VERSION,
+            "categoryStyleVersion": "amap-category-style-v1" if provider_id == "amap" else "semantic-category-style-v1",
             "cacheHit": bool(coverage.get("cacheHits")),
             "upstreamRequestCount": max(0, int(coverage.get("requests", 0)) - int(coverage.get("cacheHits", 0))),
             "tileCount": int(coverage.get("estimatedTileCount", coverage.get("cells", 0))),
