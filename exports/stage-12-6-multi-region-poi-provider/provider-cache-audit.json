@@ -1,0 +1,6 @@
+{
+  "poiCacheIdentityFields": ["region","provider","providerAdapterVersion","coordinatePolicyVersion","categoryMappingVersion"],
+  "providerSwitchCausesPoiCacheMiss": true,
+  "minuteGeometryCacheIncludesPoiProvider": false,
+  "minuteAssignmentBoundToPoiQueryId": true
+}

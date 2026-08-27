@@ -1,0 +1,7 @@
+{
+  "method": "boundary-polygon",
+  "boundaryVersion": "cn-mainland-simplified-v1",
+  "boundarySha256": "023a216a2426e01ffdc1fd13ed34c14a2de9a13d2547c681e82bccc096c5f9fd",
+  "localVersionedData": true,
+  "tests": {"wuhan": "cn-mainland", "hubeiUniversity": "cn-mainland", "beijing": "cn-mainland", "shanghai": "cn-mainland", "paris": "global", "newYork": "global", "tokyo": "global"}
+}

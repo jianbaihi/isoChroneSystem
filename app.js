@@ -40,6 +40,7 @@ const generateButtonLabel = generateButton?.querySelector('.generate-button-labe
 const poiQueryButton = document.getElementById('poiQueryButton');
 const poiQueryButtonLabel = poiQueryButton?.querySelector('.poi-query-button-label');
 const poiQuerySummary = document.getElementById('poiQuerySummary');
+const poiProviderStatus = document.getElementById('poiProviderStatus');
 const poiPreviewLabel = poiPreviewButton?.querySelector('.poi-explore-label');
 const nameCloudButton = document.getElementById('nameCloudButton');
 const nameCloudButtonLabel = nameCloudButton?.querySelector('.name-cloud-button-label');
@@ -390,19 +391,27 @@ function renderPoiQuerySummary(state) {
   const status = state?.data?.workflowStatus?.poi || 'idle';
   const result = state?.data?.workflow?.poiResult;
   if (status === 'loading') {
-    poiQuerySummary.textContent = '正在查询范围内 POI…';
+    const center = state?.data?.parameterDraft?.center;
+    const likelyChina = center && center.lon >= 73 && center.lon <= 136 && center.lat >= 18 && center.lat <= 54;
+    poiQuerySummary.textContent = `正在通过${likelyChina ? '高德地图' : 'Foursquare'}查询 POI…`;
   } else if (status === 'ready' && result) {
     const count = result.pois?.length || 0;
     const truncated = Boolean(result.coverage?.resultTruncated || result.coverage?.truncated);
+    const providerLabel = result.metadata?.providerLabel || result.metadata?.provider || '自动数据源';
     poiQuerySummary.textContent = truncated
-      ? `本次返回 ${count} 个 POI · 结果已截断`
-      : `本次搜索到 ${count} 个 POI`;
+      ? `本次返回 ${count} 个 POI · ${providerLabel} · 结果可能不完整`
+      : `本次搜索到 ${count} 个 POI · ${providerLabel}`;
   } else if (status === 'ready-empty') {
     poiQuerySummary.textContent = '本次未搜索到 POI';
   } else if (status === 'stale') {
     poiQuerySummary.textContent = '尚未查询当前范围 POI';
   } else {
     poiQuerySummary.textContent = '尚未查询 POI';
+  }
+  if (poiProviderStatus) {
+    const regionLabel = result?.metadata?.region === 'cn-mainland' ? '中国大陆' : result?.metadata?.region === 'global' ? '海外' : null;
+    const providerLabel = result?.metadata?.providerLabel || null;
+    poiProviderStatus.textContent = providerLabel ? `POI 数据源：自动 · ${providerLabel}${regionLabel ? ` · ${regionLabel}` : ''}` : 'POI 数据源：自动选择';
   }
 }
 

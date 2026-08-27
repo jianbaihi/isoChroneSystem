@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "center": "Wuhan Yellow Crane Tower",
+  "profile": "foot-walking",
+  "rangesMinutes": [5,10],
+  "region": "cn-mainland",
+  "provider": "amap",
+  "normalizedInsidePoiCount": 94,
+  "minuteClassifiedCount": 94,
+  "coordinateConversion": "GCJ-02->WGS84",
+  "spatialOffsetAudit": "five-plus visible POIs sampled; no systematic shift observed",
+  "mockFallback": false,
+  "errors": []
+}

@@ -1,0 +1,8 @@
+{
+  "design": "minute geometry keyed by center/profile/time and routing provider only",
+  "poiProviderIndependent": true,
+  "assignmentResultBoundToPoiResult": true,
+  "automatedCompatibility": "PASS",
+  "liveAmap": "PASS 94/94",
+  "liveFoursquare": "BLOCKED by upstream 429 before assignment"
+}

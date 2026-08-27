@@ -1,0 +1,7 @@
+{
+  "amap": {"poiCount":94,"frontendInteraction":"smooth","maxLongTaskObservedMs":0},
+  "foursquare": {"providerFetchMs":null,"reason":"upstream returned 429 before result"},
+  "singleHoverCardInstance":true,
+  "singleDetailCardInstance":true,
+  "poiInteractionSetData":false
+}

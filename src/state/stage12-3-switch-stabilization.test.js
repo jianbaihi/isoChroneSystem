@@ -65,7 +65,7 @@ test('POI summary is separate from the action button and covers complete, trunca
   assert.equal((html.match(/id="poiQuerySummary"/g) || []).length, 1);
   const summary = appSource.slice(appSource.indexOf('function renderPoiQuerySummary'), appSource.indexOf('function updateMatrixPresentation'));
   assert.match(summary, /本次搜索到 \$\{count\} 个 POI/);
-  assert.match(summary, /本次返回 \$\{count\} 个 POI · 结果已截断/);
+  assert.match(summary, /本次返回 \$\{count\} 个 POI · \$\{providerLabel\} · 结果可能不完整/);
   assert.match(summary, /尚未查询当前范围 POI/);
   assert.match(appSource, /setPoiQueryButtonState\('complete', 'POI 查询完成'\)/);
   assert.doesNotMatch(appSource, /setPoiQueryButtonState\('complete', `POI 查询完成 ·/);

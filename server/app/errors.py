@@ -166,6 +166,11 @@ class InvalidPoiProviderResponseError(ApiError):
         )
 
 
+class PoiProviderError(ApiError):
+    def __init__(self, code: str, message: str, status_code: int = 502, reason: str | None = None) -> None:
+        super().__init__(code, message, [{"field": "provider", "reason": reason}] if reason else [], status_code=status_code)
+
+
 class PoiUpstreamTruncatedError(ApiError):
     def __init__(self) -> None:
         super().__init__(

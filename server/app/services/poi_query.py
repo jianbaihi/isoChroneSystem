@@ -10,6 +10,13 @@ from app.models import AnalysisRequest, PoiQueryRequest, PoiQueryResult
 from app.providers.poi.base import PoiProviderAdapter
 from app.services.analysis import build_exclusive_rings, geodesic_area_km2
 from app.services.quota import QuotaObserver
+from app.providers.poi.capabilities import CAPABILITIES
+from app.providers.poi.coordinate_policy import VERSION as COORDINATE_POLICY_VERSION
+from app.providers.poi.registry import build_provider
+from app.providers.poi.router import resolve_provider
+from app.services.poi_region_resolver import resolve_region
+from app.providers.poi.category_mapping import CATEGORY_MAPPING_VERSION
+from app.services.poi_query_planner import build_provider_query_plan
 
 
 def analysis_fingerprint(center, profile: str, ranges: list[int], category_ids: list[str]) -> str:
@@ -31,7 +38,7 @@ def analysis_fingerprint(center, profile: str, ranges: list[int], category_ids: 
 async def query_pois(
     request: PoiQueryRequest,
     settings: Settings,
-    poi_provider: PoiProviderAdapter,
+    poi_provider: PoiProviderAdapter | None = None,
     quota_observer: QuotaObserver | None = None,
 ) -> PoiQueryResult:
     ranges = list(request.rangesMinutes)
@@ -57,6 +64,13 @@ async def query_pois(
         categoryIds=request.categoryIds,
         options={"includePois": True, "calculateTravelTimes": False},
     )
+    region_result = resolve_region(request.center.lon, request.center.lat)
+    provider_id = getattr(poi_provider, "provider_id", None)
+    if poi_provider is None:
+        provider_id = resolve_provider(region_result["region"], settings, request.providerOverride)
+        poi_provider = build_provider(provider_id, settings, quota_observer)
+    provider_id = provider_id or "ors_remote"
+    provider_plan = build_provider_query_plan(provider_id, outer_geometry)
     selection = await poi_provider.fetch(
         provider_request,
         outer_geometry,
@@ -89,7 +103,19 @@ async def query_pois(
         ringStatistics={ring_id: {"poiCount": count} for ring_id, count in selection.get("ringCounts", {}).items()},
         coverage=coverage,
         metadata={
-            "provider": "ors-openpoiservice",
+            "region": region_result["region"],
+            "regionResolution": region_result,
+            "provider": provider_id,
+            "providerLabel": CAPABILITIES.get(provider_id, {}).get("label", provider_id),
+            "providerRequestCount": int(coverage.get("requests", 0)),
+            "providerCacheHitCount": int(coverage.get("cacheHits", 0)),
+            "truncated": bool(coverage.get("truncated")),
+            "providerAdapterVersion": CAPABILITIES.get(provider_id, {}).get("adapterVersion", "legacy"),
+            "coordinatePolicy": COORDINATE_POLICY_VERSION if provider_id == "amap" else "wgs84-identity-v1",
+            "categoryMappingVersion": CATEGORY_MAPPING_VERSION,
+            "cacheIdentity": f"{region_result['region']}:{provider_id}:{CAPABILITIES.get(provider_id, {}).get('adapterVersion', 'legacy')}:{COORDINATE_POLICY_VERSION if provider_id == 'amap' else 'wgs84-identity-v1'}:{CATEGORY_MAPPING_VERSION}",
+            "timings": selection.get("timings", {}),
+            "providerQueryPlan": provider_plan,
             "cacheHit": bool(coverage.get("cacheHits")),
             "upstreamRequestCount": max(0, int(coverage.get("requests", 0)) - int(coverage.get("cacheHits", 0))),
             "tileCount": int(coverage.get("estimatedTileCount", coverage.get("cells", 0))),

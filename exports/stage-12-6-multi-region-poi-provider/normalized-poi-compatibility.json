@@ -1,0 +1,7 @@
+{
+  "compatible": true,
+  "sharedFields": ["poiId","name","location","categoryId","category","ringId","address","rating","phone","website","openingHours"],
+  "extensions": ["sourceLocation","providerPoiId","attribution"],
+  "canonicalLocationCrs": "EPSG:4326",
+  "providerSpecificCardBranch": false
+}

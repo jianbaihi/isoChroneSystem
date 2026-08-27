@@ -1,0 +1,8 @@
+{
+  "backendFocused": {"tests":23,"passed":23,"failed":0},
+  "frontend": {"tests":60,"passed":60,"failed":0},
+  "multiRegionUnitTests": {"tests":7,"passed":7,"failed":0},
+  "pythonCompile": "PASS",
+  "gitDiffCheck": "PASS",
+  "historicalFullSuiteNote": "one unrelated Stage 5 test module cannot load because its frozen cache fixture is absent from this checkout"
+}

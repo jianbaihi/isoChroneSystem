@@ -282,8 +282,6 @@ async def create_poi_query_endpoint(request: PoiQueryRequest, raw_request: Reque
     runtime_settings = getattr(raw_request.app.state, "settings", settings)
     quota_observer = getattr(raw_request.app.state, "quota_observer", None)
     provider = getattr(raw_request.app.state, "poi_provider", None)
-    if not isinstance(provider, OrsRemotePoiProvider):
-        provider = OrsRemotePoiProvider(runtime_settings, quota_observer=quota_observer)
     result = await query_pois(request, runtime_settings, provider, quota_observer)
     return JSONResponse(
         status_code=200,

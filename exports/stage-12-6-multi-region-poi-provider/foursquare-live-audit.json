@@ -1,0 +1,14 @@
+{
+  "status": "BLOCKED",
+  "center": "Paris Eiffel Tower",
+  "profile": "foot-walking",
+  "rangesMinutes": [5,10],
+  "region": "global",
+  "provider": "foursquare",
+  "coordinateConversion": "WGS84 identity",
+  "error": "POI_PROVIDER_RATE_LIMITED",
+  "httpStatus": 429,
+  "silentFallback": false,
+  "mockFallback": false,
+  "detailAndMinuteVerification": "not run because upstream POI result was unavailable"
+}

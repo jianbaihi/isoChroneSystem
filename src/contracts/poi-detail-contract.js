@@ -53,7 +53,7 @@
       travelTimeSecondary: band ? `(${band.lowerExclusiveMinutes}, ${band.upperInclusiveMinutes}] 分钟` : null,
       travelTimeMethodLabel: assignment ? '1 分钟等时圈估计' : '尚未补齐',
       rating: poi.rating, phone: poi.phone, website: poi.website, openingHours: poi.openingHours,
-      brand: poi.brand, providerLabel: poi.source.provider === 'ors-openpoiservice' ? 'OpenPOIService' : poi.source.provider,
+      brand: poi.brand, providerLabel: ({ 'ors-openpoiservice': 'OpenPOIService', ors_remote: 'OpenPOIService', amap: '高德地图', foursquare: 'Foursquare' })[poi.source.provider] || poi.source.provider,
     };
   }
 

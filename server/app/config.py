@@ -94,6 +94,17 @@ class Settings:
     ors_timeout_seconds: float = 15.0
     ors_matrix_timeout_seconds: float = 60.0
     poi_provider: str = "none"
+    poi_region_mode: str = "auto"
+    poi_provider_cn: str = "amap"
+    poi_provider_global: str = "foursquare"
+    poi_allow_provider_fallback: bool = False
+    amap_poi_enabled: bool = False
+    amap_web_service_key: str = field(default="", repr=False)
+    amap_poi_base_url: str = "https://restapi.amap.com/v5/place"
+    foursquare_poi_enabled: bool = False
+    foursquare_service_key: str = field(default="", repr=False)
+    foursquare_poi_base_url: str = "https://places-api.foursquare.com"
+    foursquare_places_api_version: str = "2025-06-17"
     poi_database_path: str = "data/generated/poi.sqlite3"
     poi_max_results: int = 600
     poi_max_candidates: int = 50000
@@ -152,10 +163,18 @@ class Settings:
             poi_provider = "ors_remote"
         if poi_provider == "local":
             poi_provider = "overture_local"
-        if poi_provider not in {"none", "overture_local", "ors_remote"}:
+        if poi_provider not in {"none", "overture_local", "ors_remote", "multi_region"}:
             raise ConfigurationError("POI_PROVIDER 只支持 none、overture_local 或 ors_remote。")
-        if app_env != "test" and (provider != "ors" or poi_provider != "ors_remote"):
-            raise ConfigurationError("development 必须使用 ORS 与 OpenPOIService 在线 Provider。")
+        if app_env != "test" and (provider != "ors" or poi_provider not in {"ors_remote", "multi_region"}):
+            raise ConfigurationError("development 必须使用 ORS 与在线 POI Provider。")
+
+        poi_region_mode = env.get("POI_REGION_MODE", "auto").strip().lower() or "auto"
+        if poi_region_mode != "auto":
+            raise ConfigurationError("POI_REGION_MODE 当前只支持 auto。")
+        poi_provider_cn = env.get("POI_PROVIDER_CN", "amap").strip().lower() or "amap"
+        poi_provider_global = env.get("POI_PROVIDER_GLOBAL", "foursquare").strip().lower() or "foursquare"
+        if poi_provider_cn not in {"amap", "ors_remote"} or poi_provider_global not in {"foursquare", "ors_remote"}:
+            raise ConfigurationError("POI 区域 Provider 配置不受支持。")
 
         poi_base_url = env.get("ORS_POI_BASE_URL", "https://api.openrouteservice.org").strip().rstrip("/")
         if not poi_base_url or not poi_base_url.startswith(("http://", "https://")):
@@ -183,6 +202,17 @@ class Settings:
             ors_timeout_seconds=_parse_timeout(env.get("ORS_TIMEOUT_SECONDS", "15")),
             ors_matrix_timeout_seconds=_parse_timeout(env.get("ORS_MATRIX_TIMEOUT_SECONDS", "60")),
             poi_provider=poi_provider,
+            poi_region_mode=poi_region_mode,
+            poi_provider_cn=poi_provider_cn,
+            poi_provider_global=poi_provider_global,
+            poi_allow_provider_fallback=_parse_bool(env.get("POI_ALLOW_PROVIDER_FALLBACK", "false"), "POI_ALLOW_PROVIDER_FALLBACK"),
+            amap_poi_enabled=_parse_bool(env.get("AMAP_POI_ENABLED", "false"), "AMAP_POI_ENABLED"),
+            amap_web_service_key=env.get("AMAP_WEB_SERVICE_KEY", "").strip(),
+            amap_poi_base_url=env.get("AMAP_POI_BASE_URL", "https://restapi.amap.com/v5/place").strip().rstrip("/"),
+            foursquare_poi_enabled=_parse_bool(env.get("FOURSQUARE_POI_ENABLED", "false"), "FOURSQUARE_POI_ENABLED"),
+            foursquare_service_key=env.get("FOURSQUARE_SERVICE_KEY", "").strip(),
+            foursquare_poi_base_url=env.get("FOURSQUARE_POI_BASE_URL", "https://places-api.foursquare.com").strip().rstrip("/"),
+            foursquare_places_api_version=env.get("FOURSQUARE_PLACES_API_VERSION", "2025-06-17").strip() or "2025-06-17",
             poi_database_path=env.get("POI_DATABASE_PATH", "data/generated/poi.sqlite3").strip() or "data/generated/poi.sqlite3",
             poi_max_results=_parse_int(env.get("POI_MAX_RESULTS", "600"), "POI_MAX_RESULTS", 1, MAX_POI_RESULTS),
             poi_max_candidates=_parse_int(env.get("POI_MAX_CANDIDATES", "50000"), "POI_MAX_CANDIDATES", 1, MAX_POI_CANDIDATES),
@@ -214,7 +244,7 @@ class Settings:
             return self.analysis_provider == "mock" and not self.allow_network
         return (
             self.analysis_provider == "ors"
-            and self.poi_provider == "ors_remote"
+            and self.poi_provider in {"ors_remote", "multi_region"}
             and bool(self.ors_api_key)
             and self.allow_network
             and not self.allow_mock_fallback
@@ -230,7 +260,15 @@ class Settings:
                 "isochrones": "configured" if self.analysis_provider == "ors" and key_ready else "missing",
                 "matrix": "configured" if self.analysis_provider == "ors" and key_ready else "missing",
                 "geocoder": "configured" if self.analysis_provider == "ors" and key_ready else "missing",
-                "pois": "configured" if self.poi_provider == "ors_remote" and key_ready else "missing",
+                "pois": "configured" if (
+                    self.poi_provider == "ors_remote" and key_ready
+                ) or (
+                    self.poi_provider == "multi_region"
+                    and self.amap_poi_enabled and bool(self.amap_web_service_key)
+                    and self.foursquare_poi_enabled and bool(self.foursquare_service_key)
+                ) else "missing",
+                "amap": "configured" if self.amap_poi_enabled and bool(self.amap_web_service_key) else "disabled" if not self.amap_poi_enabled else "missing",
+                "foursquare": "configured" if self.foursquare_poi_enabled and bool(self.foursquare_service_key) else "disabled" if not self.foursquare_poi_enabled else "missing",
             }
             missing = [] if key_ready else ["ORS_API_KEY"]
         return {

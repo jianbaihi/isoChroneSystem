@@ -1,0 +1,8 @@
+{
+  "version": "normalized-category-v1",
+  "categories": ["food","shopping","attraction","lodging","health","education","transport","service","entertainment","nature","other"],
+  "amapInput": ["type","typecode"],
+  "foursquareInput": ["category.id","category.name"],
+  "unknownCategory": "other",
+  "testsPassed": true
+}

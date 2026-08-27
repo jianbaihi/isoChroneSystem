@@ -123,6 +123,8 @@ class PoiQueryRequest(BaseModel):
     cumulativeIsochrones: list[CumulativeIsochrone] = Field(..., min_items=1, max_items=10)
     outerIsochrone: CumulativeIsochrone
     approved: bool = False
+    providerMode: Literal["auto"] = "auto"
+    providerOverride: Optional[Literal["amap", "foursquare", "ors_remote"]] = None
 
     _validate_ranges = validator("rangesMinutes", allow_reuse=True)(NameCloudRequest.validate_ranges.__func__)
     _normalize_categories = validator("categoryIds", allow_reuse=True)(NameCloudRequest.normalize_category_ids.__func__)
@@ -149,6 +151,12 @@ class Location(BaseModel):
     crs: Literal["EPSG:4326"] = "EPSG:4326"
 
 
+class SourceLocation(BaseModel):
+    lon: float = Field(..., ge=-180, le=180)
+    lat: float = Field(..., ge=-90, le=90)
+    crs: Literal["EPSG:4326", "GCJ-02"]
+
+
 class Poi(BaseModel):
     poiId: str
     datasetId: Optional[str] = None
@@ -156,6 +164,9 @@ class Poi(BaseModel):
     name: str
     nameLocale: Optional[str] = None
     location: Location
+    sourceLocation: Optional[SourceLocation] = None
+    providerPoiId: Optional[str] = None
+    attribution: list[str] = Field(default_factory=list)
     categoryId: Optional[str] = None
     category: Optional[dict[str, Any]] = None
     # Published results carry the Matrix fields on the POI itself.  The

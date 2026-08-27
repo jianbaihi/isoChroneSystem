@@ -1334,3 +1334,4 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
   .panmap-research-switch button,
   .panmap-research-switch button i { transition-duration: 0ms !important; animation: none !important; }
 }
+.poi-provider-status { margin: 6px 0 10px; color: #7a8798; font-size: 12px; line-height: 1.4; }

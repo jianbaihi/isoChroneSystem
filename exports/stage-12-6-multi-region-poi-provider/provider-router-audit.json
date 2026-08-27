@@ -1,0 +1,9 @@
+{
+  "mode": "auto",
+  "cn-mainland": "amap",
+  "global": "foursquare",
+  "overrideValidation": true,
+  "unsupportedOverrideError": "POI_PROVIDER_REGION_UNSUPPORTED",
+  "silentFallback": false,
+  "legacyProvider": "ors_remote"
+}

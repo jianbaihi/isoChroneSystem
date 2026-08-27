@@ -1,0 +1,11 @@
+{
+  "canonicalCrs": "EPSG:4326",
+  "policyVersion": "wgs84-gcj02-v1",
+  "amapQuery": "WGS84->GCJ-02",
+  "amapResult": "GCJ-02->WGS84",
+  "foursquare": "WGS84 identity",
+  "roundTripPlaces": ["Wuhan","Beijing","Shanghai","Guangzhou"],
+  "overseasIdentityPlaces": ["Paris","Tokyo","New York"],
+  "mixedCrsCovers": false,
+  "testsPassed": true
+}

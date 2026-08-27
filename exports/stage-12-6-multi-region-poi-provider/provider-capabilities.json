@@ -1,0 +1,5 @@
+{
+  "amap": {"regions":["cn-mainland"],"sourceCoordinateSystem":"GCJ-02","supports":{"polygonSearch":true,"rectangleSearch":false,"radiusSearch":true,"textSearch":true,"detail":true,"pagination":true}},
+  "foursquare": {"regions":["global"],"sourceCoordinateSystem":"WGS84","supports":{"polygonSearch":false,"rectangleSearch":true,"radiusSearch":true,"textSearch":true,"detail":true,"pagination":true}},
+  "ors_remote": {"regions":["cn-mainland","global"],"status":"legacy-research-only"}
+}
