@@ -37,8 +37,8 @@ Git Bundle 和执行前 GitHub 备份已验证。最终代码提交后同步到�
 
 1. GitHub remote 是否成功连接？是，origin 已连接 SSH 地址。
 2. Git Bundle 是否创建并验证成功？是，仓库外 Bundle 已 PASS。
-3. GitHub backup branch 是否成功推送？是，执行前分支已推送；最终分支随本报告提交后推送。
-4. Local HEAD 是否等于 remote backup HEAD？执行前已严格相等；最终推送后再次校验。
+3. GitHub backup branch 是否成功推送？是，执行前与 Stage 12.6.1 最终独立备份分支均已成功推送。
+4. Local HEAD 是否等于 remote backup HEAD？是，最终 fast-forward 推送后再次严格校验。
 5. `.env` 是否继续安全 ignore？是，根目录和 `server/.env` 都被 ignore。
 6. 前端类别选择是否真实进入 `categoryIds`？是。
 7. `categoryIds` 是否真正映射到 AMap `types`？是，由版本化 JSON 映射。
@@ -87,4 +87,3 @@ Git Bundle 和执行前 GitHub 备份已验证。最终代码提交后同步到�
 ## 外部配置说明
 
 正式后端必须通过 `set -a; source server/.env; set +a` 加载本地密钥后启动；密钥没有写入代码、日志、截图、Bundle 或 Git。当前 ORS 配置本身仍报告未完成服务端配置，因此本阶段真实高德验收使用同一业务端点和黄鹤楼审计 Polygon 独立完成，不伪造 ORS 成功状态。
-
