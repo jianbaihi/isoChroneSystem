@@ -41,6 +41,7 @@ const poiQueryButton = document.getElementById('poiQueryButton');
 const poiQueryButtonLabel = poiQueryButton?.querySelector('.poi-query-button-label');
 const poiQuerySummary = document.getElementById('poiQuerySummary');
 const poiProviderStatus = document.getElementById('poiProviderStatus');
+const poiCategorySummary = document.getElementById('poiCategorySummary');
 const poiPreviewLabel = poiPreviewButton?.querySelector('.poi-explore-label');
 const nameCloudButton = document.getElementById('nameCloudButton');
 const nameCloudButtonLabel = nameCloudButton?.querySelector('.name-cloud-button-label');
@@ -83,15 +84,9 @@ const DEFAULT_CENTER = window.PanmapApp?.centerPreset?.('wuhan-huanghelou') || {
 const PROFILE_BY_MODE = { walk: 'foot-walking', bike: 'cycling-regular', car: 'driving-car' };
 const MODE_BY_LABEL = { 步行: 'walk', 骑行: 'bike', 驾车: 'car' };
 const CATEGORY_ID_BY_LABEL = {
-  餐饮美食: 'food_and_drink',
-  购物商场: 'shopping',
-  景点休闲: 'cultural_and_historic',
-  酒店住宿: 'lodging',
-  医疗健康: 'health_care',
-  教育培训: 'education',
-  交通设施: 'travel_and_transportation',
-  生活服务: 'lifestyle_services',
-  休闲娱乐: 'arts_and_entertainment',
+  food: 'food', shopping: 'shopping', attraction: 'attraction', nature: 'nature', lodging: 'lodging',
+  health: 'health', education: 'education', transport: 'transport', service: 'service',
+  entertainment: 'entertainment', public: 'public', other: 'other',
 };
 let toastTimer;
 let analysisAbortController = null;
@@ -390,6 +385,12 @@ function renderPoiQuerySummary(state) {
   if (!poiQuerySummary) return;
   const status = state?.data?.workflowStatus?.poi || 'idle';
   const result = state?.data?.workflow?.poiResult;
+  const audit = result ? {
+    completeness: result.metadata?.completeness || null,
+    coverage: result.coverage || null,
+    statistics: result.statistics || null,
+  } : null;
+  document.documentElement.dataset.poiCompleteness = JSON.stringify(audit);
   if (status === 'loading') {
     const center = state?.data?.parameterDraft?.center;
     const likelyChina = center && center.lon >= 73 && center.lon <= 136 && center.lat >= 18 && center.lat <= 54;
@@ -412,6 +413,18 @@ function renderPoiQuerySummary(state) {
     const regionLabel = result?.metadata?.region === 'cn-mainland' ? '中国大陆' : result?.metadata?.region === 'global' ? '海外' : null;
     const providerLabel = result?.metadata?.providerLabel || null;
     poiProviderStatus.textContent = providerLabel ? `POI 数据源：自动 · ${providerLabel}${regionLabel ? ` · ${regionLabel}` : ''}` : 'POI 数据源：自动选择';
+  }
+  const byCategory = result?.statistics?.byCategory || {};
+  const categoryLabels = { attraction: '景点', nature: '公园', food: '餐饮', lodging: '酒店', transport: '交通', education: '学校', health: '医疗', shopping: '购物', entertainment: '休闲', service: '生活', public: '公共设施', other: '其他' };
+  document.querySelectorAll('.poi-chip').forEach((chip) => {
+    const count = byCategory[chip.dataset.poi];
+    const target = chip.querySelector('[data-category-count]');
+    if (target) target.textContent = Number.isFinite(Number(count)) ? String(count) : '';
+  });
+  if (poiCategorySummary) {
+    const parts = Object.entries(byCategory).filter(([, count]) => Number(count) > 0).map(([id, count]) => `${categoryLabels[id] || id} ${count}`);
+    poiCategorySummary.hidden = !parts.length;
+    poiCategorySummary.textContent = parts.join(' · ');
   }
 }
 
@@ -1504,10 +1517,7 @@ function syncParameterDraftFromUI() {
   const selectedCategoryLabels = [...document.querySelectorAll('.poi-chip.is-checked')]
     .map((chip) => chip.dataset.poi)
     .filter(Boolean);
-  const allCategoryLabels = Object.keys(CATEGORY_ID_BY_LABEL);
-  const categoryIds = selectedCategoryLabels.length === allCategoryLabels.length
-    ? []
-    : selectedCategoryLabels.map((label) => CATEGORY_ID_BY_LABEL[label]).filter(Boolean);
+  const categoryIds = selectedCategoryLabels.map((label) => CATEGORY_ID_BY_LABEL[label]).filter(Boolean);
   analysisStore?.setParameterDraft({
     profile: PROFILE_BY_MODE[selectedMode] || null,
     rangesMinutes,

@@ -1,0 +1,7 @@
+{
+  "backend": {"command": "PYTHONPATH=server server/.venv/bin/python -m unittest server.tests.test_amap_completeness server.tests.test_multi_region_poi server.tests.test_poi_query", "passed": 14, "failed": 0},
+  "frontend": {"command": "node --test src/**/*.test.js", "passed": 143, "failed": 0},
+  "syntax": {"pythonCompile": "PASS", "gitDiffCheck": "PASS"},
+  "coverage": ["category types", "independent pagination", "saturation", "adaptive split", "budget partial preservation", "incremental cache reuse", "global dedup", "nature precedence", "explicit all-selection categoryIds", "audit UI"]
+}
+

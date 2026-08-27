@@ -3,7 +3,7 @@ from __future__ import annotations
 CAPABILITIES = {
     "amap": {
         "providerId": "amap", "label": "高德地图", "regions": ["cn-mainland"],
-        "sourceCoordinateSystem": "GCJ-02", "adapterVersion": "amap-v1",
+        "sourceCoordinateSystem": "GCJ-02", "adapterVersion": "amap-v2",
         "supports": {"polygonSearch": True, "rectangleSearch": False, "radiusSearch": True, "textSearch": True, "detail": True, "pagination": True},
     },
     "foursquare": {

@@ -101,6 +101,12 @@ class Settings:
     amap_poi_enabled: bool = False
     amap_web_service_key: str = field(default="", repr=False)
     amap_poi_base_url: str = "https://restapi.amap.com/v5/place"
+    amap_poi_auto_request_limit: int = 20
+    amap_poi_max_concurrency: int = 2
+    amap_poi_max_split_depth: int = 3
+    amap_poi_min_cell_area_km2: float = 0.25
+    amap_poi_max_pages_per_job: int = 4
+    amap_poi_min_request_interval_seconds: float = 1.05
     foursquare_poi_enabled: bool = False
     foursquare_service_key: str = field(default="", repr=False)
     foursquare_poi_base_url: str = "https://places-api.foursquare.com"
@@ -209,6 +215,12 @@ class Settings:
             amap_poi_enabled=_parse_bool(env.get("AMAP_POI_ENABLED", "false"), "AMAP_POI_ENABLED"),
             amap_web_service_key=env.get("AMAP_WEB_SERVICE_KEY", "").strip(),
             amap_poi_base_url=env.get("AMAP_POI_BASE_URL", "https://restapi.amap.com/v5/place").strip().rstrip("/"),
+            amap_poi_auto_request_limit=_parse_int(env.get("AMAP_POI_AUTO_REQUEST_LIMIT", "20"), "AMAP_POI_AUTO_REQUEST_LIMIT", 1, 200),
+            amap_poi_max_concurrency=_parse_int(env.get("AMAP_POI_MAX_CONCURRENCY", "2"), "AMAP_POI_MAX_CONCURRENCY", 1, 8),
+            amap_poi_max_split_depth=_parse_int(env.get("AMAP_POI_MAX_SPLIT_DEPTH", "3"), "AMAP_POI_MAX_SPLIT_DEPTH", 0, 8),
+            amap_poi_min_cell_area_km2=_parse_float(env.get("AMAP_POI_MIN_CELL_AREA_KM2", "0.25"), "AMAP_POI_MIN_CELL_AREA_KM2", 0.01, 100),
+            amap_poi_max_pages_per_job=_parse_int(env.get("AMAP_POI_MAX_PAGES_PER_JOB", "4"), "AMAP_POI_MAX_PAGES_PER_JOB", 1, 100),
+            amap_poi_min_request_interval_seconds=_parse_float(env.get("AMAP_POI_MIN_REQUEST_INTERVAL_SECONDS", "1.05"), "AMAP_POI_MIN_REQUEST_INTERVAL_SECONDS", 0, 10),
             foursquare_poi_enabled=_parse_bool(env.get("FOURSQUARE_POI_ENABLED", "false"), "FOURSQUARE_POI_ENABLED"),
             foursquare_service_key=env.get("FOURSQUARE_SERVICE_KEY", "").strip(),
             foursquare_poi_base_url=env.get("FOURSQUARE_POI_BASE_URL", "https://places-api.foursquare.com").strip().rstrip("/"),

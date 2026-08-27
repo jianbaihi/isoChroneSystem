@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "1.0",
+  "analysisFingerprint": "fnv1a-630e58a3",
+  "center": {"lon": 114.2969, "lat": 30.5469, "crs": "EPSG:4326", "label": "武汉·黄鹤楼"},
+  "profile": "foot-walking",
+  "rangesMinutes": [10],
+  "categoryIds": ["attraction", "nature", "food", "lodging", "transport", "education", "health", "shopping", "entertainment", "service", "public", "other"],
+  "cumulativeIsochrones": [{"isochroneId": "audit-10", "rangeMinutes": 10, "rangeSeconds": 600, "geometry": {"type": "Polygon", "coordinates": [[[114.2769,30.5269],[114.3169,30.5269],[114.3169,30.5669],[114.2769,30.5669],[114.2769,30.5269]]]}}],
+  "outerIsochrone": {"isochroneId": "audit-10", "rangeMinutes": 10, "rangeSeconds": 600, "geometry": {"type": "Polygon", "coordinates": [[[114.2769,30.5269],[114.3169,30.5269],[114.3169,30.5669],[114.2769,30.5669],[114.2769,30.5269]]]}},
+  "approved": false,
+  "providerMode": "auto"
+}

@@ -1,0 +1,11 @@
+{
+  "fixture": "single GeoJSON source setData",
+  "results": [
+    {"poiCount": 100, "setDataMs": 0.0042, "maxLongTaskMs": 0, "singleGeoJsonSource": true},
+    {"poiCount": 500, "setDataMs": 0.0003, "maxLongTaskMs": 0, "singleGeoJsonSource": true},
+    {"poiCount": 1000, "setDataMs": 0.0002, "maxLongTaskMs": 0, "singleGeoJsonSource": true},
+    {"poiCount": 2000, "setDataMs": 0.0005, "maxLongTaskMs": 0, "singleGeoJsonSource": true}
+  ],
+  "note": "Node fixture measures the synchronous setData call boundary; real browser rendering retains the existing single-source/batched architecture."
+}
+

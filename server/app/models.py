@@ -277,6 +277,7 @@ class PoiQueryResult(BaseModel):
     pois: list[Poi] = Field(default_factory=list)
     categories: list[Category] = Field(default_factory=list)
     ringStatistics: dict[str, Any] = Field(default_factory=dict)
+    statistics: dict[str, Any] = Field(default_factory=dict)
     coverage: dict[str, Any] = Field(default_factory=dict)
     metadata: dict[str, Any] = Field(default_factory=dict)
 

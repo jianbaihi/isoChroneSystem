@@ -1,0 +1,31 @@
+{
+  "scenario": "Wuhan Huanghelou, 10-minute audit polygon",
+  "fiveCategories": {
+    "categoryIds": ["attraction", "nature", "food", "lodging", "transport"],
+    "poiCount": 546,
+    "byCategory": {"attraction": 216, "nature": 30, "food": 100, "lodging": 100, "transport": 100},
+    "status": "partial",
+    "upstreamRequests": 20,
+    "cacheHits": 14,
+    "splitCount": 3,
+    "saturated": ["food", "lodging", "transport"],
+    "splitOrBudgetBlocked": ["attraction"]
+  },
+  "allCategories": {
+    "categoryIds": ["attraction", "nature", "food", "lodging", "transport", "education", "health", "shopping", "entertainment", "service", "public", "other"],
+    "poiCount": 912,
+    "byCategory": {"attraction": 87, "nature": 30, "food": 100, "lodging": 100, "transport": 100, "education": 99, "health": 100, "shopping": 100, "entertainment": 98, "service": 98},
+    "status": "partial",
+    "upstreamRequests": 20,
+    "cacheHits": 18,
+    "splitCount": 0,
+    "blockedByBudget": ["public", "other"]
+  },
+  "provider": "amap",
+  "adapterVersion": "amap-v2",
+  "coordinatePolicy": "wgs84-gcj02-v1",
+  "rateLimitObservation": "An initial 10021 was reported explicitly; after 1.05s request pacing and cooldown both live audits succeeded without 429/5xx.",
+  "silentFallback": false,
+  "mockFallback": false
+}
+

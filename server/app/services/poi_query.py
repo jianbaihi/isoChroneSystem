@@ -101,6 +101,7 @@ async def query_pois(
         pois=selection["pois"],
         categories=selection.get("categories", []),
         ringStatistics={ring_id: {"poiCount": count} for ring_id, count in selection.get("ringCounts", {}).items()},
+        statistics={"byCategory": selection.get("byCategory", {})},
         coverage=coverage,
         metadata={
             "region": region_result["region"],
@@ -116,6 +117,7 @@ async def query_pois(
             "cacheIdentity": f"{region_result['region']}:{provider_id}:{CAPABILITIES.get(provider_id, {}).get('adapterVersion', 'legacy')}:{COORDINATE_POLICY_VERSION if provider_id == 'amap' else 'wgs84-identity-v1'}:{CATEGORY_MAPPING_VERSION}",
             "timings": selection.get("timings", {}),
             "providerQueryPlan": provider_plan,
+            "completeness": selection.get("completeness"),
             "cacheHit": bool(coverage.get("cacheHits")),
             "upstreamRequestCount": max(0, int(coverage.get("requests", 0)) - int(coverage.get("cacheHits", 0))),
             "tileCount": int(coverage.get("estimatedTileCount", coverage.get("cells", 0))),

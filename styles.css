@@ -1335,3 +1335,5 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
   .panmap-research-switch button i { transition-duration: 0ms !important; animation: none !important; }
 }
 .poi-provider-status { margin: 6px 0 10px; color: #7a8798; font-size: 12px; line-height: 1.4; }
+.poi-chip [data-category-count] { min-width: 0; color: #66758a; font-size: 10px; font-weight: 700; }
+.poi-category-summary { margin: 8px 0 0; color: #7a8798; font-size: 11px; line-height: 1.5; }

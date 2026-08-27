@@ -1,0 +1,18 @@
+{
+  "version": "amap-query-v1",
+  "precedence": ["nature", "attraction", "food", "shopping", "service", "entertainment", "health", "lodging", "education", "transport", "public", "other"],
+  "categories": {
+    "food": {"label": "餐饮", "types": ["050000"]},
+    "shopping": {"label": "购物", "types": ["060000"]},
+    "service": {"label": "生活服务", "types": ["070000"]},
+    "entertainment": {"label": "休闲娱乐", "types": ["080000"]},
+    "health": {"label": "医疗", "types": ["090000"]},
+    "lodging": {"label": "酒店", "types": ["100000"]},
+    "attraction": {"label": "景点", "types": ["110000"], "excludeTypePrefixes": ["1101"]},
+    "nature": {"label": "公园自然", "types": ["110100"]},
+    "education": {"label": "学校教育", "types": ["140000"]},
+    "transport": {"label": "交通站点", "types": ["150000"]},
+    "public": {"label": "公共设施", "types": ["200000"]},
+    "other": {"label": "其他", "types": ["010000"]}
+  }
+}
