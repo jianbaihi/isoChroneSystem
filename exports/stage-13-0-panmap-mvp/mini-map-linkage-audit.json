@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "selectedPoiId": "amap:B0ID7PFN2H",
+  "selectedPoiName": "半边鱼(武昌店)",
+  "panmapDetailVisible": true,
+  "traditionalMapDetailAriaHidden": "false",
+  "traditionalMapProvider": "高德地图",
+  "traditionalMapMinute": 11,
+  "newProviderCalls": 0
+}

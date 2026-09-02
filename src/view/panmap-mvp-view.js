@@ -5,6 +5,7 @@
   let workflow = null;
   let store = null;
   let unsubscribe = null;
+  let listenersMounted = false;
 
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
   const styleFor = (code) => app.categoryStyleRegistry?.forCode?.(code) || { color: '#64748B', label: '其他' };
@@ -43,8 +44,8 @@
       }).join('');
       return `<g class="panmap-mvp-ring${focused ? ' is-focused' : ''}" data-ring-id="${esc(ring.ringId)}" transform="translate(460 360) scale(${scale}) translate(-460 -360)" opacity="${opacity}">
         <circle cx="460" cy="360" r="${ring.radius + 62}" fill="${ringColor(index)}" fill-opacity="${focused ? '.075' : '.035'}" stroke="${ringColor(index)}" stroke-width="${focused ? 3 : 1.5}" stroke-dasharray="${focused ? '0' : '7 7'}"/>
-        <g class="panmap-mvp-ring-hit" data-ring-focus="${esc(ring.ringId)}" role="button" tabindex="0" aria-label="聚焦${esc(ring.label)}"><rect x="${460 + ring.radius + 18}" y="${360 - 16}" width="78" height="30" rx="15" fill="white" stroke="${ringColor(index)}"/><text x="${460 + ring.radius + 57}" y="${360 + 4}" text-anchor="middle" fill="${ringColor(index)}" font-size="12" font-weight="700">${esc(ring.label)}</text></g>
         ${nodes}
+        <g class="panmap-mvp-ring-hit" data-ring-focus="${esc(ring.ringId)}" role="button" tabindex="0" aria-label="聚焦${esc(ring.label)}"><rect x="${460 + ring.radius + 18}" y="${360 - 16}" width="78" height="30" rx="15" fill="white" stroke="${ringColor(index)}"/><text x="${460 + ring.radius + 57}" y="${360 + 4}" text-anchor="middle" fill="${ringColor(index)}" font-size="12" font-weight="700">${esc(ring.label)}</text></g>
       </g>`;
     }).join('');
     return `<svg class="panmap-mvp-svg" viewBox="0 0 920 720" aria-label="泛地图时间圈层与一级类别聚簇">${ringMarkup}
@@ -140,10 +141,13 @@
     store = app.panmapMvpState.createStore();
     app.panmapMvpStore = store;
     const root = document.getElementById('panmapMvp');
-    root?.addEventListener('click', (event) => activate(event.target));
-    root?.addEventListener('keydown', (event) => {
-      if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('[role="button"], button')) { event.preventDefault(); activate(event.target); }
-    });
+    if (root && !listenersMounted) {
+      root.addEventListener('click', (event) => activate(event.target));
+      root.addEventListener('keydown', (event) => {
+        if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('[role="button"], button')) { event.preventDefault(); activate(event.target); }
+      });
+      listenersMounted = true;
+    }
     unsubscribe = store.subscribe(render);
     render(store.getState());
     return store.getState();

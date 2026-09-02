@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "inputLimit": 40,
+  "realCategory": "餐饮服务",
+  "realRing": "ring-10-20",
+  "realCategoryPoiCount": 338,
+  "candidatePoiCount": 40,
+  "visiblePoiCount": 19,
+  "hiddenPoiCount": 21,
+  "overlapCount": 0
+}

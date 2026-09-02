@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "semantics": "exclusive",
+  "rings": ["ring-0-10", "ring-10-20", "ring-20-30"],
+  "sourcePoiCount": 1525,
+  "assignedPoiCount": 1525,
+  "duplicateAssignmentCount": 0,
+  "test": "panmap-input-snapshot.test.js"
+}

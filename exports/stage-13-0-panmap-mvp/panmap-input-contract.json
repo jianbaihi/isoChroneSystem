@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "panmap-input-snapshot-v1",
+  "required": ["snapshotId", "center", "profile", "rangesMinutes", "rings", "reachabilityFingerprint", "poiQueryFingerprint", "minuteAccessibilityId", "categorySchemaVersion", "categoryStyleVersion", "pois"],
+  "poiRequired": ["poiId", "name", "lon", "lat", "providerCategory", "semanticCategory", "categoryStyleKey", "displayRingId", "travelTimeMinuteEstimate"],
+  "frozen": true,
+  "providerCallsDuringBuild": 0
+}

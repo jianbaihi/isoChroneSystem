@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "panmap-input-snapshot-v1",
+  "snapshotId": "panmap-628da1be",
+  "evidenceProjection": true,
+  "center": {"lon": 114.296944, "lat": 30.546944, "label": "武汉·黄鹤楼"},
+  "profile": "foot-walking",
+  "rangesMinutes": [10, 20, 30],
+  "rings": [
+    {"ringId": "ring-0-10", "lowerExclusiveMinutes": 0, "upperInclusiveMinutes": 10},
+    {"ringId": "ring-10-20", "lowerExclusiveMinutes": 10, "upperInclusiveMinutes": 20},
+    {"ringId": "ring-20-30", "lowerExclusiveMinutes": 20, "upperInclusiveMinutes": 30}
+  ],
+  "metadata": {"sourcePoiCount": 1525, "eligiblePoiCount": 1525, "categoryCount": 10, "ringCount": 3, "providerCallCount": 0},
+  "selectedPoiEvidence": {"poiId": "amap:B0ID7PFN2H", "name": "半边鱼(武昌店)", "categoryLevel1Code": "050000", "categoryLabel": "餐饮服务", "displayRingId": "ring-10-20", "travelTimeMinuteEstimate": 11, "provider": "amap"},
+  "note": "This checked-in file is a compact evidence projection; the complete 1525-POI object was frozen in browser memory and was not duplicated into Git."
+}

@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "aggregation": "AMap Level-1 per exclusive ring",
+  "ordering": "poiCount desc, categoryCode asc",
+  "overviewLimit": "Top 10 + Other",
+  "weight": "categoryPoiCount",
+  "real20MinuteFoodCount": 338,
+  "categoryStyleSource": "CategoryStyleRegistry"
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "forwardPath": ["overview", "ring-focused", "category-focused", "poi-selected"],
+  "browserBackPath": ["category-focused", "ring-focused", "overview"],
+  "focusedRingId": "ring-10-20",
+  "focusedCategoryCode": "050000",
+  "selectedPoiId": "amap:B0ID7PFN2H"
+}

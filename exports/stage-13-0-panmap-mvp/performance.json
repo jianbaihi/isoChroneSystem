@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "realInputPoiCount": 1525,
+  "overviewRenderedObjects": "3 rings + at most 11 category nodes per ring",
+  "categoryCandidateLimit": 40,
+  "visibleLabelCount": 19,
+  "hiddenLabelCount": 21,
+  "networkCallsDuringPanmap": 0,
+  "note": "The real acceptance input exceeded the documented 300-800 target and remained interactive because rendering is bounded."
+}

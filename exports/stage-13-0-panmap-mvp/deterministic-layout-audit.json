@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "algorithm": "weighted annular subdivision + golden-angle collision placement",
+  "randomCalls": 0,
+  "stableSort": ["poiCount desc", "categoryCode asc", "minute asc", "name asc", "poiId asc"],
+  "sameSnapshotByteIdentical": true
+}
