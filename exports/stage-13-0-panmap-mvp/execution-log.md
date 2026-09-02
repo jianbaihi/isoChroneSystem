@@ -48,3 +48,13 @@
 - Commit: pending
 - Notes: blocker predates Stage 13 and is recorded without fabricating the missing cache file.
 - Blockers: historical fixture only
+
+## GitHub checkpoints and final report
+
+- Time: 2026-09-02
+- Files: `docs/ors-migration/79-stage-13-0-panmap-mvp-report.md`, `exports/stage-13-0-panmap-mvp/github-sync-report.md`
+- Tests: secret audit, diff check, local/remote hash comparisons
+- Result: checkpoint-1 PASS; checkpoint-2 PASS; final pending final report commit
+- Commit: pending
+- Notes: no remote main modification and no force push.
+- Blockers: none
