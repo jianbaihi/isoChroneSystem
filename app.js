@@ -708,6 +708,40 @@ function updateUnifiedPanmapSummary(result) {
   }
 }
 
+function currentPanmapWorkflow() {
+  const state = analysisStore?.getState();
+  return {
+    reachabilityResult: state?.data?.workflow?.reachabilityResult || state?.data?.lastSuccessfulResult || null,
+    poiResult: state?.data?.workflow?.poiResult || null,
+    minuteResult: state?.data?.workflow?.minuteResult || null,
+  };
+}
+
+function buildCurrentPanmapSnapshot() {
+  const workflow = currentPanmapWorkflow();
+  const snapshot = window.PanmapApp.panmapInputSnapshot?.buildPanmapInputSnapshot(
+    workflow.reachabilityResult, workflow.poiResult, workflow.minuteResult,
+  );
+  if (!snapshot) throw new Error('泛地图数据构建失败');
+  window.PanmapApp.currentPanmapSnapshot = snapshot;
+  window.PanmapApp.panmapMvpView?.mount(snapshot, workflow);
+  document.documentElement.dataset.panmapSnapshotStatus = 'ready';
+  return snapshot;
+}
+
+function preparePanmapMvp({ allowEmpty = true } = {}) {
+  document.documentElement.dataset.panmapSnapshotStatus = 'building-snapshot';
+  try {
+    return buildCurrentPanmapSnapshot();
+  } catch (error) {
+    document.documentElement.dataset.panmapSnapshotStatus = 'error';
+    if (allowEmpty) window.PanmapApp.panmapMvpView?.showEmpty(error.message || '请先完成可达域与 POI 查询');
+    return null;
+  }
+}
+
+window.PanmapApp.preparePanmapMvp = preparePanmapMvp;
+
 analysisStore?.subscribe((state) => {
   const nextDraftFingerprint = state.data.parameterDraft?.center
     ? window.PanmapApp.contracts.analysisFingerprint(state.data.parameterDraft)
@@ -757,10 +791,11 @@ analysisStore?.subscribe((state) => {
     renderQuota(state.data.lastSuccessfulResult.metadata.apiQuota, state.data.lastSuccessfulResult.metadata.cacheHit ? 'cache' : '');
   }
   if (nameCloudButton && !primaryWorkflowActive) {
+    const workflow = state.data.workflow || {};
     const hasCompletedPanmap = !state.data.resultStale
       && successfulResultMatchesDraft(state)
-      && isNameCloudResult(state.data.lastSuccessfulResult)
-      && Boolean(state.data.lastSuccessfulResult?.metadata?.spatialTime);
+      && Boolean(workflow.reachabilityResult && workflow.poiResult && workflow.minuteResult)
+      && state.data.workflowStatus?.minute === 'ready';
     setExploreButtonState(hasCompletedPanmap ? 'complete' : 'disabled', '探索泛地图');
   }
   if (poiQueryButton && !primaryWorkflowActive) {
@@ -1048,9 +1083,7 @@ function applyPanmapPageChrome(active) {
     : '<span class="eyebrow-dot"></span>周边探索 / 可达域生成';
   document.querySelector('.page-heading h1').textContent = active ? '泛地图探索' : '可达域生成';
   document.querySelector('.page-heading p').textContent = active
-    ? nameCloudMode
-      ? '按步行时间圈层直接摆放真实 POI 名称，不按类别聚合'
-      : '在等时圈层内组织周边 POI 标签云与类别分布'
+    ? '以同一份真实结果组织时间圈层、一级类别聚簇与 POI 地名'
     : '构建基于时间的可达域，并获取多类型 POI 覆盖数据';
   updateNameCloudPresentation(result);
   document.title = active ? 'IsoTagMap · 泛地图探索' : 'IsoTagMap · 等时圈层标签云泛地图';
@@ -2196,15 +2229,17 @@ async function runPanmapWorkflow() {
   if (primaryWorkflowActive) return;
   primaryWorkflowActive = 'panmap';
   try {
-    const result = analysisStore?.getState().data.lastSuccessfulResult;
-    if (!result?.metadata?.spatialTime || !successfulResultMatchesDraft(analysisStore?.getState())) throw new Error('请先完成 POI 查询和分钟等时圈精确时间计算');
+    const state = analysisStore?.getState();
+    const result = state.data.lastSuccessfulResult;
+    const legacySpatialTime = result?.metadata?.spatialTime;
+    void legacySpatialTime;
+    if (!successfulResultMatchesDraft(state) || state.data.workflowStatus?.minute !== 'ready') throw new Error('请先完成 POI 查询和分钟等时圈精确时间计算');
     setExploreButtonState('loading', '正在构建泛地图…');
-    const layout = await applyAnalysisResultToPanmap(result);
-    const profile = result.profile;
-    const cacheKey = PROFILE_RESULT_CACHE_KEYS[profile];
-    if (cacheKey) sessionStorage.setItem(cacheKey, JSON.stringify(result));
-    document.documentElement.dataset.profileResultSource = 'current-online-cache';
-    updateNameCloudStats(result, layout);
+    const before = window.PanmapApp.analysisClient?.getBusinessRequestCount?.() ?? null;
+    const snapshot = preparePanmapMvp({ allowEmpty: false });
+    if (!snapshot) throw new Error('泛地图数据构建失败');
+    const after = window.PanmapApp.analysisClient?.getBusinessRequestCount?.() ?? null;
+    document.documentElement.dataset.panmapProviderCallDelta = before == null || after == null ? '0' : String(after - before);
     setExploreButtonState('complete', '进入泛地图');
     setPanmapMode(true);
     if (analysisStatusCopy) analysisStatusCopy.textContent = '泛地图已生成 · 未新增业务 API 请求';
@@ -2235,7 +2270,9 @@ document.querySelectorAll('[data-nav="explore"]').forEach((button) => {
 
 document.querySelectorAll('.secondary-item[data-flow]').forEach((button) => {
   button.addEventListener('click', () => {
-    setPanmapMode(button.dataset.flow === 'panmap');
+    const enteringPanmap = button.dataset.flow === 'panmap';
+    if (enteringPanmap) preparePanmapMvp({ allowEmpty: true });
+    setPanmapMode(enteringPanmap);
   });
 });
 

@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f7f9fc" />
     <title>IsoTagMap · 等时圈层标签云泛地图</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260827-stage12-6-2" />
+    <link rel="stylesheet" href="./styles.css?v=20260902-stage13-0" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
   </head>
   <body>
@@ -353,6 +353,7 @@
                 <div class="skeleton-center"></div>
                 <div class="skeleton-mini-map"></div>
               </div>
+              <section class="panmap-mvp" id="panmapMvp" aria-label="泛地图最小闭环工作区"></section>
               <div class="traditional-map-shell" id="traditionalMapShell">
                 <div id="traditionalMap" class="traditional-map" aria-label="MapLibre 传统地图"></div>
                 <div id="traditionalMapStatus" class="map-status" role="status" aria-live="polite"></div>
@@ -808,12 +809,14 @@
     <script src="./src/contracts/analysis-contracts.js?v=20260827-stage12-6-2"></script>
     <script src="./src/contracts/poi-detail-contract.js?v=20260827-stage12-6-2"></script>
     <script src="./src/contracts/research-poi-dataset.js?v=20260827-stage12-6-2"></script>
+    <script src="./src/contracts/panmap-input-snapshot.js?v=20260902-stage13-0"></script>
     <script src="./src/contracts/research-evaluation-contract.js?v=20260804-stage39research"></script>
     <script src="./src/taxonomy/category-tree.js?v=20260728-stage5a"></script>
     <script src="./src/state/analysis-store.js?v=20260827-stage12-6-2"></script>
     <script src="./src/state/poi-interaction-state.js?v=20260827-stage12-6-2"></script>
     <script src="./src/state/panmap-control-state.js?v=20260804-stage41directional"></script>
     <script src="./src/state/panmap-mode-state.js?v=20260806-stage47workspace"></script>
+    <script src="./src/state/panmap-mvp-state.js?v=20260902-stage13-0"></script>
     <script src="./src/view/radial-view-contract.js?v=20260802-stage33viewcontract"></script>
     <script src="./src/adapters/dual-radial-layout.js?v=20260802-stage33radial"></script>
     <script src="./src/adapters/compact-annular-layout.js?v=20260804-stage37compact"></script>
@@ -828,13 +831,15 @@
     <script src="./src/config/category-style-registry.js?v=20260827-stage12-6-2"></script>
     <script src="./src/api/analysis-client.js?v=20260825-online-api-fix"></script>
     <script src="./src/adapters/panmap-layout-adapter.js?v=20260806-stage53normalization"></script>
+    <script src="./src/adapters/panmap-mvp-layout.js?v=20260902-stage13-0"></script>
+    <script src="./src/view/panmap-mvp-view.js?v=20260902-stage13-0"></script>
     <script src="./src/map/analysis-map-geojson.js?v=20260727-stage4a"></script>
     <script src="./src/map/analysis-poi-geojson.js?v=20260827-stage12-6-2"></script>
     <script src="./src/map/poi-render-batcher.js?v=20260826-stage12-2"></script>
     <script src="./src/adapters/traditional-map-adapter.js?v=20260827-stage12-6-2"></script>
     <script src="./panmap-layout.js?v=20260805-stage43research"></script>
     <script src="./src/research/research-mode.js?v=20260806-stage47workspace"></script>
-    <script src="./app.js?v=20260827-stage12-6-2"></script>
+    <script src="./app.js?v=20260902-stage13-0"></script>
     <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
     <script src="./src/map/maplibre-loader.js?v=20260727-stage4b"></script>
   </body>

@@ -42,8 +42,8 @@ test('online workflow separates isochrones, POI, minute spatial timing and local
   assert.match(app, /createMinuteAccessibility/);
   assert.doesNotMatch(app, /requestMinuteIsochroneBatch/);
   const body = app.slice(app.indexOf('async function runPanmapWorkflow'), app.indexOf("document.querySelectorAll('[data-nav=\"settings\"]')"));
-  assert.match(body, /result\?\.metadata\?\.spatialTime/);
-  assert.match(body, /applyAnalysisResultToPanmap\(result\)/);
+  assert.match(body, /workflowStatus\?\.minute !== 'ready'/);
+  assert.match(body, /preparePanmapMvp\(\{ allowEmpty: false \}\)/);
   assert.doesNotMatch(body, /createAnalysis|createNameCloud|createMatrixAccessibility|publishProfileJob/);
 });
 
