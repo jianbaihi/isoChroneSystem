@@ -12,6 +12,11 @@
   let elasticAlpha = 0;
   let elasticFocusId = null;
   let elasticAnimationFrame = null;
+  let inspectorCollapsed = false;
+  let miniMapCollapsed = false;
+  let canvasPan = { x: 0, y: 0 };
+  let canvasDrag = null;
+  let resizeListenerMounted = false;
   const elasticFrames = [];
   const elasticAnimationDuration = 280;
 
@@ -61,7 +66,7 @@
         <text x="${region.centroid[0]}" y="${region.centroid[1] + 22}" text-anchor="middle" fill="#64748B" font-size="11">${(region.areaShare * 100).toFixed(1)}%</text>
       </g>`;
     }).join('');
-    return `<svg class="panmap-mvp-svg elastic-region-svg" viewBox="0 0 860 560" aria-label="单圈层类别弹性共享分区"><rect width="860" height="560" rx="16" fill="#F8FAFC"/>${regions}</svg>`;
+    return `<svg class="panmap-mvp-svg elastic-region-svg" viewBox="0 0 860 560" preserveAspectRatio="xMidYMid meet" aria-label="单圈层类别弹性共享分区"><rect width="860" height="560" rx="16" fill="#F8FAFC"/>${regions}</svg>`;
   }
 
   function elasticMetricsPanel() {
@@ -153,6 +158,63 @@
     return parts.map((part, index) => `${index ? '<span>›</span>' : ''}${part.action ? `<button type="button" data-panmap-back="${part.action}">${esc(part.label)}</button>` : `<strong>${esc(part.label)}</strong>`}`).join('');
   }
 
+  function panmapSafeArea() {
+    return {
+      rightInset: inspectorCollapsed ? 20 : 380,
+      leftInset: miniMapCollapsed ? 20 : 280,
+      bottomInset: 64,
+    };
+  }
+
+  function syncWorkspaceState(root) {
+    const safeArea = panmapSafeArea();
+    root.classList.toggle('is-inspector-collapsed', inspectorCollapsed);
+    root.classList.toggle('is-mini-map-collapsed', miniMapCollapsed);
+    root.style.setProperty('--panmap-safe-right', `${safeArea.rightInset}px`);
+    root.style.setProperty('--panmap-safe-left', `${safeArea.leftInset}px`);
+    root.style.setProperty('--panmap-safe-bottom', `${safeArea.bottomInset}px`);
+    root.style.setProperty('--panmap-safe-shift-x', `${(safeArea.leftInset - safeArea.rightInset) / 2}px`);
+    root.style.setProperty('--panmap-safe-shift-y', `${-safeArea.bottomInset / 8}px`);
+    root.style.setProperty('--panmap-pan-x', `${canvasPan.x}px`);
+    root.style.setProperty('--panmap-pan-y', `${canvasPan.y}px`);
+    const miniMap = document.getElementById('traditionalMapShell');
+    miniMap?.classList.toggle('is-panmap-collapsed', miniMapCollapsed);
+    miniMap?.setAttribute('aria-hidden', String(miniMapCollapsed));
+    const html = document.documentElement;
+    html.dataset.panmapInspectorState = inspectorCollapsed ? 'collapsed' : (root.querySelector('[data-inspector-mode]')?.dataset.inspectorMode || 'summary');
+    html.dataset.panmapMiniMapState = miniMapCollapsed ? 'collapsed' : 'visible';
+    html.dataset.panmapSafeArea = JSON.stringify(safeArea);
+    html.dataset.panmapWorkspaceCount = String(document.querySelectorAll('.panmap-workspace').length);
+  }
+
+  function publishWorkspaceLayoutMetrics(root) {
+    global.requestAnimationFrame?.(() => {
+      const workspace = root.closest('.panmap-workspace');
+      const canvas = root.querySelector('.panmap-main-canvas');
+      if (!workspace || !canvas) return;
+      const compactRect = (node) => {
+        if (!node) return null;
+        const rect = node.getBoundingClientRect();
+        return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, area: rect.width * rect.height };
+      };
+      const workspaceRect = compactRect(workspace);
+      const canvasRect = compactRect(canvas);
+      const metrics = {
+        viewport: { width: global.innerWidth, height: global.innerHeight },
+        workspace: workspaceRect,
+        mainCanvas: canvasRect,
+        inspector: compactRect(root.querySelector('.panmap-inspector')),
+        miniMap: compactRect(document.getElementById('traditionalMapShell')),
+        breadcrumb: compactRect(root.querySelector('.panmap-breadcrumb')),
+        devToolbar: compactRect(root.querySelector('.panmap-dev-toolbar')),
+        mainCanvasAreaRatio: canvasRect.area / workspaceRect.area,
+        safeArea: panmapSafeArea(),
+      };
+      global.document.documentElement.dataset.panmapWorkspaceMetrics = JSON.stringify(metrics);
+      global.document.documentElement.dataset.panmapResizeProviderCalls = '0';
+    });
+  }
+
   function overviewSvg(state) {
     const rings = app.panmapMvpLayout.buildOverviewLayout(snapshot);
     const focusedIndex = snapshot.rings.findIndex((ring) => ring.ringId === state.focusedRingId);
@@ -179,7 +241,7 @@
         <g class="panmap-mvp-ring-hit" data-ring-focus="${esc(ring.ringId)}" role="button" tabindex="0" aria-label="聚焦${esc(ring.label)}"><rect x="${460 + ring.radius + 18}" y="${360 - 16}" width="78" height="30" rx="15" fill="white" stroke="${ringColor(index)}"/><text x="${460 + ring.radius + 57}" y="${360 + 4}" text-anchor="middle" fill="${ringColor(index)}" font-size="12" font-weight="700">${esc(ring.label)}</text></g>
       </g>`;
     }).join('');
-    return `<svg class="panmap-mvp-svg" viewBox="0 0 920 720" aria-label="泛地图时间圈层与一级类别聚簇">${ringMarkup}
+    return `<svg class="panmap-mvp-svg" viewBox="0 0 920 720" preserveAspectRatio="xMidYMid meet" aria-label="泛地图时间圈层与一级类别聚簇">${ringMarkup}
       <g class="panmap-mvp-center"><circle cx="460" cy="360" r="24" fill="#1677FF"/><circle cx="460" cy="360" r="8" fill="white"/><text x="460" y="401" text-anchor="middle" fill="#172033" font-size="13" font-weight="700">${esc(snapshot.center.label || '分析中心')}</text></g>
     </svg>`;
   }
@@ -192,7 +254,7 @@
       <rect width="${width}" height="${height}" rx="17" fill="white" stroke="${color}" stroke-width="${state.selectedPoiId === poi.poiId ? 2.5 : 1.2}"/>
       <circle cx="16" cy="17" r="4" fill="${color}"/><text x="27" y="21" fill="#172033" font-size="12" font-weight="650">${esc(poi.name.length > 12 ? `${poi.name.slice(0, 12)}…` : poi.name)}</text>
     </g>`).join('');
-    return { markup: `<svg class="panmap-mvp-svg panmap-mvp-label-cloud" viewBox="0 0 760 540" aria-label="POI 地名标签云">${labels}</svg>`, layout, candidates };
+    return { markup: `<svg class="panmap-mvp-svg panmap-mvp-label-cloud" viewBox="0 0 760 540" preserveAspectRatio="xMidYMid meet" aria-label="POI 地名标签云">${labels}</svg>`, layout, candidates };
   }
 
   function selectedDetail(state) {
@@ -232,10 +294,16 @@
     const labelMode = !elasticMode && (state.mode === 'category-focused' || state.mode === 'poi-selected');
     const labelResult = labelMode ? labelSvg(state) : null;
     root.dataset.mode = state.mode;
-    const modeSwitch = developerModeEnabled() ? `<div class="panmap-layout-switch" role="group" aria-label="泛地图布局算法"><button type="button" data-layout-mode="bubble" class="${layoutMode === 'bubble' ? 'is-active' : ''}">Bubble Baseline</button><button type="button" data-layout-mode="elastic" class="${layoutMode === 'elastic' ? 'is-active' : ''}">Elastic Region v0</button></div>` : '';
-    root.innerHTML = `<header class="panmap-mvp-header"><div><small>当前分析快照 · Provider API 0</small><strong>${esc(snapshot.center.label)} · ${profileLabels[snapshot.profile] || esc(snapshot.profile)} · ${snapshot.rangesMinutes.join(' / ')} 分钟</strong></div>${modeSwitch}<span>${snapshot.metadata.categoryCount} 类 · ${snapshot.metadata.eligiblePoiCount} POI</span></header>
-      <div class="panmap-mvp-workspace"><main class="panmap-mvp-canvas">${elasticMode ? elasticSvg() : labelResult ? labelResult.markup : overviewSvg(state)}</main><aside class="panmap-mvp-inspector">${statsPanel(state, labelResult?.layout)}${elasticMode ? elasticMetricsPanel() : ''}</aside></div>
-      <nav class="panmap-mvp-breadcrumb" aria-label="泛地图面包屑">${breadcrumb(state)}</nav>`;
+    const modeSwitch = developerModeEnabled() ? `<div class="panmap-dev-toolbar" role="group" aria-label="泛地图布局算法"><button type="button" data-layout-mode="bubble" class="${layoutMode === 'bubble' ? 'is-active' : ''}">Bubble Baseline</button><button type="button" data-layout-mode="elastic" class="${layoutMode === 'elastic' ? 'is-active' : ''}">Elastic Region v0</button></div>` : '';
+    const inspectorMode = state.mode === 'poi-selected' ? 'detail' : 'summary';
+    root.innerHTML = `<header class="panmap-mvp-header panmap-workspace-meta"><div><small>当前分析快照 · Provider API 0</small><strong>${esc(snapshot.center.label)} · ${profileLabels[snapshot.profile] || esc(snapshot.profile)} · ${snapshot.rangesMinutes.join(' / ')} 分钟</strong></div><span>${snapshot.metadata.categoryCount} 类 · ${snapshot.metadata.eligiblePoiCount} POI</span></header>
+      <main class="panmap-main-canvas panmap-mvp-canvas" data-panmap-main-canvas><div class="panmap-canvas-stage">${elasticMode ? elasticSvg() : labelResult ? labelResult.markup : overviewSvg(state)}</div></main>
+      <aside class="panmap-inspector panmap-mvp-inspector${inspectorCollapsed ? ' is-collapsed' : ''}" data-inspector-mode="${inspectorCollapsed ? 'collapsed' : inspectorMode}" aria-label="泛地图 Inspector"><button type="button" class="panmap-overlay-toggle panmap-inspector-toggle" data-panmap-inspector-toggle aria-expanded="${String(!inspectorCollapsed)}">${inspectorCollapsed ? '展开 Inspector' : '收起'}</button><div class="panmap-inspector-body">${statsPanel(state, labelResult?.layout)}${elasticMode ? elasticMetricsPanel() : ''}</div></aside>
+      <button type="button" class="panmap-overlay-toggle panmap-mini-map-toggle" data-panmap-mini-map-toggle aria-expanded="${String(!miniMapCollapsed)}">${miniMapCollapsed ? '显示传统地图' : '隐藏传统地图'}</button>
+      <nav class="panmap-breadcrumb panmap-mvp-breadcrumb" aria-label="泛地图面包屑">${breadcrumb(state)}</nav>
+      ${modeSwitch}`;
+    syncWorkspaceState(root);
+    publishWorkspaceLayoutMetrics(root);
     document.documentElement.dataset.panmapMvpMode = state.mode;
     document.documentElement.dataset.panmapSnapshotId = snapshot.snapshotId;
     document.documentElement.dataset.panmapSourcePoiCount = String(snapshot.metadata.sourcePoiCount);
@@ -245,6 +313,19 @@
   }
 
   function activate(target) {
+    const inspectorToggle = target.closest('[data-panmap-inspector-toggle]');
+    if (inspectorToggle) {
+      inspectorCollapsed = !inspectorCollapsed;
+      render(store.getState());
+      return;
+    }
+    const miniMapToggle = target.closest('[data-panmap-mini-map-toggle]');
+    if (miniMapToggle) {
+      miniMapCollapsed = !miniMapCollapsed;
+      render(store.getState());
+      global.dispatchEvent?.(new Event('resize'));
+      return;
+    }
     const alphaProbe = target.closest('[data-elastic-probe]');
     if (alphaProbe && layoutMode === 'elastic') {
       const nextAlpha = Number(alphaProbe.dataset.elasticProbe);
@@ -305,10 +386,40 @@
       root.addEventListener('keydown', (event) => {
         if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('[role="button"], button')) { event.preventDefault(); activate(event.target); }
       });
+      root.addEventListener('pointerdown', (event) => {
+        const canvas = event.target.closest('[data-panmap-main-canvas]');
+        if (!canvas || event.button !== 0 || event.target.closest('button, [role="button"], .elastic-region, .panmap-mvp-category, .panmap-mvp-poi-label, .panmap-mvp-ring-hit')) return;
+        canvasDrag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, panX: canvasPan.x, panY: canvasPan.y };
+        canvas.setPointerCapture?.(event.pointerId);
+        canvas.classList.add('is-panning');
+      });
+      root.addEventListener('pointermove', (event) => {
+        if (!canvasDrag || canvasDrag.pointerId !== event.pointerId) return;
+        canvasPan = { x: canvasDrag.panX + event.clientX - canvasDrag.startX, y: canvasDrag.panY + event.clientY - canvasDrag.startY };
+        root.style.setProperty('--panmap-pan-x', `${canvasPan.x}px`);
+        root.style.setProperty('--panmap-pan-y', `${canvasPan.y}px`);
+      });
+      const finishCanvasPan = (event) => {
+        if (!canvasDrag || canvasDrag.pointerId !== event.pointerId) return;
+        event.target.closest?.('[data-panmap-main-canvas]')?.classList.remove('is-panning');
+        canvasDrag = null;
+      };
+      root.addEventListener('pointerup', finishCanvasPan);
+      root.addEventListener('pointercancel', finishCanvasPan);
       listenersMounted = true;
+    }
+    if (!resizeListenerMounted) {
+      global.addEventListener?.('resize', () => {
+        const currentRoot = document.getElementById('panmapMvp');
+        if (currentRoot?.children.length) publishWorkspaceLayoutMetrics(currentRoot);
+      });
+      resizeListenerMounted = true;
     }
     unsubscribe = store.subscribe(render);
     layoutMode = 'bubble';
+    inspectorCollapsed = false;
+    miniMapCollapsed = false;
+    canvasPan = { x: 0, y: 0 };
     global.document.documentElement.dataset.panmapLayoutMode = layoutMode;
     render(store.getState());
     return store.getState();
