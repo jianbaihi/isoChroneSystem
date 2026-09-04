@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "checks": {
+    "polygonClickFocus": { "sequence": [0, 1, 0], "passed": true },
+    "canvasDrag": { "panAfterDrag": [60, 42], "passed": true },
+    "clickAfterDrag": { "focusAlpha": 1, "passed": true },
+    "inspectorCollapseExpand": { "states": ["summary", "collapsed", "summary"], "passed": true },
+    "miniMapCollapseExpand": { "states": ["visible", "collapsed", "visible"], "passed": true },
+    "breadcrumbCategoryToRing": { "resultMode": "ring-focused", "passed": true },
+    "miniMapClick": { "passed": true },
+    "selectedPoiLinkage": {
+      "resultMode": "poi-selected",
+      "selectedPoi": "半边鱼(武昌店)",
+      "statusText": "传统地图小窗 · 已同步定位所选 POI",
+      "passed": true
+    }
+  },
+  "canvasInvariant": {
+    "open": { "width": 909, "height": 738 },
+    "afterOverlayToggles": { "width": 909, "height": 738 },
+    "unchanged": true
+  },
+  "safeArea": {
+    "inspectorOpenRightInset": 380,
+    "miniMapVisibleLeftInset": 280,
+    "bottomInset": 64,
+    "viewOnlyTransform": true,
+    "solverCoordinatesChanged": false
+  },
+  "providerCallDelta": 0
+}

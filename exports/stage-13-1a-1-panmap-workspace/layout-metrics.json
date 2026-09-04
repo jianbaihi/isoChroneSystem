@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "viewport": { "width": 1440, "height": 900 },
+  "workspace": { "x": 520, "y": 103, "width": 909, "height": 738, "area": 670842 },
+  "mainCanvas": { "x": 520, "y": 103, "width": 909, "height": 738, "area": 670842 },
+  "inspector": { "x": 1069, "y": 123, "width": 340, "height": 691, "area": 234940, "position": "absolute" },
+  "miniMap": { "x": 540, "y": 607, "width": 240, "height": 170, "area": 40800, "position": "absolute" },
+  "breadcrumb": { "x": 540, "y": 782, "width": 135.53125, "height": 39, "area": 5285.71875, "position": "absolute" },
+  "devToolbar": { "x": 824.453125, "y": 123, "width": 224.546875, "height": 35, "area": 7859.140625, "position": "absolute" },
+  "mainCanvasAreaRatio": 1,
+  "targetMainCanvasAreaRatio": 0.8,
+  "baselineMainCanvasAreaRatio": 0.671637,
+  "workspaceCount": 1,
+  "inspectorOpenCanvasSize": { "width": 909, "height": 738 },
+  "inspectorCollapsedCanvasSize": { "width": 909, "height": 738 },
+  "miniMapVisibleCanvasSize": { "width": 909, "height": 738 },
+  "miniMapCollapsedCanvasSize": { "width": 909, "height": 738 },
+  "safeArea": { "rightInset": 380, "leftInset": 280, "bottomInset": 64 },
+  "logicalElasticViewBox": "0 0 860 560"
+}

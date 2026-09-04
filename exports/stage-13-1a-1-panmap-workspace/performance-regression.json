@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "controlledBenchmark": {
+    "baselineCommit": "40175cd2a0b27d9084736eaef62600b4717576ff",
+    "elasticCoreByteIdentical": true,
+    "fixture": "same fixed 860×560 container, ten weights, 70 measured rounds after 20 warm-up rounds",
+    "beforeMedianMs": {
+      "overviewCold": 3.477875,
+      "focusWarm": 3.433625,
+      "returnWarm": 3.156208
+    },
+    "afterMedianMs": {
+      "overviewCold": 3.523416,
+      "focusWarm": 3.481583,
+      "returnWarm": 3.200208
+    },
+    "deltaPercent": {
+      "overviewCold": 1.309449,
+      "focusWarm": 1.396716,
+      "returnWarm": 1.394078
+    },
+    "maximumAllowedPercent": 10
+  },
+  "realBrowserObservation": {
+    "snapshotPoiCount": 3029,
+    "overviewColdSolveMsObserved": 7.7,
+    "focusWarmSolveMsObserved": 1.1,
+    "returnWarmSolveMsObserved": 1.7,
+    "droppedFramesObserved": 0,
+    "note": "Browser values are retained as observations, not used as a cross-stage percentage because the upstream POI snapshot changed between runs."
+  }
+}

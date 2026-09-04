@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "viewports": [
+    {
+      "viewport": { "width": 1280, "height": 720 },
+      "workspace": { "x": 520, "y": 103, "width": 749, "height": 558, "area": 417942 },
+      "mainCanvas": { "x": 520, "y": 103, "width": 749, "height": 558, "area": 417942 },
+      "inspector": { "width": 340, "height": 526 },
+      "miniMap": { "width": 220, "height": 154 },
+      "mainCanvasAreaRatio": 1,
+      "workspaceCount": 1,
+      "singleWorkspace": true,
+      "providerCallDelta": 0
+    },
+    {
+      "viewport": { "width": 1440, "height": 900 },
+      "workspace": { "x": 520, "y": 103, "width": 909, "height": 738, "area": 670842 },
+      "mainCanvas": { "x": 520, "y": 103, "width": 909, "height": 738, "area": 670842 },
+      "inspector": { "width": 340, "height": 691 },
+      "miniMap": { "width": 240, "height": 170 },
+      "mainCanvasAreaRatio": 1,
+      "workspaceCount": 1,
+      "singleWorkspace": true,
+      "providerCallDelta": 0
+    },
+    {
+      "viewport": { "width": 1920, "height": 1080 },
+      "workspace": { "x": 520, "y": 103, "width": 1389, "height": 918, "area": 1275102 },
+      "mainCanvas": { "x": 520, "y": 103, "width": 1389, "height": 918, "area": 1275102 },
+      "inspector": { "width": 300, "height": 691 },
+      "miniMap": { "width": 240, "height": 170 },
+      "mainCanvasAreaRatio": 1,
+      "workspaceCount": 1,
+      "singleWorkspace": true,
+      "providerCallDelta": 0
+    }
+  ],
+  "resizeContract": {
+    "snapshotRebuilds": 0,
+    "minuteRuns": 0,
+    "providerCalls": 0,
+    "effect": "viewport geometry and overlay reposition only"
+  }
+}
