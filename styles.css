@@ -1374,6 +1374,9 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
 .panmap-mvp-header small { color: #7B8798; font-size: 11px; letter-spacing: .04em; }
 .panmap-mvp-header strong { font-size: 15px; }
 .panmap-mvp-header > span { color: #526174; font-size: 12px; }
+.panmap-layout-switch { display: flex; gap: 3px; padding: 3px; border: 1px solid #DCE4EE; border-radius: 11px; background: #F3F6FA; }
+.panmap-layout-switch button { padding: 7px 10px; border: 0; border-radius: 8px; background: transparent; color: #64748B; font-size: 11px; cursor: pointer; }
+.panmap-layout-switch button.is-active { background: white; color: #1677FF; box-shadow: 0 2px 8px rgba(15,23,42,.08); }
 .panmap-mvp-workspace { min-height: 0; flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) 286px; }
 .panmap-mvp-canvas { min-width: 0; min-height: 0; padding: 10px; display: grid; place-items: center; overflow: hidden; }
 .panmap-mvp-svg { width: 100%; height: 100%; max-width: 980px; max-height: 760px; overflow: visible; }
@@ -1384,6 +1387,18 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
 .panmap-mvp-poi-label.is-selected { transform-box: fill-box; transform-origin: center; }
 .panmap-mvp-poi-label.is-selected rect { fill: #F8FBFF; }
 .panmap-mvp-center { pointer-events: none; }
+.elastic-region-svg { max-width: 920px; max-height: 650px; filter: drop-shadow(0 14px 28px rgba(15,23,42,.06)); }
+.elastic-region { cursor: pointer; }
+.elastic-region path { transition: fill-opacity 120ms ease; }
+.elastic-region:hover path { fill-opacity: .24; }
+.elastic-region text, .elastic-region circle { pointer-events: none; }
+.elastic-runtime-metrics { margin-top: 18px; padding-top: 16px; border-top: 1px solid #E6EBF2; }
+.elastic-runtime-metrics > small { color: #7C3AED; font-weight: 750; }
+.elastic-runtime-metrics dl { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin: 10px 0; }
+.elastic-runtime-metrics dl div { padding: 8px; border-radius: 10px; background: #F6F3FF; }
+.elastic-runtime-metrics dt { color: #7B8798; font-size: 10px; }
+.elastic-runtime-metrics dd { margin: 2px 0 0; color: #312E81; font-size: 11px; font-weight: 700; }
+.elastic-runtime-metrics p { margin: 9px 0 0; color: #7B8798; font-size: 10px; line-height: 1.5; }
 .panmap-mvp-inspector { padding: 18px; border-left: 1px solid #E6EBF2; background: rgba(255,255,255,.86); overflow: auto; }
 .panmap-mvp-summary > small { color: #1677FF; font-weight: 700; }
 .panmap-mvp-summary h2 { margin: 7px 0 15px; font-size: 24px; }
