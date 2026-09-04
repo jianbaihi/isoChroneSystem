@@ -1,0 +1,12 @@
+{
+  "viewport": { "width": 1440, "height": 900 },
+  "panmapRoot": { "x": 538, "y": 121, "width": 873, "height": 644 },
+  "workspace": { "x": 539, "y": 189, "width": 871, "height": 527 },
+  "mainCanvas": { "x": 539, "y": 189, "width": 585, "height": 527 },
+  "inspector": { "x": 1124, "y": 189, "width": 286, "height": 527 },
+  "miniMap": { "x": 538, "y": 663, "width": 240, "height": 160 },
+  "breadcrumb": { "x": 539, "y": 716, "width": 871, "height": 48 },
+  "layoutSwitch": { "x": 994.328, "y": 122, "width": 117.703, "height": 66 },
+  "mainCanvasAreaRatio": 0.671637,
+  "calculation": "(585 × 527) / (871 × 527)"
+}
