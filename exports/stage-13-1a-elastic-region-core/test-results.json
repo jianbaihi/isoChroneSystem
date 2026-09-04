@@ -1,0 +1,38 @@
+{
+  "status": "PASS_WITH_EXISTING_FIXTURE_BLOCKER",
+  "frontend": {
+    "command": "node --test src/**/*.test.js",
+    "passed": 167,
+    "failed": 0,
+    "status": "PASS"
+  },
+  "focusedElasticEngine": {
+    "passed": 5,
+    "failed": 0,
+    "coverage": [
+      "geometry completeness",
+      "focus expansion and context compression",
+      "minimum area",
+      "warm start and adjacent-alpha continuity",
+      "determinism",
+      "return stability",
+      "ten-node performance metric",
+      "core business-concept isolation"
+    ],
+    "status": "PASS"
+  },
+  "elasticUiIntegration": {
+    "passed": 4,
+    "failed": 0,
+    "status": "PASS"
+  },
+  "javascriptSyntax": "PASS",
+  "gitDiffCheck": "PASS",
+  "backend": {
+    "testsDiscovered": 145,
+    "assertionFailures": 0,
+    "status": "BLOCKED_BY_EXISTING_MISSING_FIXTURE",
+    "missingFixture": "data/generated/ors-cache/stage-5-live-validation/20260730T020216Z-be95b0fa/e8bb30111305495cf7ab9e17441cceab2079caa7b071c313b6802f7bafb7d55e.json",
+    "interpretation": "The loader error belongs to a historical Stage 5 cache fixture and is unrelated to Stage 13.1A source changes. It was not fabricated or silently replaced."
+  }
+}

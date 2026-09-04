@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "sequence": [0, 0.5, 1, 0],
+  "warmStart": {
+    "previousSitesReused": true,
+    "previousWeightsReused": true,
+    "randomReinitialization": false
+  },
+  "deterministicAuditFixture": {
+    "focusAlpha0_5": {
+      "maxAreaError": 0.002421,
+      "focusedAreaShare": 0.401301,
+      "adjacencyChangeCount": 0
+    },
+    "focusAlpha1": {
+      "maxAreaError": 0.002443,
+      "focusedAreaShare": 0.448761,
+      "adjacencyChangeCount": 0
+    },
+    "returned": {
+      "maxAreaError": 0.002451,
+      "maximumAreaShareDeltaFromOverview": 0.004658,
+      "maximumCentroidDeltaFromOverviewPixels": 14.016
+    }
+  },
+  "testTolerances": {
+    "maximumReturnAreaShareDelta": 0.01,
+    "maximumReturnCentroidDeltaPixels": 35,
+    "maximumAdjacentAlphaCentroidDisplacementPixels": 80,
+    "maximumAdjacentAlphaAreaDelta": 0.05
+  },
+  "browserObservation": "The restaurant cell expanded progressively, neighbors compressed synchronously, and the same boundaries returned without visible snapping."
+}

@@ -71,7 +71,7 @@
       <div><dt>Focus Alpha</dt><dd>${elasticAlpha.toFixed(2)}</dd></div><div><dt>单帧求解</dt><dd>${metrics.solveMs.toFixed(2)} ms</dd></div>
       <div><dt>Gap / Overlap</dt><dd>${(metrics.gapRatio * 100).toFixed(3)}% / ${(metrics.overlapRatio * 100).toFixed(3)}%</dd></div><div><dt>最大面积误差</dt><dd>${(metrics.maxAreaError * 100).toFixed(2)}%</dd></div>
       <div><dt>邻接变化</dt><dd>${metrics.adjacencyChangeCount}</dd></div><div><dt>Warm Start</dt><dd>${metrics.warmStartUsed ? '是' : '否'}</dd></div>
-    </dl><p>直线共享边界 · 固定父容器 · POI 文本未参与</p></section>`;
+    </dl>${developerModeEnabled() ? '<div class="elastic-alpha-probes" aria-label="开发验收 Alpha"><button type="button" data-elastic-probe="0">0</button><button type="button" data-elastic-probe="0.5">0.5</button><button type="button" data-elastic-probe="1">1</button></div>' : ''}<p>直线共享边界 · 固定父容器 · POI 文本未参与</p></section>`;
   }
 
   function publishElasticRuntime(animation = {}) {
@@ -94,6 +94,10 @@
     html.dataset.elasticGapRatio = elasticResult.metrics.gapRatio.toFixed(8);
     html.dataset.elasticOverlapRatio = elasticResult.metrics.overlapRatio.toFixed(8);
     html.dataset.elasticProviderCallCount = '0';
+    html.dataset.elasticFrameCount = String(runtime.frameCount);
+    html.dataset.elasticMaxFrameMs = runtime.maxFrameMs.toFixed(3);
+    html.dataset.elasticDroppedFrames = String(runtime.droppedFrames);
+    html.dataset.elasticAnimationDuration = runtime.animationDuration == null ? '' : runtime.animationDuration.toFixed(3);
   }
 
   function animateElastic(targetAlpha, focusId, onComplete) {
@@ -241,6 +245,14 @@
   }
 
   function activate(target) {
+    const alphaProbe = target.closest('[data-elastic-probe]');
+    if (alphaProbe && layoutMode === 'elastic') {
+      const nextAlpha = Number(alphaProbe.dataset.elasticProbe);
+      const focusId = elasticFocusId || '050000';
+      if (!store.getState().focusedCategoryCode && nextAlpha > 0) store.dispatch({ type: 'FOCUS_CATEGORY', categoryCode: focusId });
+      animateElastic(nextAlpha, focusId, nextAlpha === 0 ? () => store.dispatch({ type: 'BACK_RING' }) : null);
+      return;
+    }
     const layoutButton = target.closest('[data-layout-mode]');
     if (layoutButton) { setLayoutMode(layoutButton.dataset.layoutMode); return; }
     const elasticCategory = target.closest('[data-elastic-category]');

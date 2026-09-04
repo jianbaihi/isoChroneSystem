@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "method": "weighted power diagram by pairwise half-plane clipping",
+  "container": {
+    "id": "ring-10-20",
+    "width": 860,
+    "height": 560,
+    "containerArea": 481600
+  },
+  "nodeCount": 10,
+  "stableStates": {
+    "overview": {
+      "gapRatio": 0,
+      "overlapRatio": 0
+    },
+    "focusAlpha0_5": {
+      "gapRatio": 0,
+      "overlapRatio": 0
+    },
+    "focusAlpha1": {
+      "gapRatio": 0,
+      "overlapRatio": 0
+    },
+    "returned": {
+      "gapRatio": 0,
+      "overlapRatio": 0
+    }
+  },
+  "thresholds": {
+    "maximumGapRatio": 0.005,
+    "maximumOverlapRatio": 0.005
+  },
+  "integrityChecks": {
+    "finiteCoordinates": true,
+    "validPolygons": true,
+    "allRegionsInsideContainer": true,
+    "sharedPartition": true
+  },
+  "evidence": "Automated engine tests plus the real Huanghelou walking 10/20/30 browser run. Ratios shown in the live metrics panel were 0.000% / 0.000%."
+}

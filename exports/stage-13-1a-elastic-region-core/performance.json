@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "target": {
+    "nodeCount": 10,
+    "singleFrameSolverMaximumMs": 16
+  },
+  "realBrowserStableStates": [
+    {
+      "state": "overview-cold",
+      "solveMs": 5.4,
+      "warmStartUsed": false
+    },
+    {
+      "state": "focus-alpha-0.5",
+      "solveMs": 0.1,
+      "warmStartUsed": true
+    },
+    {
+      "state": "focus-alpha-1",
+      "solveMs": 0.4,
+      "warmStartUsed": true
+    },
+    {
+      "state": "returned-alpha-0",
+      "solveMs": 0.2,
+      "warmStartUsed": true
+    }
+  ],
+  "solverIterations": {
+    "stableMaximum": 72,
+    "perAnimationFrame": 6
+  },
+  "animation": {
+    "configuredDurationMs": 280,
+    "frameMsMetricImplemented": true,
+    "droppedFramesMetricImplemented": true,
+    "recordedDroppedFrames": null,
+    "recordingNote": "The accepted real run was loaded immediately before the final DOM data-attribute export for frameCount/maxFrameMs/droppedFrames was added. Exact dropped-frame count was therefore not retroactively invented; the browser animation was visually accepted as continuous, and subsequent runs expose this metric through documentElement.dataset."
+  },
+  "deterministicTenNodeColdSolveMs": 9.68,
+  "providerCallsDuringElasticInteraction": 0
+}

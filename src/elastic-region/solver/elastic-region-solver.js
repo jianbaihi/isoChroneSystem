@@ -29,6 +29,7 @@
     const containerArea = elastic.polygon.area(input.container.polygon);
     const sites = initialSites(input.nodes, input.previousState);
     const iterations = Math.max(1, Math.floor(context.iterations ?? options.solverIterations));
+    const effectiveStep = input.previousState ? Math.min(options.solverStep, 0.12) : options.solverStep;
     let cells = [];
     let completedIterations = 0;
     for (let iteration = 0; iteration < iterations; iteration += 1) {
@@ -39,7 +40,7 @@
       completedIterations = iteration + 1;
       if (maximumError <= options.tolerance) break;
       const averageWeight = sites.reduce((sum, site) => sum + site.weight, 0) / sites.length;
-      sites.forEach((site, index) => { site.weight += options.solverStep * errors[index] * containerArea; });
+      sites.forEach((site, index) => { site.weight += effectiveStep * errors[index] * containerArea; });
       const nextAverage = sites.reduce((sum, site) => sum + site.weight, 0) / sites.length;
       sites.forEach((site) => { site.weight -= nextAverage - averageWeight; });
     }

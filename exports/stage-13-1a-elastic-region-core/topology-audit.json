@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "sitePolicy": "fixed semantic anchors",
+  "anchorDisplacement": {
+    "maximumPixels": 0,
+    "allNodes": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  },
+  "adjacency": {
+    "initialSharedEdgeCountInDeterministicAudit": 18,
+    "focusAlpha0_5ChangeCount": 0,
+    "focusAlpha1ChangeCount": 0,
+    "returnChangeCount": 0
+  },
+  "interpretation": "The initial solve creates the adjacency graph; subsequent focus and return transitions retained it in the audited sequence. The metric remains observable and is not hard-coded to zero."
+}

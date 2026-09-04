@@ -1399,6 +1399,8 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
 .elastic-runtime-metrics dt { color: #7B8798; font-size: 10px; }
 .elastic-runtime-metrics dd { margin: 2px 0 0; color: #312E81; font-size: 11px; font-weight: 700; }
 .elastic-runtime-metrics p { margin: 9px 0 0; color: #7B8798; font-size: 10px; line-height: 1.5; }
+.elastic-alpha-probes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.elastic-alpha-probes button { padding: 6px; border: 1px solid #DDD6FE; border-radius: 8px; background: white; color: #6D28D9; font-size: 10px; cursor: pointer; }
 .panmap-mvp-inspector { padding: 18px; border-left: 1px solid #E6EBF2; background: rgba(255,255,255,.86); overflow: auto; }
 .panmap-mvp-summary > small { color: #1677FF; font-weight: 700; }
 .panmap-mvp-summary h2 { margin: 7px 0 15px; font-size: 24px; }

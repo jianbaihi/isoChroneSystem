@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "definition": "abs(actualShare - targetShare)",
+  "realBrowserStableStates": [
+    {
+      "state": "overview",
+      "focusAlpha": 0,
+      "maxAreaError": 0.0068,
+      "displayPercent": 0.68,
+      "warmStartUsed": false
+    },
+    {
+      "state": "restaurant-focus-half",
+      "focusAlpha": 0.5,
+      "maxAreaError": 0.0024,
+      "displayPercent": 0.24,
+      "warmStartUsed": true
+    },
+    {
+      "state": "restaurant-focus-full",
+      "focusAlpha": 1,
+      "maxAreaError": 0.0025,
+      "displayPercent": 0.25,
+      "warmStartUsed": true
+    },
+    {
+      "state": "returned",
+      "focusAlpha": 0,
+      "maxAreaError": 0.0025,
+      "displayPercent": 0.25,
+      "warmStartUsed": true
+    }
+  ],
+  "behaviorChecks": {
+    "focusedAreaIncreasesWithAlpha": true,
+    "atLeastOneContextRegionCompresses": true,
+    "allContextRegionsRemainAboveMinimum": true,
+    "minimumShare": 0.035
+  },
+  "note": "The live browser panel exposes max error. Mean error is emitted by RegionLayoutResult.metrics and covered by deterministic engine tests; it was not separately transcribed from the visual panel."
+}

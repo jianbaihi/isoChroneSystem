@@ -1,0 +1,46 @@
+{
+  "inputSchema": {
+    "schemaVersion": "region-layout-input-v0",
+    "container": {
+      "id": "string",
+      "polygon": "Array<[number, number]>, minimum 3 points"
+    },
+    "nodes": {
+      "cardinality": "2-20",
+      "fields": {
+        "id": "unique string",
+        "baseWeight": "positive number",
+        "targetWeight": "positive number",
+        "anchor": "[number, number]",
+        "minShare": "number in [0, 1)",
+        "focus": "number in [0, 1]"
+      }
+    },
+    "previousState": "RegionLayoutResult | null",
+    "options": "solver options"
+  },
+  "resultSchema": {
+    "schemaVersion": "region-layout-result-v0",
+    "regions": [
+      {
+        "id": "string",
+        "polygon": "Array<[number, number]>",
+        "area": "number",
+        "areaShare": "number",
+        "centroid": "[number, number]"
+      }
+    ],
+    "solverState": {
+      "sites": "Array<{id, point, weight}>",
+      "focusId": "string | null",
+      "focusAlpha": "number in [0, 1]"
+    },
+    "targetShares": "Record<string, number>",
+    "metrics": "geometry, area, topology, continuity and performance metrics"
+  },
+  "adapterBoundary": "PanmapInputSnapshot and POI category concepts are mapped only in adapters/isotagmap; the engine consumes generic nodes.",
+  "implementation": {
+    "contracts": "src/elastic-region/core/contracts.js",
+    "adapter": "src/elastic-region/adapters/isotagmap/category-cluster-adapter.js"
+  }
+}
