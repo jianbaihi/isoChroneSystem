@@ -68,9 +68,21 @@
 - tests: in-app browser semantic interaction, live metric reading, screenshot capture
 - result: PASS
 - metrics: 2223/2223 minute-classified POIs; 1044 POIs and 10 categories in parent; cold solve 5.40ms; warm stable solves 0.10–0.40ms; gap/overlap 0; max area error 0.24–0.25% after warm focus; provider calls 0
-- commit: pending final verification commit
+- commit: `07da118`
 - blocker: exact dropped-frame count was not retained by the already-loaded page before final DOM export attributes were added; value remains truthfully unreported rather than reconstructed
 - nextAction: rerun automated suites, secret audit, final backup, and report
+
+## Final automated verification and backup
+
+- timestamp: 2026-09-04
+- step: Full frontend suite, syntax/diff/secret checks, final GitHub backup
+- filesChanged: Stage 13.1A evidence package and final report
+- tests: 167 frontend tests, JavaScript syntax, `git diff --check`, `git check-ignore`, remote ref read-back
+- result: PASS
+- metrics: frontend 167/167; core backup `1a12223`; final accepted implementation backup `07da118`; `.env` ignored
+- commit: `07da118` for accepted implementation and evidence; documentation finalization follows as a fast-forward commit
+- blocker: backend discovery still encounters one pre-existing missing Stage 5 ORS cache fixture; 145 tests produced no Stage 13.1A assertion failure
+- nextAction: hold Stage 13.1A as the reviewed minimum step and evaluate before authorizing Stage 13.1B
 
 ## Frozen experiment parameters
 
