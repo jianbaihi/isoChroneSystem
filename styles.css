@@ -1384,7 +1384,7 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
 .panmap-mvp-header strong { font-size: 15px; }
 .panmap-mvp-header > span { color: #526174; font-size: 12px; }
 .panmap-dev-toolbar { position: absolute; top: 20px; right: 380px; z-index: 31; display: flex; gap: 3px; padding: 3px; border: 1px solid #DCE4EE; border-radius: 11px; background: rgba(243,246,250,.92); box-shadow: 0 8px 22px rgba(31,55,83,.09); backdrop-filter: blur(12px); pointer-events: auto; transition: right 180ms ease; }
-.panmap-mvp.is-inspector-collapsed .panmap-dev-toolbar { right: 20px; }
+.panmap-mvp.is-inspector-collapsed .panmap-dev-toolbar { right: 136px; }
 .panmap-dev-toolbar button { padding: 7px 10px; border: 0; border-radius: 8px; background: transparent; color: #64748B; font-size: 11px; cursor: pointer; }
 .panmap-dev-toolbar button.is-active { background: white; color: #1677FF; box-shadow: 0 2px 8px rgba(15,23,42,.08); }
 .panmap-main-canvas { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; min-width: 0; min-height: 0; display: grid; place-items: center; overflow: hidden; pointer-events: auto; touch-action: none; }

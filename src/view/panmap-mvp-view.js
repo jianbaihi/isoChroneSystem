@@ -16,6 +16,7 @@
   let miniMapCollapsed = false;
   let canvasPan = { x: 0, y: 0 };
   let canvasDrag = null;
+  let suppressCanvasClick = false;
   let resizeListenerMounted = false;
   const elasticFrames = [];
   const elasticAnimationDuration = 280;
@@ -382,26 +383,40 @@
     app.panmapMvpStore = store;
     const root = document.getElementById('panmapMvp');
     if (root && !listenersMounted) {
-      root.addEventListener('click', (event) => activate(event.target));
+      root.addEventListener('click', (event) => {
+        if (suppressCanvasClick) {
+          suppressCanvasClick = false;
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        activate(event.target);
+      });
       root.addEventListener('keydown', (event) => {
         if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('[role="button"], button')) { event.preventDefault(); activate(event.target); }
       });
       root.addEventListener('pointerdown', (event) => {
         const canvas = event.target.closest('[data-panmap-main-canvas]');
-        if (!canvas || event.button !== 0 || event.target.closest('button, [role="button"], .elastic-region, .panmap-mvp-category, .panmap-mvp-poi-label, .panmap-mvp-ring-hit')) return;
-        canvasDrag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, panX: canvasPan.x, panY: canvasPan.y };
-        canvas.setPointerCapture?.(event.pointerId);
-        canvas.classList.add('is-panning');
+        if (!canvas || event.button !== 0 || event.target.closest('button, .panmap-mvp-poi-label')) return;
+        canvasDrag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, panX: canvasPan.x, panY: canvasPan.y, moved: false, canvas };
       });
       root.addEventListener('pointermove', (event) => {
         if (!canvasDrag || canvasDrag.pointerId !== event.pointerId) return;
+        if (!canvasDrag.moved && Math.hypot(event.clientX - canvasDrag.startX, event.clientY - canvasDrag.startY) > 3) {
+          canvasDrag.moved = true;
+          canvasDrag.canvas.setPointerCapture?.(event.pointerId);
+          canvasDrag.canvas.classList.add('is-panning');
+        }
         canvasPan = { x: canvasDrag.panX + event.clientX - canvasDrag.startX, y: canvasDrag.panY + event.clientY - canvasDrag.startY };
         root.style.setProperty('--panmap-pan-x', `${canvasPan.x}px`);
         root.style.setProperty('--panmap-pan-y', `${canvasPan.y}px`);
+        document.documentElement.dataset.panmapCanvasPan = `${canvasPan.x},${canvasPan.y}`;
       });
       const finishCanvasPan = (event) => {
         if (!canvasDrag || canvasDrag.pointerId !== event.pointerId) return;
-        event.target.closest?.('[data-panmap-main-canvas]')?.classList.remove('is-panning');
+        canvasDrag.canvas.classList.remove('is-panning');
+        suppressCanvasClick = canvasDrag.moved;
+        if (suppressCanvasClick) global.setTimeout?.(() => { suppressCanvasClick = false; }, 50);
         canvasDrag = null;
       };
       root.addEventListener('pointerup', finishCanvasPan);
@@ -420,6 +435,7 @@
     inspectorCollapsed = false;
     miniMapCollapsed = false;
     canvasPan = { x: 0, y: 0 };
+    suppressCanvasClick = false;
     global.document.documentElement.dataset.panmapLayoutMode = layoutMode;
     render(store.getState());
     return store.getState();

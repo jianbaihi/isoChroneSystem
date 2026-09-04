@@ -27,6 +27,7 @@ test('Mini Map, breadcrumb and developer switch are overlay controls', () => {
   assert.match(view, /panmap-dev-toolbar/);
   assert.match(styles, /\.panmap-breadcrumb \{ position: absolute;/);
   assert.match(styles, /\.panmap-dev-toolbar \{ position: absolute;/);
+  assert.match(styles, /\.panmap-mvp\.is-inspector-collapsed \.panmap-dev-toolbar \{ right: 136px; \}/);
   assert.match(styles, /\.app-shell\.is-panmap \.panmap-mini-map \{ z-index: 20;/);
 });
 
@@ -44,6 +45,11 @@ test('overlay toggles and canvas pan are local interactions with no Provider wor
   assert.match(interaction, /inspectorCollapsed = !inspectorCollapsed/);
   assert.match(interaction, /miniMapCollapsed = !miniMapCollapsed/);
   assert.match(view, /root\.addEventListener\('pointermove'/);
+  assert.match(view, /suppressCanvasClick = canvasDrag\.moved/);
+  assert.match(view, /setTimeout.*suppressCanvasClick = false.*50/);
+  assert.match(view, /if \(!canvasDrag\.moved.*Math\.hypot/);
+  assert.match(view, /canvasDrag\.canvas\.setPointerCapture/);
+  assert.match(view, /panmapCanvasPan/);
   assert.doesNotMatch(view, /analysisClient|fetch\(|XMLHttpRequest|createMinuteAccessibility/);
 });
 
