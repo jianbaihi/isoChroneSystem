@@ -6,12 +6,12 @@ const html = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8
 const view = fs.readFileSync(new URL('../view/panmap-mvp-view.js', import.meta.url), 'utf8');
 const styles = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
 
-test('developer toolbar retains both baselines and adds Annular Elastic v1 as a third mode', () => {
+test('developer toolbar retains both baselines and Annular Elastic v1 when later modes are appended', () => {
   assert.match(view, /Bubble Baseline/);
   assert.match(view, /Rectangular Elastic v0/);
   assert.match(view, /Annular Elastic v1/);
   assert.match(view, /data-layout-mode="annular"/);
-  assert.match(view, /\['elastic', 'annular'\]\.includes\(nextMode\)/);
+  assert.match(view, /\['elastic', 'annular', 'natural'\]\.includes\(nextMode\)/);
 });
 
 test('annular modules load before the view and use the existing single workspace', () => {

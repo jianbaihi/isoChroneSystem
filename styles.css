@@ -1383,7 +1383,7 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
 .panmap-mvp-header small { color: #7B8798; font-size: 11px; letter-spacing: .04em; }
 .panmap-mvp-header strong { font-size: 15px; }
 .panmap-mvp-header > span { color: #526174; font-size: 12px; }
-.panmap-dev-toolbar { position: absolute; top: 82px; right: 380px; z-index: 31; display: flex; gap: 3px; padding: 3px; border: 1px solid #DCE4EE; border-radius: 11px; background: rgba(243,246,250,.92); box-shadow: 0 8px 22px rgba(31,55,83,.09); backdrop-filter: blur(12px); pointer-events: auto; transition: right 180ms ease; }
+.panmap-dev-toolbar { position: absolute; top: 82px; right: 380px; z-index: 31; display: flex; flex-wrap: wrap; justify-content: flex-end; max-width: 380px; gap: 3px; padding: 3px; border: 1px solid #DCE4EE; border-radius: 11px; background: rgba(243,246,250,.92); box-shadow: 0 8px 22px rgba(31,55,83,.09); backdrop-filter: blur(12px); pointer-events: auto; transition: right 180ms ease; }
 .panmap-mvp.is-inspector-collapsed .panmap-dev-toolbar { right: 136px; }
 .panmap-dev-toolbar button { padding: 7px 10px; border: 0; border-radius: 8px; background: transparent; color: #64748B; font-size: 11px; cursor: pointer; }
 .panmap-dev-toolbar button.is-active { background: white; color: #1677FF; box-shadow: 0 2px 8px rgba(15,23,42,.08); }
@@ -1434,6 +1434,15 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
 .annular-runtime-metrics dd { color: #155E75; }
 .annular-alpha-probes { grid-template-columns: repeat(4, 1fr); }
 .annular-alpha-probes button { border-color: #BAE6FD; color: #0369A1; }
+.natural-frame { fill: #F7FAFC; stroke: #DDE7F0; }
+.natural-region { cursor: pointer; outline: none; }
+.natural-region path { fill-opacity: .69; stroke: rgba(255,255,255,.94); stroke-width: .9; vector-effect: non-scaling-stroke; transition: fill-opacity 140ms ease, filter 180ms ease, stroke 140ms ease; }
+.natural-region:hover path, .natural-region:focus-visible path { fill-opacity: .79; filter: drop-shadow(0 4px 8px rgba(30,41,59,.12)); }
+.natural-region.is-focused path { fill-opacity: .9; stroke: rgba(255,255,255,.98); stroke-width: 1.15; filter: drop-shadow(0 7px 13px rgba(30,41,59,.15)); }
+.natural-runtime-metrics > small { color: #0F766E; }
+.natural-runtime-metrics dl div { background: #F0FDFA; }
+.natural-runtime-metrics dd { color: #115E59; }
+.natural-alpha-probes button { border-color: #99F6E4; color: #0F766E; }
 .panmap-inspector { position: absolute; top: 20px; right: 20px; z-index: 30; width: clamp(300px, 24vw, 340px); max-height: calc(100% - 40px); overflow: auto; padding: 18px; border: 1px solid rgba(214,224,235,.94); border-radius: 16px; background: rgba(255,255,255,.9); box-shadow: 0 16px 38px rgba(31,55,83,.14); backdrop-filter: blur(14px); pointer-events: auto; transition: width 180ms ease, padding 180ms ease, box-shadow 180ms ease; }
 .panmap-inspector.is-collapsed { width: auto; overflow: visible; padding: 4px; }
 .panmap-inspector.is-collapsed .panmap-inspector-body { display: none; }

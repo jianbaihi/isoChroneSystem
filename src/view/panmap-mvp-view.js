@@ -18,6 +18,13 @@
   let annularAlpha = 0;
   let annularFocusId = null;
   let annularAnimationFrame = null;
+  let naturalInput = null;
+  let naturalResult = null;
+  let naturalRing = null;
+  let naturalReferenceState = null;
+  let naturalAlpha = 0;
+  let naturalFocusId = null;
+  let naturalAnimationFrame = null;
   let inspectorCollapsed = false;
   let miniMapCollapsed = false;
   let canvasPan = { x: 0, y: 0 };
@@ -26,8 +33,10 @@
   let resizeListenerMounted = false;
   const elasticFrames = [];
   const annularFrames = [];
+  const naturalFrames = [];
   const elasticAnimationDuration = 280;
   const annularAnimationDuration = 280;
+  const naturalAnimationDuration = 320;
 
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
   const styleFor = (code) => app.categoryStyleRegistry?.forCode?.(code) || { color: '#64748B', label: '其他' };
@@ -73,6 +82,23 @@
     html.dataset.annularRegionRingId = annularRing.ringId;
     html.dataset.annularRegionCount = String(annularResult.regions.length);
     return annularRing.ringId;
+  }
+
+  function initializeNaturalLayout() {
+    const adapted = app.elasticRegion?.naturalAnnularAdapter?.buildInput?.(snapshot, {
+      center: [430, 280], innerRadius: 104, outerRadius: 246, minShare: 0.035,
+    });
+    if (!adapted || !app.elasticRegion?.naturalBoundary?.engine) return null;
+    naturalRing = adapted.ring;
+    naturalInput = adapted.input;
+    naturalResult = app.elasticRegion.naturalBoundary.engine.solve(naturalInput);
+    naturalReferenceState = naturalResult.boundaryState;
+    naturalAlpha = 0;
+    naturalFocusId = null;
+    const html = global.document.documentElement;
+    html.dataset.naturalRegionRingId = naturalRing.ringId;
+    html.dataset.naturalRegionCount = String(naturalResult.regions.length);
+    return naturalRing.ringId;
   }
 
   function polygonPath(polygon) {
@@ -141,6 +167,41 @@
     </dl>${developerModeEnabled() ? '<div class="elastic-alpha-probes annular-alpha-probes" aria-label="开发验收 Alpha"><button type="button" data-annular-probe="0">0</button><button type="button" data-annular-probe="0.25">0.25</button><button type="button" data-annular-probe="0.5">0.5</button><button type="button" data-annular-probe="1">1</button></div>' : ''}<p>稳定类别顺序 · 固定中心与内外半径 · 悬浮不改布局</p></section>`;
   }
 
+  function naturalSvg() {
+    if (!naturalResult && !initializeNaturalLayout()) return '<p>Natural Annular v2 unavailable</p>';
+    const regions = naturalResult.regions.map((region) => {
+      const style = styleFor(region.id);
+      const focused = naturalFocusId === region.id && naturalAlpha > 0;
+      const shareLabel = `${(region.areaShare * 100).toFixed(1)}%`;
+      const detail = region.areaShare >= 0.065 ? `<text y="18" class="annular-detail">${region.metadata?.count || 0} 个 · ${shareLabel}</text>` : '';
+      return `<g class="natural-region${focused ? ' is-focused' : ''}" data-natural-category="${esc(region.id)}" role="button" tabindex="0" aria-label="${esc(style.label)} ${region.metadata?.count || 0}个 ${shareLabel}">
+        <path d="${polygonPath(region.polygon)}" fill="${style.color}"/>
+        <g class="annular-label" transform="translate(${region.labelPoint[0].toFixed(3)} ${region.labelPoint[1].toFixed(3)})"><text class="annular-category-label">${esc(style.label.length > 7 ? `${style.label.slice(0, 7)}…` : style.label)}</text>${detail}</g>
+      </g>`;
+    }).join('');
+    const center = naturalResult.input.center;
+    return `<svg class="panmap-mvp-svg annular-region-svg natural-region-svg" viewBox="0 0 860 560" preserveAspectRatio="xMidYMid meet" aria-label="单圈层自然共享边界弹性分区">
+      <circle cx="${center[0]}" cy="${center[1]}" r="${naturalResult.input.outerRadius + 16}" class="annular-frame natural-frame"/>
+      ${regions}
+      <g class="annular-center natural-center" aria-label="固定分析中心"><circle cx="${center[0]}" cy="${center[1]}" r="${naturalResult.input.innerRadius - 8}"/><circle cx="${center[0]}" cy="${center[1] - 13}" r="10" class="annular-center-dot"/><text x="${center[0]}" y="${center[1] + 15}">${esc(snapshot.center.label || '分析中心')}</text><text x="${center[0]}" y="${center[1] + 36}" class="annular-center-subtitle">${esc(naturalRing?.label || '单圈层')} · Natural v2</text></g>
+    </svg>`;
+  }
+
+  function naturalMetricsPanel() {
+    const metrics = naturalResult?.metrics;
+    if (!metrics) return '';
+    const focusedRegion = naturalResult.regions.find((region) => region.id === naturalFocusId);
+    const focusedIndex = focusedRegion ? naturalResult.regions.indexOf(focusedRegion) : -1;
+    const targetShare = focusedIndex >= 0 ? naturalResult.targetShares[focusedIndex] : null;
+    return `<section class="elastic-runtime-metrics natural-runtime-metrics" aria-label="自然共享边界指标"><small>Natural Annular v2 · ${esc(naturalRing?.label || '单圈层')}</small><dl>
+      <div><dt>Focus Alpha</dt><dd>${naturalAlpha.toFixed(2)}</dd></div><div><dt>求解时间</dt><dd>${metrics.solveMs.toFixed(3)} ms</dd></div>
+      <div><dt>Target / Actual</dt><dd>${targetShare == null ? '—' : `${(targetShare * 100).toFixed(2)}% / ${(focusedRegion.areaShare * 100).toFixed(2)}%`}</dd></div><div><dt>面积误差</dt><dd>${(metrics.meanAreaError * 100).toFixed(3)}% / ${(metrics.maxAreaError * 100).toFixed(3)}%</dd></div>
+      <div><dt>Gap / Overlap</dt><dd>${(metrics.gapRatio * 100).toFixed(3)}% / ${(metrics.overlapRatio * 100).toFixed(3)}%</dd></div><div><dt>Crossings</dt><dd>${metrics.boundaryCrossingCount} / ${metrics.selfIntersectionRegionCount}</dd></div>
+      <div><dt>平均曲率</dt><dd>${metrics.curvatureMean.toFixed(5)}</dd></div><div><dt>最大边界移动</dt><dd>${metrics.maxBoundaryMove.toFixed(3)} px</dd></div>
+      <div><dt>Warm Start</dt><dd>${metrics.warmStartUsed ? '是' : '否'}</dd></div><div><dt>共享边界</dt><dd>${metrics.allBoundariesSharedExactlyTwice ? '完整' : '异常'}</dd></div>
+    </dl>${developerModeEnabled() ? '<div class="elastic-alpha-probes annular-alpha-probes natural-alpha-probes" aria-label="Natural v2 开发验收 Alpha"><button type="button" data-natural-probe="0">0</button><button type="button" data-natural-probe="0.25">0.25</button><button type="button" data-natural-probe="0.5">0.5</button><button type="button" data-natural-probe="1">1</button></div>' : ''}<p>自然共享曲边 · 固定中心与内外半径 · Warm Start</p></section>`;
+  }
+
   function publishElasticRuntime(animation = {}) {
     if (!elasticResult) return;
     const frameDurations = elasticFrames.map((frame) => frame.frameMs);
@@ -199,6 +260,43 @@
     html.dataset.annularDroppedFrames = String(runtime.droppedFrames);
     html.dataset.annularAnimationDuration = runtime.animationDuration == null ? '' : runtime.animationDuration.toFixed(3);
     html.dataset.annularShares = JSON.stringify(runtime.shares);
+  }
+
+  function publishNaturalRuntime(animation = {}) {
+    if (!naturalResult) return;
+    const frameDurations = naturalFrames.map((frame) => frame.frameMs);
+    const metrics = naturalResult.metrics;
+    const runtime = {
+      layoutMode, focusAlpha: naturalAlpha, focusId: naturalFocusId,
+      metrics, shares: naturalResult.regions.map((region) => ({ id: region.id, targetShare: region.targetShare, actualShare: region.areaShare })),
+      boundaryFingerprint: naturalResult.boundaryGraph.boundaries.map((boundary) => `${boundary.id}:${boundary.controls.map((control) => `${control.radius.toFixed(3)},${control.angle.toFixed(6)}`).join(';')}`).join('|'),
+      animationDuration: animation.animationDuration ?? null,
+      frameCount: naturalFrames.length,
+      maxFrameMs: frameDurations.length ? Math.max(...frameDurations) : 0,
+      droppedFrames: frameDurations.filter((value) => value > 20).length,
+      providerCallCount: 0,
+    };
+    app.naturalBoundaryRuntime = runtime;
+    const html = global.document.documentElement;
+    html.dataset.naturalFocusAlpha = naturalAlpha.toFixed(3);
+    html.dataset.naturalFocusId = naturalFocusId || '';
+    html.dataset.naturalSolveMs = metrics.solveMs.toFixed(3);
+    html.dataset.naturalGapRatio = metrics.gapRatio.toFixed(8);
+    html.dataset.naturalOverlapRatio = metrics.overlapRatio.toFixed(8);
+    html.dataset.naturalMeanAreaError = metrics.meanAreaError.toFixed(8);
+    html.dataset.naturalMaxAreaError = metrics.maxAreaError.toFixed(8);
+    html.dataset.naturalBoundaryCrossings = String(metrics.boundaryCrossingCount);
+    html.dataset.naturalSelfIntersections = String(metrics.selfIntersectionRegionCount);
+    html.dataset.naturalOrderChanges = String(metrics.orderChangeCount);
+    html.dataset.naturalCenterDelta = metrics.centerDelta.toFixed(8);
+    html.dataset.naturalRadiusDelta = Math.max(metrics.innerRadiusDelta, metrics.outerRadiusDelta).toFixed(8);
+    html.dataset.naturalWarmStart = String(metrics.warmStartUsed);
+    html.dataset.naturalProviderCallCount = '0';
+    html.dataset.naturalFrameCount = String(runtime.frameCount);
+    html.dataset.naturalMaxFrameMs = runtime.maxFrameMs.toFixed(3);
+    html.dataset.naturalDroppedFrames = String(runtime.droppedFrames);
+    html.dataset.naturalAnimationDuration = runtime.animationDuration == null ? '' : runtime.animationDuration.toFixed(3);
+    html.dataset.naturalBoundaryFingerprint = runtime.boundaryFingerprint;
   }
 
   function animateElastic(targetAlpha, focusId, onComplete) {
@@ -263,22 +361,62 @@
     annularAnimationFrame = global.requestAnimationFrame(tick);
   }
 
+  function animateNatural(targetAlpha, focusId, onComplete) {
+    if (!naturalInput || !naturalResult) initializeNaturalLayout();
+    if (!naturalInput || !naturalResult) return;
+    global.cancelAnimationFrame?.(naturalAnimationFrame);
+    naturalFrames.length = 0;
+    const fromAlpha = naturalAlpha;
+    const started = global.performance.now();
+    let previousTimestamp = started;
+    naturalFocusId = focusId || naturalFocusId;
+    const tick = (timestamp) => {
+      const progress = Math.min(1, (timestamp - started) / naturalAnimationDuration);
+      const eased = app.elasticRegion.naturalBoundary.interpolation.easeInOutCubic(progress);
+      naturalAlpha = app.elasticRegion.naturalBoundary.interpolation.lerp(fromAlpha, targetAlpha, eased);
+      naturalInput = {
+        ...naturalInput,
+        focus: { id: naturalFocusId, alpha: naturalAlpha, expansionFactor: 1.8, maxShare: 0.45 },
+        previousBoundaryState: naturalResult.boundaryState,
+        referenceBoundaryState: naturalReferenceState,
+        parameters: { ...naturalInput.parameters, iterations: progress === 1 ? 32 : 4 },
+      };
+      naturalResult = app.elasticRegion.naturalBoundary.engine.solve(naturalInput);
+      naturalFrames.push({ alpha: naturalAlpha, frameMs: timestamp - previousTimestamp, solveMs: naturalResult.metrics.solveMs });
+      previousTimestamp = timestamp;
+      render(store.getState());
+      publishNaturalRuntime();
+      if (progress < 1) naturalAnimationFrame = global.requestAnimationFrame(tick);
+      else {
+        if (targetAlpha === 0) naturalFocusId = null;
+        publishNaturalRuntime({ animationDuration: timestamp - started });
+        onComplete?.();
+      }
+    };
+    naturalAnimationFrame = global.requestAnimationFrame(tick);
+  }
+
   function setLayoutMode(nextMode) {
-    layoutMode = ['elastic', 'annular'].includes(nextMode) ? nextMode : 'bubble';
+    layoutMode = ['elastic', 'annular', 'natural'].includes(nextMode) ? nextMode : 'bubble';
     if (layoutMode === 'elastic') {
       const ringId = initializeElasticLayout();
       if (ringId) store?.dispatch({ type: 'FOCUS_RING', ringId });
     } else if (layoutMode === 'annular') {
       const ringId = initializeAnnularLayout();
       if (ringId) store?.dispatch({ type: 'FOCUS_RING', ringId });
+    } else if (layoutMode === 'natural') {
+      const ringId = initializeNaturalLayout();
+      if (ringId) store?.dispatch({ type: 'FOCUS_RING', ringId });
     } else {
       global.cancelAnimationFrame?.(elasticAnimationFrame);
       global.cancelAnimationFrame?.(annularAnimationFrame);
+      global.cancelAnimationFrame?.(naturalAnimationFrame);
       store?.dispatch({ type: 'OVERVIEW' });
     }
     global.document.documentElement.dataset.panmapLayoutMode = layoutMode;
     publishElasticRuntime();
     publishAnnularRuntime();
+    publishNaturalRuntime();
     render(store?.getState?.() || app.panmapMvpState.initialState());
   }
 
@@ -426,14 +564,15 @@
     if (!root || !snapshot) return;
     const elasticMode = layoutMode === 'elastic';
     const annularMode = layoutMode === 'annular';
-    const labelMode = !elasticMode && !annularMode && (state.mode === 'category-focused' || state.mode === 'poi-selected');
+    const naturalMode = layoutMode === 'natural';
+    const labelMode = !elasticMode && !annularMode && !naturalMode && (state.mode === 'category-focused' || state.mode === 'poi-selected');
     const labelResult = labelMode ? labelSvg(state) : null;
     root.dataset.mode = state.mode;
-    const modeSwitch = developerModeEnabled() ? `<div class="panmap-dev-toolbar" role="group" aria-label="泛地图布局算法"><button type="button" data-layout-mode="bubble" class="${layoutMode === 'bubble' ? 'is-active' : ''}">Bubble Baseline</button><button type="button" data-layout-mode="elastic" class="${layoutMode === 'elastic' ? 'is-active' : ''}">Rectangular Elastic v0</button><button type="button" data-layout-mode="annular" class="${layoutMode === 'annular' ? 'is-active' : ''}">Annular Elastic v1</button></div>` : '';
+    const modeSwitch = developerModeEnabled() ? `<div class="panmap-dev-toolbar" role="group" aria-label="泛地图布局算法"><button type="button" data-layout-mode="bubble" class="${layoutMode === 'bubble' ? 'is-active' : ''}">Bubble Baseline</button><button type="button" data-layout-mode="elastic" class="${layoutMode === 'elastic' ? 'is-active' : ''}">Rectangular Elastic v0</button><button type="button" data-layout-mode="annular" class="${layoutMode === 'annular' ? 'is-active' : ''}">Annular Elastic v1</button><button type="button" data-layout-mode="natural" class="${layoutMode === 'natural' ? 'is-active' : ''}">Natural Annular v2</button></div>` : '';
     const inspectorMode = state.mode === 'poi-selected' ? 'detail' : 'summary';
     root.innerHTML = `<header class="panmap-mvp-header panmap-workspace-meta"><div><small>当前分析快照 · Provider API 0</small><strong>${esc(snapshot.center.label)} · ${profileLabels[snapshot.profile] || esc(snapshot.profile)} · ${snapshot.rangesMinutes.join(' / ')} 分钟</strong></div><span>${snapshot.metadata.categoryCount} 类 · ${snapshot.metadata.eligiblePoiCount} POI</span></header>
-      <main class="panmap-main-canvas panmap-mvp-canvas" data-panmap-main-canvas><div class="panmap-canvas-stage">${elasticMode ? elasticSvg() : annularMode ? annularSvg() : labelResult ? labelResult.markup : overviewSvg(state)}</div></main>
-      <aside class="panmap-inspector panmap-mvp-inspector${inspectorCollapsed ? ' is-collapsed' : ''}" data-inspector-mode="${inspectorCollapsed ? 'collapsed' : inspectorMode}" aria-label="泛地图 Inspector"><button type="button" class="panmap-overlay-toggle panmap-inspector-toggle" data-panmap-inspector-toggle aria-expanded="${String(!inspectorCollapsed)}">${inspectorCollapsed ? '展开 Inspector' : '收起'}</button><div class="panmap-inspector-body">${statsPanel(state, labelResult?.layout)}${elasticMode ? elasticMetricsPanel() : annularMode ? annularMetricsPanel() : ''}</div></aside>
+      <main class="panmap-main-canvas panmap-mvp-canvas" data-panmap-main-canvas><div class="panmap-canvas-stage">${elasticMode ? elasticSvg() : annularMode ? annularSvg() : naturalMode ? naturalSvg() : labelResult ? labelResult.markup : overviewSvg(state)}</div></main>
+      <aside class="panmap-inspector panmap-mvp-inspector${inspectorCollapsed ? ' is-collapsed' : ''}" data-inspector-mode="${inspectorCollapsed ? 'collapsed' : inspectorMode}" aria-label="泛地图 Inspector"><button type="button" class="panmap-overlay-toggle panmap-inspector-toggle" data-panmap-inspector-toggle aria-expanded="${String(!inspectorCollapsed)}">${inspectorCollapsed ? '展开 Inspector' : '收起'}</button><div class="panmap-inspector-body">${statsPanel(state, labelResult?.layout)}${elasticMode ? elasticMetricsPanel() : annularMode ? annularMetricsPanel() : naturalMode ? naturalMetricsPanel() : ''}</div></aside>
       <button type="button" class="panmap-overlay-toggle panmap-mini-map-toggle" data-panmap-mini-map-toggle aria-expanded="${String(!miniMapCollapsed)}">${miniMapCollapsed ? '显示传统地图' : '隐藏传统地图'}</button>
       <nav class="panmap-breadcrumb panmap-mvp-breadcrumb" aria-label="泛地图面包屑">${breadcrumb(state)}</nav>
       ${modeSwitch}`;
@@ -477,6 +616,14 @@
       animateAnnular(nextAlpha, focusId, nextAlpha === 0 ? () => store.dispatch({ type: 'BACK_RING' }) : null);
       return;
     }
+    const naturalProbe = target.closest('[data-natural-probe]');
+    if (naturalProbe && layoutMode === 'natural') {
+      const nextAlpha = Number(naturalProbe.dataset.naturalProbe);
+      const focusId = naturalFocusId || naturalResult?.regions.find((region) => region.id === '050000')?.id || naturalResult?.regions[0]?.id;
+      if (!store.getState().focusedCategoryCode && nextAlpha > 0) store.dispatch({ type: 'FOCUS_CATEGORY', categoryCode: focusId });
+      animateNatural(nextAlpha, focusId, nextAlpha === 0 ? () => store.dispatch({ type: 'BACK_RING' }) : null);
+      return;
+    }
     const layoutButton = target.closest('[data-layout-mode]');
     if (layoutButton) { setLayoutMode(layoutButton.dataset.layoutMode); return; }
     const elasticCategory = target.closest('[data-elastic-category]');
@@ -503,6 +650,18 @@
       }
       return;
     }
+    const naturalCategory = target.closest('[data-natural-category]');
+    if (naturalCategory && layoutMode === 'natural') {
+      const categoryCode = naturalCategory.dataset.naturalCategory;
+      const current = store.getState();
+      if (current.focusedCategoryCode === categoryCode && naturalAlpha > 0) {
+        animateNatural(0, categoryCode, () => store.dispatch({ type: 'BACK_RING' }));
+      } else {
+        store.dispatch({ type: 'FOCUS_CATEGORY', categoryCode });
+        animateNatural(1, categoryCode);
+      }
+      return;
+    }
     const ring = target.closest('[data-ring-focus]');
     const category = target.closest('[data-category-code]');
     const poi = target.closest('[data-poi-id]');
@@ -526,6 +685,10 @@
       }
       if (layoutMode === 'annular' && back.dataset.panmapBack === 'ring' && annularAlpha > 0) {
         animateAnnular(0, annularFocusId, () => store.dispatch({ type: 'BACK_RING' }));
+        return;
+      }
+      if (layoutMode === 'natural' && back.dataset.panmapBack === 'ring' && naturalAlpha > 0) {
+        animateNatural(0, naturalFocusId, () => store.dispatch({ type: 'BACK_RING' }));
         return;
       }
       store.dispatch({ type: actions[back.dataset.panmapBack] });
@@ -591,12 +754,20 @@
     unsubscribe = store.subscribe(render);
     layoutMode = 'bubble';
     global.cancelAnimationFrame?.(annularAnimationFrame);
+    global.cancelAnimationFrame?.(naturalAnimationFrame);
     annularInput = null;
     annularResult = null;
     annularRing = null;
     annularAlpha = 0;
     annularFocusId = null;
     annularFrames.length = 0;
+    naturalInput = null;
+    naturalResult = null;
+    naturalRing = null;
+    naturalReferenceState = null;
+    naturalAlpha = 0;
+    naturalFocusId = null;
+    naturalFrames.length = 0;
     inspectorCollapsed = false;
     miniMapCollapsed = false;
     canvasPan = { x: 0, y: 0 };
@@ -613,5 +784,5 @@
     root.querySelector('#panmapEmptyBack')?.addEventListener('click', () => document.getElementById('backToIsochrone')?.click());
   }
 
-  app.panmapMvpView = Object.freeze({ mount, showEmpty, render, setLayoutMode, animateElastic, animateAnnular });
+  app.panmapMvpView = Object.freeze({ mount, showEmpty, render, setLayoutMode, animateElastic, animateAnnular, animateNatural });
 })(window);
