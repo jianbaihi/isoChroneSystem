@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "logicalGeometry": { "center": [430, 280], "innerRadius": 104, "outerRadius": 246 },
+  "viewports": [
+    { "width": 1280, "height": 720, "workspace": [749, 558], "mainCanvasAreaRatio": 1, "shareFingerprint": "identical", "providerCallCount": 0 },
+    { "width": 1440, "height": 900, "workspace": [909, 738], "mainCanvasAreaRatio": 1, "shareFingerprint": "identical", "providerCallCount": 0 },
+    { "width": 1920, "height": 1080, "workspace": [1389, 918], "mainCanvasAreaRatio": 1, "shareFingerprint": "identical", "providerCallCount": 0 }
+  ],
+  "workspaceCount": 1,
+  "sharesChangedByResize": false,
+  "logicalCenterChangedByResize": false,
+  "radiiChangedByResize": false,
+  "developerToolbarHeaderOverlap": false
+}

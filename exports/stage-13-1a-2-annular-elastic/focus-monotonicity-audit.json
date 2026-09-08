@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "focusCategoryCode": "050000",
+  "focusCategoryLabel": "餐饮服务",
+  "samples": [
+    { "alpha": 0, "share": 0.17643741940525964 },
+    { "alpha": 0.25, "share": 0.21172490328631157 },
+    { "alpha": 0.5, "share": 0.24701238716736348 },
+    { "alpha": 1, "share": 0.31758735492946736 }
+  ],
+  "nonDecreasing": true,
+  "contextCategoriesRemainVisible": true,
+  "minimumContextShare": 0.035
+}

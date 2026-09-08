@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "annular-elastic-input-v1",
+  "scenario": {
+    "centerLabel": "武汉·黄鹤楼",
+    "profile": "foot-walking",
+    "rangesMinutes": [10, 20, 30],
+    "exclusiveRingId": "ring-10-20",
+    "sourceSnapshotPoiCount": 3841,
+    "exclusiveRingPoiCount": 1845
+  },
+  "input": {
+    "center": [430, 280],
+    "innerRadius": 104,
+    "outerRadius": 246,
+    "startAngle": -1.5707963267948966,
+    "minShare": 0.035,
+    "focusExpansionFactor": 1.8,
+    "maxFocusShare": 0.45,
+    "regions": [
+      { "id": "050000", "order": 0, "baseWeight": 343 },
+      { "id": "060000", "order": 1, "baseWeight": 299 },
+      { "id": "070000", "order": 2, "baseWeight": 322 },
+      { "id": "080000", "order": 3, "baseWeight": 158 },
+      { "id": "090000", "order": 4, "baseWeight": 284 },
+      { "id": "100000", "order": 5, "baseWeight": 261 },
+      { "id": "110000", "order": 6, "baseWeight": 47 },
+      { "id": "140000", "order": 7, "baseWeight": 45 },
+      { "id": "150000", "order": 8, "baseWeight": 40 },
+      { "id": "200000", "order": 9, "baseWeight": 46 }
+    ]
+  },
+  "outputSchemaVersion": "annular-elastic-output-v1",
+  "outputFields": [
+    "center", "innerRadius", "outerRadius", "regions[].startAngle", "regions[].endAngle",
+    "regions[].angularShare", "regions[].areaShare", "regions[].polygon", "regions[].centroid", "metrics", "previousState"
+  ]
+}

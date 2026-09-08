@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "taxonomyOrder": ["050000", "060000", "070000", "080000", "090000", "100000", "110000", "140000", "150000", "200000"],
+  "alphaSamples": [0, 0.25, 0.5, 0.75, 1],
+  "orderChangeCount": 0,
+  "adjacencyStable": true,
+  "hoverChangesOrder": false,
+  "categoryPositionEncodesGeography": false
+}

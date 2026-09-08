@@ -1,0 +1,22 @@
+{
+  "result": "PASS",
+  "regionCount": 10,
+  "nodeBenchmark": {
+    "warmupRuns": 500,
+    "batchCount": 20,
+    "solvesPerBatch": 100,
+    "medianGeometryBuildMs": 0.18667375,
+    "p95GeometryBuildMs": 0.19236541,
+    "maxBatchMeanGeometryBuildMs": 0.19506417,
+    "budgetMs": 2
+  },
+  "browser": {
+    "animationDurationObservedMs": [296.0, 281.4, 281.3, 280.8, 282.7],
+    "targetDurationRangeMs": [260, 320],
+    "finalFrameCount": 18,
+    "finalMaxFrameMs": 17.6,
+    "finalDroppedFrames": 0,
+    "maxObservedGeometryBuildMs": 0.5,
+    "providerCallCount": 0
+  }
+}

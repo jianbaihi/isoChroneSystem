@@ -1,0 +1,22 @@
+{
+  "result": "PASS",
+  "partition": "shared annular sectors",
+  "center": [430, 280],
+  "innerRadius": 104,
+  "outerRadius": 246,
+  "arcSampleStepDegrees": 1,
+  "annulusArea": 156137.15488341273,
+  "sumRegionArea": 156137.15488341273,
+  "gapArea": 0,
+  "overlapArea": 0,
+  "coverageRatio": 1,
+  "sampledCoverageRatio": 0.9999492312032947,
+  "gapRatio": 0,
+  "overlapRatio": 0,
+  "meanAreaShareError": 0,
+  "maxAreaShareError": 0,
+  "allPolygonPointsInsideAnnulus": true,
+  "centerRemainsEmpty": true,
+  "wrapAroundClosed": true,
+  "finalAngleEqualsStartPlusTau": true
+}

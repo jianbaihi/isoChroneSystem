@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "path": [0, 1, 0],
+  "sharesExactReturn": true,
+  "anglesExactReturn": true,
+  "polygonsExactReturn": true,
+  "centerDisplacement": 0,
+  "innerRadiusDelta": 0,
+  "outerRadiusDelta": 0,
+  "providerCallCount": 0
+}
