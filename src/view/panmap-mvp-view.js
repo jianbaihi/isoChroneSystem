@@ -12,6 +12,12 @@
   let elasticAlpha = 0;
   let elasticFocusId = null;
   let elasticAnimationFrame = null;
+  let annularInput = null;
+  let annularResult = null;
+  let annularRing = null;
+  let annularAlpha = 0;
+  let annularFocusId = null;
+  let annularAnimationFrame = null;
   let inspectorCollapsed = false;
   let miniMapCollapsed = false;
   let canvasPan = { x: 0, y: 0 };
@@ -19,7 +25,9 @@
   let suppressCanvasClick = false;
   let resizeListenerMounted = false;
   const elasticFrames = [];
+  const annularFrames = [];
   const elasticAnimationDuration = 280;
+  const annularAnimationDuration = 280;
 
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
   const styleFor = (code) => app.categoryStyleRegistry?.forCode?.(code) || { color: '#64748B', label: '其他' };
@@ -51,6 +59,22 @@
     return target.ring.ringId;
   }
 
+  function initializeAnnularLayout() {
+    const adapted = app.elasticRegion?.annularCategoryAdapter?.buildInput?.(snapshot, {
+      center: [430, 280], innerRadius: 104, outerRadius: 246, minShare: 0.035,
+    });
+    if (!adapted || !app.elasticRegion?.annular?.engine) return null;
+    annularRing = adapted.ring;
+    annularInput = adapted.input;
+    annularResult = app.elasticRegion.annular.engine.solve(annularInput);
+    annularAlpha = 0;
+    annularFocusId = null;
+    const html = global.document.documentElement;
+    html.dataset.annularRegionRingId = annularRing.ringId;
+    html.dataset.annularRegionCount = String(annularResult.regions.length);
+    return annularRing.ringId;
+  }
+
   function polygonPath(polygon) {
     return polygon.length ? `M ${polygon.map((point) => `${point[0].toFixed(3)} ${point[1].toFixed(3)}`).join(' L ')} Z` : '';
   }
@@ -80,6 +104,43 @@
     </dl>${developerModeEnabled() ? '<div class="elastic-alpha-probes" aria-label="开发验收 Alpha"><button type="button" data-elastic-probe="0">0</button><button type="button" data-elastic-probe="0.5">0.5</button><button type="button" data-elastic-probe="1">1</button></div>' : ''}<p>直线共享边界 · 固定父容器 · POI 文本未参与</p></section>`;
   }
 
+  function annularSvg() {
+    if (!annularResult && !initializeAnnularLayout()) return '<p>Annular Elastic v1 unavailable</p>';
+    const regions = annularResult.regions.map((region) => {
+      const style = styleFor(region.id);
+      const focused = annularFocusId === region.id && annularAlpha > 0;
+      const shareLabel = `${(region.angleShare * 100).toFixed(1)}%`;
+      const detail = region.angleShare >= 0.065 ? `<text y="18" class="annular-detail">${region.metadata?.count || 0} 个 · ${shareLabel}</text>` : '';
+      return `<g class="annular-region${focused ? ' is-focused' : ''}" data-annular-category="${esc(region.id)}" role="button" tabindex="0" aria-label="${esc(style.label)} ${region.metadata?.count || 0}个 ${shareLabel}">
+        <path d="${polygonPath(region.polygon)}" fill="${style.color}"/>
+        <g class="annular-label" transform="translate(${region.labelPoint[0].toFixed(3)} ${region.labelPoint[1].toFixed(3)})"><text class="annular-category-label">${esc(style.label.length > 7 ? `${style.label.slice(0, 7)}…` : style.label)}</text>${detail}</g>
+      </g>`;
+    }).join('');
+    const center = annularResult.input.center;
+    return `<svg class="panmap-mvp-svg annular-region-svg" viewBox="0 0 860 560" preserveAspectRatio="xMidYMid meet" aria-label="单圈层类别环形弹性共享分区">
+      <circle cx="${center[0]}" cy="${center[1]}" r="${annularResult.input.outerRadius + 16}" class="annular-frame"/>
+      ${regions}
+      <g class="annular-center" aria-label="固定分析中心"><circle cx="${center[0]}" cy="${center[1]}" r="${annularResult.input.innerRadius - 8}"/><circle cx="${center[0]}" cy="${center[1] - 13}" r="10" class="annular-center-dot"/><text x="${center[0]}" y="${center[1] + 15}">${esc(snapshot.center.label || '分析中心')}</text><text x="${center[0]}" y="${center[1] + 36}" class="annular-center-subtitle">${esc(annularRing?.label || '单圈层')} · 固定中心</text></g>
+    </svg>`;
+  }
+
+  function annularMetricsPanel() {
+    const metrics = annularResult?.metrics;
+    if (!metrics) return '';
+    const focusedRegion = annularResult.regions.find((region) => region.id === annularFocusId);
+    const focusedIndex = focusedRegion ? annularResult.regions.indexOf(focusedRegion) : -1;
+    const baseShares = app.elasticRegion.annular.shareSolver.baseShares(annularResult.input.regions);
+    const focusLabel = focusedRegion ? styleFor(focusedRegion.id).label : '—';
+    const baseShare = focusedIndex >= 0 ? baseShares[focusedIndex] : null;
+    return `<section class="elastic-runtime-metrics annular-runtime-metrics" aria-label="环形弹性区域指标"><small>Annular Elastic v1 · ${esc(annularRing?.label || '单圈层')}</small><dl>
+      <div><dt>Focus Alpha</dt><dd>${annularAlpha.toFixed(2)}</dd></div><div><dt>几何构建</dt><dd>${metrics.geometryBuildMs.toFixed(3)} ms</dd></div>
+      <div><dt>当前类别</dt><dd>${esc(focusLabel)}</dd></div><div><dt>Base / Current</dt><dd>${baseShare == null ? '—' : `${(baseShare * 100).toFixed(1)}% / ${(focusedRegion.areaShare * 100).toFixed(1)}%`}</dd></div>
+      <div><dt>Coverage</dt><dd>${(metrics.coverageRatio * 100).toFixed(3)}%</dd></div><div><dt>Gap / Overlap</dt><dd>${(metrics.gapRatio * 100).toFixed(3)}% / ${(metrics.overlapRatio * 100).toFixed(3)}%</dd></div>
+      <div><dt>最大面积误差</dt><dd>${(metrics.maxAreaError * 100).toFixed(3)}%</dd></div><div><dt>顺序变化</dt><dd>${metrics.orderChangeCount}</dd></div>
+      <div><dt>中心位移</dt><dd>${metrics.centerDelta.toFixed(3)}</dd></div><div><dt>半径变化</dt><dd>${Math.max(metrics.innerRadiusDelta, metrics.outerRadiusDelta).toFixed(3)}</dd></div>
+    </dl>${developerModeEnabled() ? '<div class="elastic-alpha-probes annular-alpha-probes" aria-label="开发验收 Alpha"><button type="button" data-annular-probe="0">0</button><button type="button" data-annular-probe="0.25">0.25</button><button type="button" data-annular-probe="0.5">0.5</button><button type="button" data-annular-probe="1">1</button></div>' : ''}<p>稳定类别顺序 · 固定中心与内外半径 · 悬浮不改布局</p></section>`;
+  }
+
   function publishElasticRuntime(animation = {}) {
     if (!elasticResult) return;
     const frameDurations = elasticFrames.map((frame) => frame.frameMs);
@@ -104,6 +165,40 @@
     html.dataset.elasticMaxFrameMs = runtime.maxFrameMs.toFixed(3);
     html.dataset.elasticDroppedFrames = String(runtime.droppedFrames);
     html.dataset.elasticAnimationDuration = runtime.animationDuration == null ? '' : runtime.animationDuration.toFixed(3);
+  }
+
+  function publishAnnularRuntime(animation = {}) {
+    if (!annularResult) return;
+    const frameDurations = annularFrames.map((frame) => frame.frameMs);
+    const metrics = annularResult.metrics;
+    const runtime = {
+      layoutMode, focusAlpha: annularAlpha, focusId: annularFocusId,
+      metrics, shares: annularResult.regions.map((region) => ({ id: region.id, share: region.angleShare })),
+      animationDuration: animation.animationDuration ?? null,
+      frameCount: annularFrames.length,
+      maxFrameMs: frameDurations.length ? Math.max(...frameDurations) : 0,
+      droppedFrames: frameDurations.filter((value) => value > 20).length,
+      providerCallCount: 0,
+    };
+    app.annularRegionRuntime = runtime;
+    const html = global.document.documentElement;
+    html.dataset.annularFocusAlpha = annularAlpha.toFixed(3);
+    html.dataset.annularFocusId = annularFocusId || '';
+    html.dataset.annularCoverageRatio = metrics.coverageRatio.toFixed(8);
+    html.dataset.annularGapRatio = metrics.gapRatio.toFixed(8);
+    html.dataset.annularOverlapRatio = metrics.overlapRatio.toFixed(8);
+    html.dataset.annularMeanAreaError = metrics.meanAreaError.toFixed(8);
+    html.dataset.annularMaxAreaError = metrics.maxAreaError.toFixed(8);
+    html.dataset.annularOrderChanges = String(metrics.orderChangeCount);
+    html.dataset.annularCenterDelta = metrics.centerDelta.toFixed(8);
+    html.dataset.annularRadiusDelta = Math.max(metrics.innerRadiusDelta, metrics.outerRadiusDelta).toFixed(8);
+    html.dataset.annularGeometryBuildMs = metrics.geometryBuildMs.toFixed(3);
+    html.dataset.annularProviderCallCount = '0';
+    html.dataset.annularFrameCount = String(runtime.frameCount);
+    html.dataset.annularMaxFrameMs = runtime.maxFrameMs.toFixed(3);
+    html.dataset.annularDroppedFrames = String(runtime.droppedFrames);
+    html.dataset.annularAnimationDuration = runtime.animationDuration == null ? '' : runtime.animationDuration.toFixed(3);
+    html.dataset.annularShares = JSON.stringify(runtime.shares);
   }
 
   function animateElastic(targetAlpha, focusId, onComplete) {
@@ -135,17 +230,55 @@
     elasticAnimationFrame = global.requestAnimationFrame(tick);
   }
 
+  function animateAnnular(targetAlpha, focusId, onComplete) {
+    if (!annularInput || !annularResult) initializeAnnularLayout();
+    if (!annularInput || !annularResult) return;
+    global.cancelAnimationFrame?.(annularAnimationFrame);
+    annularFrames.length = 0;
+    const fromAlpha = annularAlpha;
+    const started = global.performance.now();
+    let previousTimestamp = started;
+    annularFocusId = focusId || annularFocusId;
+    const tick = (timestamp) => {
+      const progress = Math.min(1, (timestamp - started) / annularAnimationDuration);
+      const eased = app.elasticRegion.annular.interpolation.easeInOutCubic(progress);
+      annularAlpha = app.elasticRegion.annular.interpolation.lerp(fromAlpha, targetAlpha, eased);
+      annularInput = {
+        ...annularInput,
+        focus: { id: annularFocusId, alpha: annularAlpha, expansionFactor: 1.8, maxShare: 0.45 },
+        previousState: annularResult.previousState,
+      };
+      annularResult = app.elasticRegion.annular.engine.solve(annularInput);
+      annularFrames.push({ alpha: annularAlpha, frameMs: timestamp - previousTimestamp, geometryBuildMs: annularResult.metrics.geometryBuildMs });
+      previousTimestamp = timestamp;
+      render(store.getState());
+      publishAnnularRuntime();
+      if (progress < 1) annularAnimationFrame = global.requestAnimationFrame(tick);
+      else {
+        if (targetAlpha === 0) annularFocusId = null;
+        publishAnnularRuntime({ animationDuration: timestamp - started });
+        onComplete?.();
+      }
+    };
+    annularAnimationFrame = global.requestAnimationFrame(tick);
+  }
+
   function setLayoutMode(nextMode) {
-    layoutMode = nextMode === 'elastic' ? 'elastic' : 'bubble';
+    layoutMode = ['elastic', 'annular'].includes(nextMode) ? nextMode : 'bubble';
     if (layoutMode === 'elastic') {
       const ringId = initializeElasticLayout();
       if (ringId) store?.dispatch({ type: 'FOCUS_RING', ringId });
+    } else if (layoutMode === 'annular') {
+      const ringId = initializeAnnularLayout();
+      if (ringId) store?.dispatch({ type: 'FOCUS_RING', ringId });
     } else {
       global.cancelAnimationFrame?.(elasticAnimationFrame);
+      global.cancelAnimationFrame?.(annularAnimationFrame);
       store?.dispatch({ type: 'OVERVIEW' });
     }
     global.document.documentElement.dataset.panmapLayoutMode = layoutMode;
     publishElasticRuntime();
+    publishAnnularRuntime();
     render(store?.getState?.() || app.panmapMvpState.initialState());
   }
 
@@ -292,14 +425,15 @@
     const root = document.getElementById('panmapMvp');
     if (!root || !snapshot) return;
     const elasticMode = layoutMode === 'elastic';
-    const labelMode = !elasticMode && (state.mode === 'category-focused' || state.mode === 'poi-selected');
+    const annularMode = layoutMode === 'annular';
+    const labelMode = !elasticMode && !annularMode && (state.mode === 'category-focused' || state.mode === 'poi-selected');
     const labelResult = labelMode ? labelSvg(state) : null;
     root.dataset.mode = state.mode;
-    const modeSwitch = developerModeEnabled() ? `<div class="panmap-dev-toolbar" role="group" aria-label="泛地图布局算法"><button type="button" data-layout-mode="bubble" class="${layoutMode === 'bubble' ? 'is-active' : ''}">Bubble Baseline</button><button type="button" data-layout-mode="elastic" class="${layoutMode === 'elastic' ? 'is-active' : ''}">Elastic Region v0</button></div>` : '';
+    const modeSwitch = developerModeEnabled() ? `<div class="panmap-dev-toolbar" role="group" aria-label="泛地图布局算法"><button type="button" data-layout-mode="bubble" class="${layoutMode === 'bubble' ? 'is-active' : ''}">Bubble Baseline</button><button type="button" data-layout-mode="elastic" class="${layoutMode === 'elastic' ? 'is-active' : ''}">Rectangular Elastic v0</button><button type="button" data-layout-mode="annular" class="${layoutMode === 'annular' ? 'is-active' : ''}">Annular Elastic v1</button></div>` : '';
     const inspectorMode = state.mode === 'poi-selected' ? 'detail' : 'summary';
     root.innerHTML = `<header class="panmap-mvp-header panmap-workspace-meta"><div><small>当前分析快照 · Provider API 0</small><strong>${esc(snapshot.center.label)} · ${profileLabels[snapshot.profile] || esc(snapshot.profile)} · ${snapshot.rangesMinutes.join(' / ')} 分钟</strong></div><span>${snapshot.metadata.categoryCount} 类 · ${snapshot.metadata.eligiblePoiCount} POI</span></header>
-      <main class="panmap-main-canvas panmap-mvp-canvas" data-panmap-main-canvas><div class="panmap-canvas-stage">${elasticMode ? elasticSvg() : labelResult ? labelResult.markup : overviewSvg(state)}</div></main>
-      <aside class="panmap-inspector panmap-mvp-inspector${inspectorCollapsed ? ' is-collapsed' : ''}" data-inspector-mode="${inspectorCollapsed ? 'collapsed' : inspectorMode}" aria-label="泛地图 Inspector"><button type="button" class="panmap-overlay-toggle panmap-inspector-toggle" data-panmap-inspector-toggle aria-expanded="${String(!inspectorCollapsed)}">${inspectorCollapsed ? '展开 Inspector' : '收起'}</button><div class="panmap-inspector-body">${statsPanel(state, labelResult?.layout)}${elasticMode ? elasticMetricsPanel() : ''}</div></aside>
+      <main class="panmap-main-canvas panmap-mvp-canvas" data-panmap-main-canvas><div class="panmap-canvas-stage">${elasticMode ? elasticSvg() : annularMode ? annularSvg() : labelResult ? labelResult.markup : overviewSvg(state)}</div></main>
+      <aside class="panmap-inspector panmap-mvp-inspector${inspectorCollapsed ? ' is-collapsed' : ''}" data-inspector-mode="${inspectorCollapsed ? 'collapsed' : inspectorMode}" aria-label="泛地图 Inspector"><button type="button" class="panmap-overlay-toggle panmap-inspector-toggle" data-panmap-inspector-toggle aria-expanded="${String(!inspectorCollapsed)}">${inspectorCollapsed ? '展开 Inspector' : '收起'}</button><div class="panmap-inspector-body">${statsPanel(state, labelResult?.layout)}${elasticMode ? elasticMetricsPanel() : annularMode ? annularMetricsPanel() : ''}</div></aside>
       <button type="button" class="panmap-overlay-toggle panmap-mini-map-toggle" data-panmap-mini-map-toggle aria-expanded="${String(!miniMapCollapsed)}">${miniMapCollapsed ? '显示传统地图' : '隐藏传统地图'}</button>
       <nav class="panmap-breadcrumb panmap-mvp-breadcrumb" aria-label="泛地图面包屑">${breadcrumb(state)}</nav>
       ${modeSwitch}`;
@@ -335,6 +469,14 @@
       animateElastic(nextAlpha, focusId, nextAlpha === 0 ? () => store.dispatch({ type: 'BACK_RING' }) : null);
       return;
     }
+    const annularProbe = target.closest('[data-annular-probe]');
+    if (annularProbe && layoutMode === 'annular') {
+      const nextAlpha = Number(annularProbe.dataset.annularProbe);
+      const focusId = annularFocusId || annularResult?.regions.find((region) => region.id === '050000')?.id || annularResult?.regions[0]?.id;
+      if (!store.getState().focusedCategoryCode && nextAlpha > 0) store.dispatch({ type: 'FOCUS_CATEGORY', categoryCode: focusId });
+      animateAnnular(nextAlpha, focusId, nextAlpha === 0 ? () => store.dispatch({ type: 'BACK_RING' }) : null);
+      return;
+    }
     const layoutButton = target.closest('[data-layout-mode]');
     if (layoutButton) { setLayoutMode(layoutButton.dataset.layoutMode); return; }
     const elasticCategory = target.closest('[data-elastic-category]');
@@ -346,6 +488,18 @@
       } else {
         store.dispatch({ type: 'FOCUS_CATEGORY', categoryCode });
         animateElastic(1, categoryCode);
+      }
+      return;
+    }
+    const annularCategory = target.closest('[data-annular-category]');
+    if (annularCategory && layoutMode === 'annular') {
+      const categoryCode = annularCategory.dataset.annularCategory;
+      const current = store.getState();
+      if (current.focusedCategoryCode === categoryCode && annularAlpha > 0) {
+        animateAnnular(0, categoryCode, () => store.dispatch({ type: 'BACK_RING' }));
+      } else {
+        store.dispatch({ type: 'FOCUS_CATEGORY', categoryCode });
+        animateAnnular(1, categoryCode);
       }
       return;
     }
@@ -368,6 +522,10 @@
       const actions = { overview: 'OVERVIEW', ring: 'BACK_RING', category: 'BACK_CATEGORY' };
       if (layoutMode === 'elastic' && back.dataset.panmapBack === 'ring' && elasticAlpha > 0) {
         animateElastic(0, elasticFocusId, () => store.dispatch({ type: 'BACK_RING' }));
+        return;
+      }
+      if (layoutMode === 'annular' && back.dataset.panmapBack === 'ring' && annularAlpha > 0) {
+        animateAnnular(0, annularFocusId, () => store.dispatch({ type: 'BACK_RING' }));
         return;
       }
       store.dispatch({ type: actions[back.dataset.panmapBack] });
@@ -432,6 +590,13 @@
     }
     unsubscribe = store.subscribe(render);
     layoutMode = 'bubble';
+    global.cancelAnimationFrame?.(annularAnimationFrame);
+    annularInput = null;
+    annularResult = null;
+    annularRing = null;
+    annularAlpha = 0;
+    annularFocusId = null;
+    annularFrames.length = 0;
     inspectorCollapsed = false;
     miniMapCollapsed = false;
     canvasPan = { x: 0, y: 0 };
@@ -448,5 +613,5 @@
     root.querySelector('#panmapEmptyBack')?.addEventListener('click', () => document.getElementById('backToIsochrone')?.click());
   }
 
-  app.panmapMvpView = Object.freeze({ mount, showEmpty, render, setLayoutMode, animateElastic });
+  app.panmapMvpView = Object.freeze({ mount, showEmpty, render, setLayoutMode, animateElastic, animateAnnular });
 })(window);

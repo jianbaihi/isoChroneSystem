@@ -1383,7 +1383,7 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
 .panmap-mvp-header small { color: #7B8798; font-size: 11px; letter-spacing: .04em; }
 .panmap-mvp-header strong { font-size: 15px; }
 .panmap-mvp-header > span { color: #526174; font-size: 12px; }
-.panmap-dev-toolbar { position: absolute; top: 20px; right: 380px; z-index: 31; display: flex; gap: 3px; padding: 3px; border: 1px solid #DCE4EE; border-radius: 11px; background: rgba(243,246,250,.92); box-shadow: 0 8px 22px rgba(31,55,83,.09); backdrop-filter: blur(12px); pointer-events: auto; transition: right 180ms ease; }
+.panmap-dev-toolbar { position: absolute; top: 82px; right: 380px; z-index: 31; display: flex; gap: 3px; padding: 3px; border: 1px solid #DCE4EE; border-radius: 11px; background: rgba(243,246,250,.92); box-shadow: 0 8px 22px rgba(31,55,83,.09); backdrop-filter: blur(12px); pointer-events: auto; transition: right 180ms ease; }
 .panmap-mvp.is-inspector-collapsed .panmap-dev-toolbar { right: 136px; }
 .panmap-dev-toolbar button { padding: 7px 10px; border: 0; border-radius: 8px; background: transparent; color: #64748B; font-size: 11px; cursor: pointer; }
 .panmap-dev-toolbar button.is-active { background: white; color: #1677FF; box-shadow: 0 2px 8px rgba(15,23,42,.08); }
@@ -1414,6 +1414,26 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
 .elastic-runtime-metrics p { margin: 9px 0 0; color: #7B8798; font-size: 10px; line-height: 1.5; }
 .elastic-alpha-probes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
 .elastic-alpha-probes button { padding: 6px; border: 1px solid #DDD6FE; border-radius: 8px; background: white; color: #6D28D9; font-size: 10px; cursor: pointer; }
+.annular-region-svg { max-width: none; max-height: none; overflow: visible; }
+.annular-frame { fill: #F8FAFC; stroke: #E8EEF5; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.annular-region { cursor: pointer; outline: none; }
+.annular-region path { fill-opacity: .66; stroke: rgba(255,255,255,.96); stroke-width: 1; vector-effect: non-scaling-stroke; transition: fill-opacity 140ms ease, filter 160ms ease, stroke 140ms ease; }
+.annular-region:hover path, .annular-region:focus-visible path { fill-opacity: .78; filter: drop-shadow(0 3px 7px rgba(30,41,59,.12)); }
+.annular-region.is-focused path { fill-opacity: .88; stroke: rgba(255,255,255,1); stroke-width: 1.35; filter: drop-shadow(0 5px 10px rgba(30,41,59,.16)); }
+.annular-label { pointer-events: none; text-anchor: middle; }
+.annular-label text { fill: #172033; paint-order: stroke; stroke: rgba(255,255,255,.88); stroke-width: 3px; stroke-linejoin: round; }
+.annular-label .annular-category-label { font-size: 12px; font-weight: 760; }
+.annular-label .annular-detail { fill: #526174; font-size: 9px; font-weight: 650; stroke-width: 2.5px; }
+.annular-center { pointer-events: none; text-anchor: middle; }
+.annular-center > circle:first-child { fill: rgba(255,255,255,.96); stroke: #DCE5EF; stroke-width: 1.2; vector-effect: non-scaling-stroke; filter: drop-shadow(0 6px 14px rgba(30,41,59,.09)); }
+.annular-center-dot { fill: #1677FF; stroke: white; stroke-width: 4; vector-effect: non-scaling-stroke; }
+.annular-center text { fill: #172033; font-size: 13px; font-weight: 780; }
+.annular-center .annular-center-subtitle { fill: #7B8798; font-size: 10px; font-weight: 600; }
+.annular-runtime-metrics > small { color: #0E7490; }
+.annular-runtime-metrics dl div { background: #F0F9FA; }
+.annular-runtime-metrics dd { color: #155E75; }
+.annular-alpha-probes { grid-template-columns: repeat(4, 1fr); }
+.annular-alpha-probes button { border-color: #BAE6FD; color: #0369A1; }
 .panmap-inspector { position: absolute; top: 20px; right: 20px; z-index: 30; width: clamp(300px, 24vw, 340px); max-height: calc(100% - 40px); overflow: auto; padding: 18px; border: 1px solid rgba(214,224,235,.94); border-radius: 16px; background: rgba(255,255,255,.9); box-shadow: 0 16px 38px rgba(31,55,83,.14); backdrop-filter: blur(14px); pointer-events: auto; transition: width 180ms ease, padding 180ms ease, box-shadow 180ms ease; }
 .panmap-inspector.is-collapsed { width: auto; overflow: visible; padding: 4px; }
 .panmap-inspector.is-collapsed .panmap-inspector-body { display: none; }
@@ -1454,7 +1474,7 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
 
 @media (max-width: 1360px) {
   .panmap-inspector { width: 300px; max-height: calc(100% - 32px); top: 16px; right: 16px; }
-  .panmap-dev-toolbar { top: 16px; right: 332px; }
+  .panmap-dev-toolbar { top: 74px; right: 332px; }
   .panmap-mvp-header { top: 16px; left: 16px; max-width: min(470px, calc(100% - 360px)); }
   .app-shell.is-panmap .panmap-mini-map { left: 16px; bottom: 58px; width: 220px; height: 154px; }
   .panmap-mini-map-toggle { left: 16px; bottom: 220px; }
