@@ -1,0 +1,16 @@
+{
+  "ringId": "ring-10-20",
+  "center": [
+    430,
+    280
+  ],
+  "innerRadius": 104,
+  "outerRadius": 246,
+  "centerDelta": 0,
+  "innerRadiusDelta": 0,
+  "outerRadiusDelta": 0,
+  "boundaryCrossingCount": 0,
+  "selfIntersectionRegionCount": 0,
+  "duplicateBoundaryCount": 0,
+  "allBoundariesSharedExactlyTwice": true
+}

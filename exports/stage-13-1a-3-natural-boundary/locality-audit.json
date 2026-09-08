@@ -1,0 +1,56 @@
+{
+  "focusId": "050000",
+  "focusAlpha": 1,
+  "movementByGraphDistance": [
+    {
+      "boundaryId": "boundary-0",
+      "graphDistance": 0,
+      "maxMove": 1.9235263514468748
+    },
+    {
+      "boundaryId": "boundary-1",
+      "graphDistance": 0,
+      "maxMove": 105.23014959883903
+    },
+    {
+      "boundaryId": "boundary-2",
+      "graphDistance": 1,
+      "maxMove": 81.96308711485104
+    },
+    {
+      "boundaryId": "boundary-3",
+      "graphDistance": 2,
+      "maxMove": 56.1721407376746
+    },
+    {
+      "boundaryId": "boundary-4",
+      "graphDistance": 3,
+      "maxMove": 46.92576819882868
+    },
+    {
+      "boundaryId": "boundary-5",
+      "graphDistance": 4,
+      "maxMove": 24.816674534694688
+    },
+    {
+      "boundaryId": "boundary-6",
+      "graphDistance": 4,
+      "maxMove": 5.0068329834775245
+    },
+    {
+      "boundaryId": "boundary-7",
+      "graphDistance": 3,
+      "maxMove": 0.002883007539823006
+    },
+    {
+      "boundaryId": "boundary-8",
+      "graphDistance": 2,
+      "maxMove": 0
+    },
+    {
+      "boundaryId": "boundary-9",
+      "graphDistance": 1,
+      "maxMove": 0
+    }
+  ]
+}

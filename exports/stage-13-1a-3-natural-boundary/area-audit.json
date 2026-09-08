@@ -1,0 +1,1042 @@
+{
+  "trajectory": [
+    {
+      "focusAlpha": 0,
+      "focusId": "050000",
+      "targetShares": [
+        {
+          "id": "050000",
+          "share": 0.1715273539461368
+        },
+        {
+          "id": "060000",
+          "share": 0.14976291217362847
+        },
+        {
+          "id": "070000",
+          "share": 0.16113977946380328
+        },
+        {
+          "id": "080000",
+          "share": 0.08001776922081777
+        },
+        {
+          "id": "090000",
+          "share": 0.14234321611481882
+        },
+        {
+          "id": "100000",
+          "share": 0.13096634882464403
+        },
+        {
+          "id": "110000",
+          "share": 0.059242620256150735
+        },
+        {
+          "id": "140000",
+          "share": 0.035
+        },
+        {
+          "id": "150000",
+          "share": 0.035
+        },
+        {
+          "id": "200000",
+          "share": 0.035000000000000114
+        }
+      ],
+      "actualShares": [
+        {
+          "id": "050000",
+          "share": 0.1715187309945232
+        },
+        {
+          "id": "060000",
+          "share": 0.1497553476375446
+        },
+        {
+          "id": "070000",
+          "share": 0.16113185589653659
+        },
+        {
+          "id": "080000",
+          "share": 0.08001374700958797
+        },
+        {
+          "id": "090000",
+          "share": 0.14233621253621212
+        },
+        {
+          "id": "100000",
+          "share": 0.1309599463186437
+        },
+        {
+          "id": "110000",
+          "share": 0.059239780065440624
+        },
+        {
+          "id": "140000",
+          "share": 0.03499832003139819
+        },
+        {
+          "id": "150000",
+          "share": 0.03499834367633696
+        },
+        {
+          "id": "200000",
+          "share": 0.03499831417977982
+        }
+      ],
+      "metrics": {
+        "regionCount": 10,
+        "boundaryCount": 10,
+        "duplicateBoundaryCount": 0,
+        "allBoundariesSharedExactlyTwice": true,
+        "annulusArea": 156137.15488341273,
+        "sumRegionArea": 156129.44144971122,
+        "coverageRatio": 0.9999505983460037,
+        "gapRatio": 0.000049401653996292556,
+        "overlapRatio": 0,
+        "meanAreaError": 0.000004940165399627133,
+        "maxAreaError": 0.000008622951613607155,
+        "boundaryCrossingCount": 0,
+        "selfIntersectionRegionCount": 0,
+        "orderChangeCount": 0,
+        "centerDelta": 0,
+        "innerRadiusDelta": 0,
+        "outerRadiusDelta": 0,
+        "curvatureMean": 0.013570182400654511,
+        "curvatureMax": 0.05173942672613916,
+        "curvatureVariation": 0.012009414294956423,
+        "temporalMeanControlDisplacement": 0,
+        "temporalMaxControlDisplacement": 0,
+        "maxBoundaryMove": 0,
+        "maxCentroidDisplacement": 0,
+        "maxAreaDelta": 0,
+        "returnGeometryDrift": 0,
+        "movementByGraphDistance": [
+          {
+            "boundaryId": "boundary-0",
+            "graphDistance": 0,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-1",
+            "graphDistance": 0,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-2",
+            "graphDistance": 1,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-3",
+            "graphDistance": 2,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-4",
+            "graphDistance": 3,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-5",
+            "graphDistance": 4,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-6",
+            "graphDistance": 4,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-7",
+            "graphDistance": 3,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-8",
+            "graphDistance": 2,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-9",
+            "graphDistance": 1,
+            "maxMove": 0
+          }
+        ],
+        "solveMs": 4.048625000000001,
+        "warmStartUsed": false,
+        "iterations": 32,
+        "iterationsPerFrame": 4
+      }
+    },
+    {
+      "focusAlpha": 0.25,
+      "focusId": "050000",
+      "targetShares": [
+        {
+          "id": "050000",
+          "share": 0.20583282473536416
+        },
+        {
+          "id": "060000",
+          "share": 0.14209552081107846
+        },
+        {
+          "id": "070000",
+          "share": 0.15271229154792088
+        },
+        {
+          "id": "080000",
+          "share": 0.0770101002069577
+        },
+        {
+          "id": "090000",
+          "share": 0.13517153989574648
+        },
+        {
+          "id": "100000",
+          "share": 0.12455476915890408
+        },
+        {
+          "id": "110000",
+          "share": 0.057622953644028085
+        },
+        {
+          "id": "140000",
+          "share": 0.035
+        },
+        {
+          "id": "150000",
+          "share": 0.035
+        },
+        {
+          "id": "200000",
+          "share": 0.03500000000000011
+        }
+      ],
+      "actualShares": [
+        {
+          "id": "050000",
+          "share": 0.20582251006916624
+        },
+        {
+          "id": "060000",
+          "share": 0.1420885821306765
+        },
+        {
+          "id": "070000",
+          "share": 0.15270456103839114
+        },
+        {
+          "id": "080000",
+          "share": 0.07700626435839505
+        },
+        {
+          "id": "090000",
+          "share": 0.1351648122327483
+        },
+        {
+          "id": "100000",
+          "share": 0.12454852649883331
+        },
+        {
+          "id": "110000",
+          "share": 0.057620091282094665
+        },
+        {
+          "id": "140000",
+          "share": 0.034998320030395824
+        },
+        {
+          "id": "150000",
+          "share": 0.03499834367633701
+        },
+        {
+          "id": "200000",
+          "share": 0.034998318572078205
+        }
+      ],
+      "metrics": {
+        "regionCount": 10,
+        "boundaryCount": 10,
+        "duplicateBoundaryCount": 0,
+        "allBoundariesSharedExactlyTwice": true,
+        "annulusArea": 156137.15488341273,
+        "sumRegionArea": 156129.39953361658,
+        "coverageRatio": 0.9999503298891161,
+        "gapRatio": 0.00004967011088385625,
+        "overlapRatio": 0,
+        "meanAreaError": 0.000004967011088372053,
+        "maxAreaError": 0.000010314666197913658,
+        "boundaryCrossingCount": 0,
+        "selfIntersectionRegionCount": 0,
+        "orderChangeCount": 0,
+        "centerDelta": 0,
+        "innerRadiusDelta": 0,
+        "outerRadiusDelta": 0,
+        "curvatureMean": 0.013247542255220172,
+        "curvatureMax": 0.05139638874359267,
+        "curvatureVariation": 0.011907322120916518,
+        "temporalMeanControlDisplacement": 11.473607005543764,
+        "temporalMaxControlDisplacement": 52.92212784267168,
+        "maxBoundaryMove": 52.92212784267168,
+        "maxCentroidDisplacement": 34.192847884863625,
+        "maxAreaDelta": 0.03430377907464305,
+        "returnGeometryDrift": 52.92212784267168,
+        "movementByGraphDistance": [
+          {
+            "boundaryId": "boundary-0",
+            "graphDistance": 0,
+            "maxMove": 0.9617633248322849
+          },
+          {
+            "boundaryId": "boundary-1",
+            "graphDistance": 0,
+            "maxMove": 52.92212784267168
+          },
+          {
+            "boundaryId": "boundary-2",
+            "graphDistance": 1,
+            "maxMove": 41.12546746508247
+          },
+          {
+            "boundaryId": "boundary-3",
+            "graphDistance": 2,
+            "maxMove": 28.132096184215346
+          },
+          {
+            "boundaryId": "boundary-4",
+            "graphDistance": 3,
+            "maxMove": 23.489670741995607
+          },
+          {
+            "boundaryId": "boundary-5",
+            "graphDistance": 4,
+            "maxMove": 12.412287879883358
+          },
+          {
+            "boundaryId": "boundary-6",
+            "graphDistance": 4,
+            "maxMove": 2.5034489002294125
+          },
+          {
+            "boundaryId": "boundary-7",
+            "graphDistance": 3,
+            "maxMove": 0.0014415006218524607
+          },
+          {
+            "boundaryId": "boundary-8",
+            "graphDistance": 2,
+            "maxMove": 2.0495186137532014e-13
+          },
+          {
+            "boundaryId": "boundary-9",
+            "graphDistance": 1,
+            "maxMove": 1.7288250917028502e-13
+          }
+        ],
+        "solveMs": 2.8111670000000117,
+        "warmStartUsed": true,
+        "iterations": 32,
+        "iterationsPerFrame": 4
+      }
+    },
+    {
+      "focusAlpha": 0.5,
+      "focusId": "050000",
+      "targetShares": [
+        {
+          "id": "050000",
+          "share": 0.2401382955245915
+        },
+        {
+          "id": "060000",
+          "share": 0.1344281294485285
+        },
+        {
+          "id": "070000",
+          "share": 0.1442848036320385
+        },
+        {
+          "id": "080000",
+          "share": 0.07400243119309763
+        },
+        {
+          "id": "090000",
+          "share": 0.12799986367667412
+        },
+        {
+          "id": "100000",
+          "share": 0.11814318949316413
+        },
+        {
+          "id": "110000",
+          "share": 0.056003287031905435
+        },
+        {
+          "id": "140000",
+          "share": 0.035
+        },
+        {
+          "id": "150000",
+          "share": 0.035
+        },
+        {
+          "id": "200000",
+          "share": 0.0350000000000001
+        }
+      ],
+      "actualShares": [
+        {
+          "id": "050000",
+          "share": 0.24012614006541788
+        },
+        {
+          "id": "060000",
+          "share": 0.13442151508431777
+        },
+        {
+          "id": "070000",
+          "share": 0.1442775105499433
+        },
+        {
+          "id": "080000",
+          "share": 0.07399877050032205
+        },
+        {
+          "id": "090000",
+          "share": 0.1279936576394442
+        },
+        {
+          "id": "100000",
+          "share": 0.11813735735480717
+        },
+        {
+          "id": "110000",
+          "share": 0.056000658674071474
+        },
+        {
+          "id": "140000",
+          "share": 0.034998320029394674
+        },
+        {
+          "id": "150000",
+          "share": 0.03499834367633701
+        },
+        {
+          "id": "200000",
+          "share": 0.03499832202070673
+        }
+      ],
+      "metrics": {
+        "regionCount": 10,
+        "boundaryCount": 10,
+        "duplicateBoundaryCount": 0,
+        "allBoundariesSharedExactlyTwice": true,
+        "annulusArea": 156137.15488341273,
+        "sumRegionArea": 156129.44102014022,
+        "coverageRatio": 0.9999505955947624,
+        "gapRatio": 0.00004940440523763136,
+        "overlapRatio": 0,
+        "meanAreaError": 0.000004940440523765882,
+        "maxAreaError": 0.00001215545917362948,
+        "boundaryCrossingCount": 0,
+        "selfIntersectionRegionCount": 0,
+        "orderChangeCount": 0,
+        "centerDelta": 0,
+        "innerRadiusDelta": 0,
+        "outerRadiusDelta": 0,
+        "curvatureMean": 0.013365361595307615,
+        "curvatureMax": 0.05136944661745012,
+        "curvatureVariation": 0.011469093788972873,
+        "temporalMeanControlDisplacement": 11.473642787367268,
+        "temporalMaxControlDisplacement": 52.92212784267159,
+        "maxBoundaryMove": 52.92212784267159,
+        "maxCentroidDisplacement": 34.35297123984866,
+        "maxAreaDelta": 0.03430362999625164,
+        "returnGeometryDrift": 105.23014959883905,
+        "movementByGraphDistance": [
+          {
+            "boundaryId": "boundary-0",
+            "graphDistance": 0,
+            "maxMove": 0.9617675258328581
+          },
+          {
+            "boundaryId": "boundary-1",
+            "graphDistance": 0,
+            "maxMove": 52.92212784267159
+          },
+          {
+            "boundaryId": "boundary-2",
+            "graphDistance": 1,
+            "maxMove": 41.12546746508242
+          },
+          {
+            "boundaryId": "boundary-3",
+            "graphDistance": 2,
+            "maxMove": 28.132096184215445
+          },
+          {
+            "boundaryId": "boundary-4",
+            "graphDistance": 3,
+            "maxMove": 23.489670741995578
+          },
+          {
+            "boundaryId": "boundary-5",
+            "graphDistance": 4,
+            "maxMove": 12.41228787988318
+          },
+          {
+            "boundaryId": "boundary-6",
+            "graphDistance": 4,
+            "maxMove": 2.50344890022908
+          },
+          {
+            "boundaryId": "boundary-7",
+            "graphDistance": 3,
+            "maxMove": 0.0014415069181672009
+          },
+          {
+            "boundaryId": "boundary-8",
+            "graphDistance": 2,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-9",
+            "graphDistance": 1,
+            "maxMove": 0
+          }
+        ],
+        "solveMs": 1.2579580000000021,
+        "warmStartUsed": true,
+        "iterations": 32,
+        "iterationsPerFrame": 4
+      }
+    },
+    {
+      "focusAlpha": 1,
+      "focusId": "050000",
+      "targetShares": [
+        {
+          "id": "050000",
+          "share": 0.30874923710304625
+        },
+        {
+          "id": "060000",
+          "share": 0.11909334672342851
+        },
+        {
+          "id": "070000",
+          "share": 0.12742982780027373
+        },
+        {
+          "id": "080000",
+          "share": 0.06798709316537749
+        },
+        {
+          "id": "090000",
+          "share": 0.11365651123852946
+        },
+        {
+          "id": "100000",
+          "share": 0.10532003016168426
+        },
+        {
+          "id": "110000",
+          "share": 0.05276395380766015
+        },
+        {
+          "id": "140000",
+          "share": 0.035
+        },
+        {
+          "id": "150000",
+          "share": 0.035
+        },
+        {
+          "id": "200000",
+          "share": 0.03500000000000009
+        }
+      ],
+      "actualShares": [
+        {
+          "id": "050000",
+          "share": 0.30873355117015944
+        },
+        {
+          "id": "060000",
+          "share": 0.11908740765765466
+        },
+        {
+          "id": "070000",
+          "share": 0.12742344017298232
+        },
+        {
+          "id": "080000",
+          "share": 0.06798379284393778
+        },
+        {
+          "id": "090000",
+          "share": 0.11365083113264099
+        },
+        {
+          "id": "100000",
+          "share": 0.10531476625154437
+        },
+        {
+          "id": "110000",
+          "share": 0.052761274597351776
+        },
+        {
+          "id": "140000",
+          "share": 0.03499832002739489
+        },
+        {
+          "id": "150000",
+          "share": 0.03499834367633701
+        },
+        {
+          "id": "200000",
+          "share": 0.03499832654339113
+        }
+      ],
+      "metrics": {
+        "regionCount": 10,
+        "boundaryCount": 10,
+        "duplicateBoundaryCount": 0,
+        "allBoundariesSharedExactlyTwice": true,
+        "annulusArea": 156137.15488341273,
+        "sumRegionArea": 156129.3564685345,
+        "coverageRatio": 0.9999500540733943,
+        "gapRatio": 0.00004994592660568273,
+        "overlapRatio": 0,
+        "meanAreaError": 0.000004994592660557961,
+        "maxAreaError": 0.00001568593288681086,
+        "boundaryCrossingCount": 0,
+        "selfIntersectionRegionCount": 0,
+        "orderChangeCount": 0,
+        "centerDelta": 0,
+        "innerRadiusDelta": 0,
+        "outerRadiusDelta": 0,
+        "curvatureMean": 0.013538498623892435,
+        "curvatureMax": 0.05131484397197785,
+        "curvatureVariation": 0.011107069047974658,
+        "temporalMeanControlDisplacement": 22.872104802737255,
+        "temporalMaxControlDisplacement": 105.23014959883903,
+        "maxBoundaryMove": 105.23014959883903,
+        "maxCentroidDisplacement": 68.86212394082591,
+        "maxAreaDelta": 0.06860741110474156,
+        "returnGeometryDrift": 205.59012417822336,
+        "movementByGraphDistance": [
+          {
+            "boundaryId": "boundary-0",
+            "graphDistance": 0,
+            "maxMove": 1.9235263514468748
+          },
+          {
+            "boundaryId": "boundary-1",
+            "graphDistance": 0,
+            "maxMove": 105.23014959883903
+          },
+          {
+            "boundaryId": "boundary-2",
+            "graphDistance": 1,
+            "maxMove": 81.96308711485104
+          },
+          {
+            "boundaryId": "boundary-3",
+            "graphDistance": 2,
+            "maxMove": 56.1721407376746
+          },
+          {
+            "boundaryId": "boundary-4",
+            "graphDistance": 3,
+            "maxMove": 46.92576819882868
+          },
+          {
+            "boundaryId": "boundary-5",
+            "graphDistance": 4,
+            "maxMove": 24.816674534694688
+          },
+          {
+            "boundaryId": "boundary-6",
+            "graphDistance": 4,
+            "maxMove": 5.0068329834775245
+          },
+          {
+            "boundaryId": "boundary-7",
+            "graphDistance": 3,
+            "maxMove": 0.002883007539823006
+          },
+          {
+            "boundaryId": "boundary-8",
+            "graphDistance": 2,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-9",
+            "graphDistance": 1,
+            "maxMove": 0
+          }
+        ],
+        "solveMs": 1.3292500000000018,
+        "warmStartUsed": true,
+        "iterations": 32,
+        "iterationsPerFrame": 4
+      }
+    },
+    {
+      "focusAlpha": 0.5,
+      "focusId": "050000",
+      "targetShares": [
+        {
+          "id": "050000",
+          "share": 0.2401382955245915
+        },
+        {
+          "id": "060000",
+          "share": 0.1344281294485285
+        },
+        {
+          "id": "070000",
+          "share": 0.1442848036320385
+        },
+        {
+          "id": "080000",
+          "share": 0.07400243119309763
+        },
+        {
+          "id": "090000",
+          "share": 0.12799986367667412
+        },
+        {
+          "id": "100000",
+          "share": 0.11814318949316413
+        },
+        {
+          "id": "110000",
+          "share": 0.056003287031905435
+        },
+        {
+          "id": "140000",
+          "share": 0.035
+        },
+        {
+          "id": "150000",
+          "share": 0.035
+        },
+        {
+          "id": "200000",
+          "share": 0.0350000000000001
+        }
+      ],
+      "actualShares": [
+        {
+          "id": "050000",
+          "share": 0.24012651468237667
+        },
+        {
+          "id": "060000",
+          "share": 0.1344214313453967
+        },
+        {
+          "id": "070000",
+          "share": 0.14427741853215165
+        },
+        {
+          "id": "080000",
+          "share": 0.0739987376505801
+        },
+        {
+          "id": "090000",
+          "share": 0.12799357933023464
+        },
+        {
+          "id": "100000",
+          "share": 0.11813728733969511
+        },
+        {
+          "id": "110000",
+          "share": 0.056000640987848224
+        },
+        {
+          "id": "140000",
+          "share": 0.03499832002939477
+        },
+        {
+          "id": "150000",
+          "share": 0.03499834367633701
+        },
+        {
+          "id": "200000",
+          "share": 0.03499832202074635
+        }
+      ],
+      "metrics": {
+        "regionCount": 10,
+        "boundaryCount": 10,
+        "duplicateBoundaryCount": 0,
+        "allBoundariesSharedExactlyTwice": true,
+        "annulusArea": 156137.15488341273,
+        "sumRegionArea": 156129.44102014005,
+        "coverageRatio": 0.9999505955947613,
+        "gapRatio": 0.00004940440523874975,
+        "overlapRatio": 0,
+        "meanAreaError": 0.000004940440523872047,
+        "maxAreaError": 0.000011780842214842435,
+        "boundaryCrossingCount": 0,
+        "selfIntersectionRegionCount": 0,
+        "orderChangeCount": 0,
+        "centerDelta": 0,
+        "innerRadiusDelta": 0,
+        "outerRadiusDelta": 0,
+        "curvatureMean": 0.013365335039225514,
+        "curvatureMax": 0.05137139412344456,
+        "curvatureVariation": 0.011469127168728529,
+        "temporalMeanControlDisplacement": 22.87199851069647,
+        "temporalMaxControlDisplacement": 105.23014959883903,
+        "maxBoundaryMove": 105.23014959883903,
+        "maxCentroidDisplacement": 68.86176034507474,
+        "maxAreaDelta": 0.06860703648778277,
+        "returnGeometryDrift": 105.23014959883905,
+        "movementByGraphDistance": [
+          {
+            "boundaryId": "boundary-0",
+            "graphDistance": 0,
+            "maxMove": 1.9235137484967737
+          },
+          {
+            "boundaryId": "boundary-1",
+            "graphDistance": 0,
+            "maxMove": 105.23014959883903
+          },
+          {
+            "boundaryId": "boundary-2",
+            "graphDistance": 1,
+            "maxMove": 81.96308711485104
+          },
+          {
+            "boundaryId": "boundary-3",
+            "graphDistance": 2,
+            "maxMove": 56.1721407376746
+          },
+          {
+            "boundaryId": "boundary-4",
+            "graphDistance": 3,
+            "maxMove": 46.92576819882868
+          },
+          {
+            "boundaryId": "boundary-5",
+            "graphDistance": 4,
+            "maxMove": 24.816674534694688
+          },
+          {
+            "boundaryId": "boundary-6",
+            "graphDistance": 4,
+            "maxMove": 5.0068329834775245
+          },
+          {
+            "boundaryId": "boundary-7",
+            "graphDistance": 3,
+            "maxMove": 0.0028829886500459415
+          },
+          {
+            "boundaryId": "boundary-8",
+            "graphDistance": 2,
+            "maxMove": 0
+          },
+          {
+            "boundaryId": "boundary-9",
+            "graphDistance": 1,
+            "maxMove": 0
+          }
+        ],
+        "solveMs": 0.7562499999999943,
+        "warmStartUsed": true,
+        "iterations": 32,
+        "iterationsPerFrame": 4
+      }
+    },
+    {
+      "focusAlpha": 0,
+      "focusId": "050000",
+      "targetShares": [
+        {
+          "id": "050000",
+          "share": 0.1715273539461368
+        },
+        {
+          "id": "060000",
+          "share": 0.14976291217362847
+        },
+        {
+          "id": "070000",
+          "share": 0.16113977946380328
+        },
+        {
+          "id": "080000",
+          "share": 0.08001776922081777
+        },
+        {
+          "id": "090000",
+          "share": 0.14234321611481882
+        },
+        {
+          "id": "100000",
+          "share": 0.13096634882464403
+        },
+        {
+          "id": "110000",
+          "share": 0.059242620256150735
+        },
+        {
+          "id": "140000",
+          "share": 0.035
+        },
+        {
+          "id": "150000",
+          "share": 0.035
+        },
+        {
+          "id": "200000",
+          "share": 0.035000000000000114
+        }
+      ],
+      "actualShares": [
+        {
+          "id": "050000",
+          "share": 0.17151898074079336
+        },
+        {
+          "id": "060000",
+          "share": 0.1497552918110571
+        },
+        {
+          "id": "070000",
+          "share": 0.1611317945510028
+        },
+        {
+          "id": "080000",
+          "share": 0.08001372510964617
+        },
+        {
+          "id": "090000",
+          "share": 0.14233616032976204
+        },
+        {
+          "id": "100000",
+          "share": 0.13095989964163038
+        },
+        {
+          "id": "110000",
+          "share": 0.059239768274556404
+        },
+        {
+          "id": "140000",
+          "share": 0.03499832003139819
+        },
+        {
+          "id": "150000",
+          "share": 0.03499834367633696
+        },
+        {
+          "id": "200000",
+          "share": 0.0349983141798226
+        }
+      ],
+      "metrics": {
+        "regionCount": 10,
+        "boundaryCount": 10,
+        "duplicateBoundaryCount": 0,
+        "allBoundariesSharedExactlyTwice": true,
+        "annulusArea": 156137.15488341273,
+        "sumRegionArea": 156129.44144971156,
+        "coverageRatio": 0.999950598346006,
+        "gapRatio": 0.000049401653994055766,
+        "overlapRatio": 0,
+        "meanAreaError": 0.000004940165399403701,
+        "maxAreaError": 0.000008373205343442658,
+        "boundaryCrossingCount": 0,
+        "selfIntersectionRegionCount": 0,
+        "orderChangeCount": 0,
+        "centerDelta": 0,
+        "innerRadiusDelta": 0,
+        "outerRadiusDelta": 0,
+        "curvatureMean": 0.013570191390248674,
+        "curvatureMax": 0.05173939355307259,
+        "curvatureVariation": 0.012009417810643958,
+        "temporalMeanControlDisplacement": 22.87214023284598,
+        "temporalMaxControlDisplacement": 105.23014959883905,
+        "maxBoundaryMove": 105.23014959883905,
+        "maxCentroidDisplacement": 68.23185887123022,
+        "maxAreaDelta": 0.06860753394158331,
+        "returnGeometryDrift": 0.00040838334554422134,
+        "movementByGraphDistance": [
+          {
+            "boundaryId": "boundary-0",
+            "graphDistance": 0,
+            "maxMove": 1.9235305523629322
+          },
+          {
+            "boundaryId": "boundary-1",
+            "graphDistance": 0,
+            "maxMove": 105.23014959883905
+          },
+          {
+            "boundaryId": "boundary-2",
+            "graphDistance": 1,
+            "maxMove": 81.963087114851
+          },
+          {
+            "boundaryId": "boundary-3",
+            "graphDistance": 2,
+            "maxMove": 56.172140737674574
+          },
+          {
+            "boundaryId": "boundary-4",
+            "graphDistance": 3,
+            "maxMove": 46.92576819882863
+          },
+          {
+            "boundaryId": "boundary-5",
+            "graphDistance": 4,
+            "maxMove": 24.816674534694773
+          },
+          {
+            "boundaryId": "boundary-6",
+            "graphDistance": 4,
+            "maxMove": 5.006832983477491
+          },
+          {
+            "boundaryId": "boundary-7",
+            "graphDistance": 3,
+            "maxMove": 0.0028830138366205717
+          },
+          {
+            "boundaryId": "boundary-8",
+            "graphDistance": 2,
+            "maxMove": 2.0495186137532014e-13
+          },
+          {
+            "boundaryId": "boundary-9",
+            "graphDistance": 1,
+            "maxMove": 1.7288250917028502e-13
+          }
+        ],
+        "solveMs": 0.6634590000000173,
+        "warmStartUsed": true,
+        "iterations": 32,
+        "iterationsPerFrame": 4
+      }
+    }
+  ],
+  "gates": {
+    "meanAreaErrorMax": 0.02,
+    "maxAreaErrorMax": 0.05,
+    "gapRatioMax": 0.001,
+    "overlapRatioMax": 0.001
+  }
+}

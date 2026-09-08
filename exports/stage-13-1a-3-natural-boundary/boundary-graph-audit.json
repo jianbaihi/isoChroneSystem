@@ -1,0 +1,101 @@
+{
+  "boundaryCount": 10,
+  "duplicateBoundaryCount": 0,
+  "sharedExactlyTwiceCount": 10,
+  "allBoundariesSharedExactlyTwice": true,
+  "regionCount": 10,
+  "controlsPerBoundary": [
+    7,
+    7,
+    7,
+    7,
+    7,
+    7,
+    7,
+    7,
+    7,
+    7
+  ],
+  "references": [
+    {
+      "id": "050000",
+      "order": 0,
+      "startBoundaryId": "boundary-0",
+      "endBoundaryId": "boundary-1",
+      "startDirection": 1,
+      "endDirection": -1
+    },
+    {
+      "id": "060000",
+      "order": 1,
+      "startBoundaryId": "boundary-1",
+      "endBoundaryId": "boundary-2",
+      "startDirection": 1,
+      "endDirection": -1
+    },
+    {
+      "id": "070000",
+      "order": 2,
+      "startBoundaryId": "boundary-2",
+      "endBoundaryId": "boundary-3",
+      "startDirection": 1,
+      "endDirection": -1
+    },
+    {
+      "id": "080000",
+      "order": 3,
+      "startBoundaryId": "boundary-3",
+      "endBoundaryId": "boundary-4",
+      "startDirection": 1,
+      "endDirection": -1
+    },
+    {
+      "id": "090000",
+      "order": 4,
+      "startBoundaryId": "boundary-4",
+      "endBoundaryId": "boundary-5",
+      "startDirection": 1,
+      "endDirection": -1
+    },
+    {
+      "id": "100000",
+      "order": 5,
+      "startBoundaryId": "boundary-5",
+      "endBoundaryId": "boundary-6",
+      "startDirection": 1,
+      "endDirection": -1
+    },
+    {
+      "id": "110000",
+      "order": 6,
+      "startBoundaryId": "boundary-6",
+      "endBoundaryId": "boundary-7",
+      "startDirection": 1,
+      "endDirection": -1
+    },
+    {
+      "id": "140000",
+      "order": 7,
+      "startBoundaryId": "boundary-7",
+      "endBoundaryId": "boundary-8",
+      "startDirection": 1,
+      "endDirection": -1
+    },
+    {
+      "id": "150000",
+      "order": 8,
+      "startBoundaryId": "boundary-8",
+      "endBoundaryId": "boundary-9",
+      "startDirection": 1,
+      "endDirection": -1
+    },
+    {
+      "id": "200000",
+      "order": 9,
+      "startBoundaryId": "boundary-9",
+      "endBoundaryId": "boundary-0",
+      "startDirection": 1,
+      "endDirection": -1
+    }
+  ]
+}

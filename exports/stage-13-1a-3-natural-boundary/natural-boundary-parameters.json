@@ -1,0 +1,15 @@
+{
+  "controlPointCount": 7,
+  "iterations": 32,
+  "iterationsPerFrame": 4,
+  "relaxation": 0.32,
+  "naturalAmplitude": 0.052,
+  "pressureAmplitude": 0.026,
+  "sampleSteps": 5,
+  "areaWeight": 1,
+  "smoothWeight": 0.28,
+  "temporalWeight": 0.4,
+  "endpointWeight": 1,
+  "orderWeight": 1,
+  "localityWeight": 0.7
+}

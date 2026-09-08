@@ -1,0 +1,8 @@
+{
+  "command": "node --test",
+  "tests": 196,
+  "passed": 196,
+  "failed": 0,
+  "durationMs": 4714.234334,
+  "status": "PASS"
+}

@@ -1,0 +1,8 @@
+{
+  "transition": "0.50 -> 0.51",
+  "warmStartUsed": true,
+  "meanControlDisplacement": 0.459481252875568,
+  "maxControlDisplacement": 2.1209821098713073,
+  "maxCentroidDisplacement": 1.3796346530914436,
+  "maxAreaDelta": 0.0013721310402048381
+}

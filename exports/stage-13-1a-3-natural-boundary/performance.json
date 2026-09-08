@@ -1,0 +1,17 @@
+{
+  "sampleCount": 240,
+  "solveMs": {
+    "median": 0.6291669999999954,
+    "p95": 0.6992079999999987,
+    "max": 0.8225829999999803,
+    "gateP95": 8,
+    "passed": true
+  },
+  "browser": {
+    "viewport": "1440x900",
+    "animationDurationMs": 330.4,
+    "maxFrameMs": 16.7,
+    "droppedFrames": 0,
+    "providerCallDelta": 0
+  }
+}

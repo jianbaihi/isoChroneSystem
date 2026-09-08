@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "natural-shared-boundary-output-v2",
+  "inputSchemaVersion": "natural-shared-boundary-input-v2",
+  "boundaryStateSchemaVersion": "natural-shared-boundary-state-v2",
+  "scope": {
+    "center": "fixed",
+    "container": "single exclusive annulus",
+    "ringId": "ring-10-20",
+    "directionEncoding": false
+  },
+  "invariants": [
+    "one stored boundary per adjacent pair",
+    "opposite-direction region references",
+    "fixed center and radii",
+    "cyclic order preserved",
+    "deterministic output"
+  ]
+}
