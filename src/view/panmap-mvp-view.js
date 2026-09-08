@@ -7,6 +7,9 @@
   let unsubscribe = null;
   let listenersMounted = false;
   let layoutMode = 'bubble';
+  let previewLayout = null;
+  let previewStartedAt = 0;
+  let previewBuildMs = 0;
   let elasticInput = null;
   let elasticResult = null;
   let elasticAlpha = 0;
@@ -103,6 +106,25 @@
 
   function polygonPath(polygon) {
     return polygon.length ? `M ${polygon.map((point) => `${point[0].toFixed(3)} ${point[1].toFixed(3)}`).join(' L ')} Z` : '';
+  }
+
+  function previewSvg(state) {
+    previewLayout ||= app.labelDrivenPreview.build(snapshot);
+    const activeRing = snapshot.rings.find(r => r.ringId === state.focusedRingId) || snapshot.rings[1] || snapshot.rings[0];
+    const contours = [
+      'M 475 316 C 525 304 570 331 572 387 C 586 430 545 466 493 467 C 439 475 411 445 410 397 C 407 354 436 326 475 316 Z',
+      'M 345 176 C 450 156 535 158 633 188 C 713 196 722 261 732 320 C 727 390 687 418 678 487 C 687 559 604 655 515 658 C 425 667 333 670 302 611 C 282 569 156 546 154 465 C 151 400 188 369 197 305 C 204 251 254 199 345 176 Z',
+      'M 260 44 C 370 24 446 38 527 30 C 638 29 701 43 731 112 C 803 161 852 215 852 300 C 896 385 879 451 864 514 C 873 606 819 672 719 688 C 639 732 553 718 470 720 C 362 741 303 691 247 637 C 155 617 96 550 111 462 C 65 370 111 306 111 230 C 98 144 169 78 260 44 Z'
+    ];
+    const rings = snapshot.rings.slice(0,3).map((ring,i) => `<path d="${contours[i]}" fill="${ringColor(i)}" fill-opacity=".025" stroke="${ringColor(i)}" stroke-opacity="${ring.ringId === activeRing?.ringId ? '.85' : '.35'}" stroke-width="${ring.ringId === activeRing?.ringId ? 3 : 1.5}" stroke-dasharray="${ring.ringId === activeRing?.ringId ? 'none' : '5 4'}" pointer-events="none"/>`).reverse().join('');
+    const clusters = previewLayout.clusters.map(cluster => {
+      const color = styleFor(cluster.code).color;
+      const count = cluster.pois.filter(p => p.displayRingId === activeRing?.ringId).length;
+      const selected = state.focusedCategoryCode === cluster.code;
+      return `<g class="preview-cluster${selected ? ' is-selected' : ''}${count ? '' : ' is-empty'}" style="--preview-color:${color}" data-category-code="${esc(cluster.code)}" data-ring-id="${esc(activeRing?.ringId)}" role="button" tabindex="0" aria-label="${esc(styleFor(cluster.code).label)} ${count}个POI" aria-pressed="${selected}"><path d="${cluster.path}"/>${cluster.labels.map(label => `<text x="${label.x}" y="${label.y}" dominant-baseline="middle" text-anchor="middle" class="${label.title ? 'preview-title' : 'preview-name'}"><title>${esc(label.fullText)}</title>${esc(label.text)}</text>`).join('')}</g>`;
+    }).join('');
+    const chips=snapshot.rings.map((ring,i)=>`<g data-ring-focus="${esc(ring.ringId)}" role="button" tabindex="0" aria-label="预览聚焦${ring.upperInclusiveMinutes}分钟" aria-pressed="${ring.ringId === activeRing?.ringId}" transform="translate(${[445,458,475][i] ?? 390+i*100} ${[313,177,26][i] ?? 5})"><rect width="90" height="28" rx="14" fill="${ring.ringId === activeRing?.ringId ? ringColor(i) : 'white'}" stroke="${ringColor(i)}"/><text x="45" y="19" text-anchor="middle" font-size="13" fill="${ring.ringId === activeRing?.ringId ? 'white' : ringColor(i)}">${ring.upperInclusiveMinutes} 分钟</text></g>`).join('');
+    return `<svg class="panmap-mvp-svg label-preview-svg" viewBox="0 0 ${previewLayout.width} ${previewLayout.height}" aria-label="标签驱动泛地图预览"><rect width="100%" height="100%" fill="#fcfcfb" data-preview-blank="true"/>${rings}${clusters}<g pointer-events="none"><path d="M490 375 C466 345 513 345 508 369 L490 394 Z" fill="#f36c68"/><circle cx="491" cy="366" r="5" fill="white"/><text x="490" y="417" text-anchor="middle" font-size="14" fill="#465242" font-weight="700">${esc(snapshot.center.label)}</text><text x="490" y="439" text-anchor="middle" font-size="10" fill="#899388">分析中心</text></g>${chips}<text x="490" y="752" text-anchor="middle" font-size="11" fill="#8b96a1">示意布局 · 代表标签来自当前快照 · 轮廓不表示真实地理边界</text></svg>`;
   }
 
   function elasticSvg() {
@@ -397,8 +419,16 @@
   }
 
   function setLayoutMode(nextMode) {
-    layoutMode = ['elastic', 'annular', 'natural'].includes(nextMode) ? nextMode : 'bubble';
-    if (layoutMode === 'elastic') {
+    layoutMode = ['elastic', 'annular', 'natural', 'preview'].includes(nextMode) ? nextMode : 'bubble';
+    if (layoutMode === 'preview') {
+      global.cancelAnimationFrame?.(elasticAnimationFrame);
+      global.cancelAnimationFrame?.(annularAnimationFrame);
+      global.cancelAnimationFrame?.(naturalAnimationFrame);
+      previewStartedAt = performance.now();
+      previewLayout = app.labelDrivenPreview.build(snapshot);
+      previewBuildMs = performance.now() - previewStartedAt;
+      store?.dispatch({ type: 'FOCUS_RING', ringId: (snapshot.rings.find(r => r.upperInclusiveMinutes === 20) || snapshot.rings[0])?.ringId });
+    } else if (layoutMode === 'elastic') {
       const ringId = initializeElasticLayout();
       if (ringId) store?.dispatch({ type: 'FOCUS_RING', ringId });
     } else if (layoutMode === 'annular') {
@@ -552,7 +582,7 @@
     return `<div class="panmap-mvp-summary">
       <small>${state.mode === 'overview' ? '当前概览' : state.mode === 'ring-focused' ? '圈层聚焦' : state.mode === 'category-focused' ? '类别展开' : '地点详情'}</small>
       <h2>${state.mode === 'overview' ? `${snapshot.metadata.eligiblePoiCount} 个 POI` : ring?.label || '泛地图'}</h2>
-      <dl><div><dt>圈层 POI</dt><dd>${scoped.length}</dd></div><div><dt>一级类别</dt><dd>${counts.size}</dd></div>${currentCategoryCount == null ? '' : `<div><dt>当前类别</dt><dd>${currentCategoryCount}</dd></div>`}${labelInfo ? `<div><dt>可见 / 隐藏标签</dt><dd>${labelInfo.visiblePoiCount} / ${labelInfo.hiddenPoiCount}</dd></div>` : ''}</dl>
+      <dl><div><dt>圈层 POI</dt><dd>${scoped.length}</dd></div><div><dt>一级类别</dt><dd>${counts.size}</dd></div>${currentCategoryCount == null ? '' : `<div><dt>当前类别</dt><dd>${esc(styleFor(state.focusedCategoryCode).label)} · ${currentCategoryCount}</dd></div>`}${labelInfo ? `<div><dt>可见 / 隐藏标签</dt><dd>${labelInfo.visiblePoiCount} / ${labelInfo.hiddenPoiCount}</dd></div>` : ''}</dl>
       <div class="panmap-mvp-top-categories">${top.map(([code, count]) => `<span><i style="--category-color:${styleFor(code).color}"></i>${esc(styleFor(code).label)}<b>${count}</b></span>`).join('')}</div>
       ${selectedDetail(state)}
       <div class="panmap-mvp-link-status">传统地图小窗 · ${state.selectedPoiId ? '已同步定位所选 POI' : '等待选择 POI'}</div>
@@ -560,22 +590,42 @@
   }
 
   function render(state) {
+    const renderStartedAt = performance.now();
     const root = document.getElementById('panmapMvp');
     if (!root || !snapshot) return;
+    const retainedPreview = layoutMode === 'preview' ? root.querySelector('.label-preview-svg') : null;
     const elasticMode = layoutMode === 'elastic';
     const annularMode = layoutMode === 'annular';
     const naturalMode = layoutMode === 'natural';
-    const labelMode = !elasticMode && !annularMode && !naturalMode && (state.mode === 'category-focused' || state.mode === 'poi-selected');
+    const previewMode = layoutMode === 'preview';
+    const labelMode = !elasticMode && !annularMode && !naturalMode && !previewMode && (state.mode === 'category-focused' || state.mode === 'poi-selected');
     const labelResult = labelMode ? labelSvg(state) : null;
     root.dataset.mode = state.mode;
-    const modeSwitch = developerModeEnabled() ? `<div class="panmap-dev-toolbar" role="group" aria-label="泛地图布局算法"><button type="button" data-layout-mode="bubble" class="${layoutMode === 'bubble' ? 'is-active' : ''}">Bubble Baseline</button><button type="button" data-layout-mode="elastic" class="${layoutMode === 'elastic' ? 'is-active' : ''}">Rectangular Elastic v0</button><button type="button" data-layout-mode="annular" class="${layoutMode === 'annular' ? 'is-active' : ''}">Annular Elastic v1</button><button type="button" data-layout-mode="natural" class="${layoutMode === 'natural' ? 'is-active' : ''}">Natural Annular v2</button></div>` : '';
+    root.classList.toggle('is-label-preview', previewMode);
+    const modeSwitch = developerModeEnabled() ? `<div class="panmap-dev-toolbar" role="group" aria-label="泛地图布局算法"><button type="button" data-layout-mode="bubble" class="${layoutMode === 'bubble' ? 'is-active' : ''}">Bubble Baseline</button><button type="button" data-layout-mode="elastic" class="${layoutMode === 'elastic' ? 'is-active' : ''}">Rectangular Elastic v0</button><button type="button" data-layout-mode="annular" class="${layoutMode === 'annular' ? 'is-active' : ''}">Annular Elastic v1</button><button type="button" data-layout-mode="natural" class="${layoutMode === 'natural' ? 'is-active' : ''}">Natural Annular v2</button><button type="button" data-layout-mode="preview" class="${layoutMode === 'preview' ? 'is-active' : ''}">Label-Driven Preview v1</button></div>` : '';
     const inspectorMode = state.mode === 'poi-selected' ? 'detail' : 'summary';
     root.innerHTML = `<header class="panmap-mvp-header panmap-workspace-meta"><div><small>当前分析快照 · Provider API 0</small><strong>${esc(snapshot.center.label)} · ${profileLabels[snapshot.profile] || esc(snapshot.profile)} · ${snapshot.rangesMinutes.join(' / ')} 分钟</strong></div><span>${snapshot.metadata.categoryCount} 类 · ${snapshot.metadata.eligiblePoiCount} POI</span></header>
-      <main class="panmap-main-canvas panmap-mvp-canvas" data-panmap-main-canvas><div class="panmap-canvas-stage">${elasticMode ? elasticSvg() : annularMode ? annularSvg() : naturalMode ? naturalSvg() : labelResult ? labelResult.markup : overviewSvg(state)}</div></main>
+      <main class="panmap-main-canvas panmap-mvp-canvas" data-panmap-main-canvas><div class="panmap-canvas-stage">${previewMode ? previewSvg(state) : elasticMode ? elasticSvg() : annularMode ? annularSvg() : naturalMode ? naturalSvg() : labelResult ? labelResult.markup : overviewSvg(state)}</div></main>
       <aside class="panmap-inspector panmap-mvp-inspector${inspectorCollapsed ? ' is-collapsed' : ''}" data-inspector-mode="${inspectorCollapsed ? 'collapsed' : inspectorMode}" aria-label="泛地图 Inspector"><button type="button" class="panmap-overlay-toggle panmap-inspector-toggle" data-panmap-inspector-toggle aria-expanded="${String(!inspectorCollapsed)}">${inspectorCollapsed ? '展开 Inspector' : '收起'}</button><div class="panmap-inspector-body">${statsPanel(state, labelResult?.layout)}${elasticMode ? elasticMetricsPanel() : annularMode ? annularMetricsPanel() : naturalMode ? naturalMetricsPanel() : ''}</div></aside>
       <button type="button" class="panmap-overlay-toggle panmap-mini-map-toggle" data-panmap-mini-map-toggle aria-expanded="${String(!miniMapCollapsed)}">${miniMapCollapsed ? '显示传统地图' : '隐藏传统地图'}</button>
       <nav class="panmap-breadcrumb panmap-mvp-breadcrumb" aria-label="泛地图面包屑">${breadcrumb(state)}</nav>
       ${modeSwitch}`;
+    if (retainedPreview) {
+      const replacement = root.querySelector('.label-preview-svg');
+      const oldNodes = retainedPreview.querySelectorAll('*');
+      const newNodes = replacement.querySelectorAll('*');
+      if (oldNodes.length === newNodes.length) {
+        newNodes.forEach((node, i) => {
+          for (const attr of [...oldNodes[i].attributes]) if (!node.hasAttribute(attr.name)) oldNodes[i].removeAttribute(attr.name);
+          for (const attr of node.attributes) oldNodes[i].setAttribute(attr.name, attr.value);
+        });
+        replacement.replaceWith(retainedPreview);
+      }
+    }
+    if (layoutMode === 'preview') {
+      const requests = performance.getEntriesByType('resource').filter(entry => entry.startTime >= previewStartedAt && /\/api\//.test(entry.name));
+      root.dataset.previewAudit = JSON.stringify({ buildMs: previewBuildMs, renderMs: performance.now() - renderStartedAt, providerRequestDelta: requests.length, ringId: state.focusedRingId, selectedCategory: state.focusedCategoryCode, categoryCount: previewLayout.clusters.length, labelCount: previewLayout.clusters.reduce((n,c) => n+c.labels.length, 0) });
+    }
     syncWorkspaceState(root);
     publishWorkspaceLayoutMetrics(root);
     document.documentElement.dataset.panmapMvpMode = state.mode;
@@ -587,6 +637,7 @@
   }
 
   function activate(target) {
+    if (layoutMode === 'preview' && target.closest('[data-preview-blank]')) { store.dispatch({ type: 'BACK_RING' }); return; }
     const inspectorToggle = target.closest('[data-panmap-inspector-toggle]');
     if (inspectorToggle) {
       inspectorCollapsed = !inspectorCollapsed;
@@ -678,6 +729,7 @@
     }
     if (ring) { store.dispatch({ type: 'FOCUS_RING', ringId: ring.dataset.ringFocus }); return; }
     if (back) {
+      if (layoutMode === 'preview' && back.dataset.panmapBack === 'overview') { store.dispatch({ type: 'BACK_RING' }); return; }
       const actions = { overview: 'OVERVIEW', ring: 'BACK_RING', category: 'BACK_CATEGORY' };
       if (layoutMode === 'elastic' && back.dataset.panmapBack === 'ring' && elasticAlpha > 0) {
         animateElastic(0, elasticFocusId, () => store.dispatch({ type: 'BACK_RING' }));
@@ -698,6 +750,7 @@
 
   function mount(nextSnapshot, nextWorkflow) {
     snapshot = nextSnapshot;
+    previewLayout = null;
     workflow = nextWorkflow;
     unsubscribe?.();
     store = app.panmapMvpState.createStore();
@@ -712,6 +765,17 @@
           return;
         }
         activate(event.target);
+      });
+      root.addEventListener('pointerover', (event) => {
+        if (layoutMode !== 'preview' || store.getState().focusedCategoryCode) return;
+        const category = event.target.closest('[data-category-code]');
+        const panel = root.querySelector('.panmap-inspector-body');
+        if (category && panel) panel.innerHTML = statsPanel({ ...store.getState(), mode: 'category-focused', focusedCategoryCode: category.dataset.categoryCode });
+      });
+      root.addEventListener('pointerout', (event) => {
+        if (layoutMode !== 'preview' || store.getState().focusedCategoryCode || event.relatedTarget?.closest?.('[data-category-code]')) return;
+        const panel = root.querySelector('.panmap-inspector-body');
+        if (panel) panel.innerHTML = statsPanel(store.getState());
       });
       root.addEventListener('keydown', (event) => {
         if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('[role="button"], button')) { event.preventDefault(); activate(event.target); }

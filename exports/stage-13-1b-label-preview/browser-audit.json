@@ -1,0 +1,348 @@
+{
+  "responsive": [
+    {
+      "audit": {
+        "buildMs": 9.099999964237211,
+        "categoryCount": 9,
+        "labelCount": 63,
+        "providerRequestDelta": 0,
+        "renderMs": 2.099999964237213,
+        "ringId": "ring-10-20",
+        "selectedCategory": null
+      },
+      "canvas": {
+        "bottom": 841,
+        "height": 738,
+        "right": 1429,
+        "width": 1346,
+        "x": 83,
+        "y": 103
+      },
+      "clipped": 0,
+      "collisions": 0,
+      "coveredByOverlay": [],
+      "labelCount": 63,
+      "meta": "当前分析快照 · Provider API 0武汉·黄鹤楼 · 步行 · 10 / 20 / 30 分钟9 类 · 4540 POI",
+      "overlays": [
+        {
+          "bottom": 539,
+          "height": 416,
+          "right": 1409,
+          "width": 280,
+          "x": 1129,
+          "y": 123
+        },
+        {
+          "bottom": 777,
+          "height": 170,
+          "right": 343,
+          "width": 240,
+          "x": 103,
+          "y": 607
+        }
+      ],
+      "summary": "\n      圈层聚焦\n      20 分钟\n      圈层 POI2101一级类别9\n      餐饮服务343购物服务299医疗保健服务284交通设施服务281住宿服务261科教文化服务229\n      \n      传统地图小窗 · 等待选择 POI\n    ",
+      "svg": {
+        "bottom": 793,
+        "height": 620,
+        "right": 1149,
+        "width": 966,
+        "x": 183,
+        "y": 173
+      },
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      },
+      "screenshot": "07-full-workspace-final.png",
+      "geometryStable": true,
+      "fingerprintSha256": "bd68e14584b8b58613858008ac1f9cfe1370b9c38b65912436dbeca838de5b2c"
+    },
+    {
+      "audit": {
+        "buildMs": 9.099999964237211,
+        "categoryCount": 9,
+        "labelCount": 63,
+        "providerRequestDelta": 0,
+        "renderMs": 2.099999964237213,
+        "ringId": "ring-10-20",
+        "selectedCategory": null
+      },
+      "canvas": {
+        "bottom": 661,
+        "height": 558,
+        "right": 1269,
+        "width": 1186,
+        "x": 83,
+        "y": 103
+      },
+      "clipped": 0,
+      "collisions": 0,
+      "coveredByOverlay": [],
+      "labelCount": 63,
+      "meta": "当前分析快照 · Provider API 0武汉·黄鹤楼 · 步行 · 10 / 20 / 30 分钟9 类 · 4540 POI",
+      "overlays": [
+        {
+          "bottom": 523,
+          "height": 404,
+          "right": 1253,
+          "width": 240,
+          "x": 1013,
+          "y": 119
+        },
+        {
+          "bottom": 603,
+          "height": 154,
+          "right": 319,
+          "width": 220,
+          "x": 99,
+          "y": 449
+        }
+      ],
+      "summary": "\n      圈层聚焦\n      20 分钟\n      圈层 POI2101一级类别9\n      餐饮服务343购物服务299医疗保健服务284交通设施服务281住宿服务261科教文化服务229\n      \n      传统地图小窗 · 等待选择 POI\n    ",
+      "svg": {
+        "bottom": 613,
+        "height": 450,
+        "right": 1029,
+        "width": 856,
+        "x": 173,
+        "y": 163
+      },
+      "viewport": {
+        "height": 720,
+        "width": 1280
+      },
+      "screenshot": "08-responsive-1280.png",
+      "geometryStable": true,
+      "fingerprintSha256": "bd68e14584b8b58613858008ac1f9cfe1370b9c38b65912436dbeca838de5b2c"
+    },
+    {
+      "audit": {
+        "buildMs": 9.099999964237211,
+        "categoryCount": 9,
+        "labelCount": 63,
+        "providerRequestDelta": 0,
+        "renderMs": 2.099999964237213,
+        "ringId": "ring-10-20",
+        "selectedCategory": null
+      },
+      "canvas": {
+        "bottom": 1021,
+        "height": 918,
+        "right": 1909,
+        "width": 1826,
+        "x": 83,
+        "y": 103
+      },
+      "clipped": 0,
+      "collisions": 0,
+      "coveredByOverlay": [],
+      "labelCount": 63,
+      "meta": "当前分析快照 · Provider API 0武汉·黄鹤楼 · 步行 · 10 / 20 / 30 分钟9 类 · 4540 POI",
+      "overlays": [
+        {
+          "bottom": 539,
+          "height": 416,
+          "right": 1889,
+          "width": 280,
+          "x": 1609,
+          "y": 123
+        },
+        {
+          "bottom": 957,
+          "height": 170,
+          "right": 343,
+          "width": 240,
+          "x": 103,
+          "y": 787
+        }
+      ],
+      "summary": "\n      圈层聚焦\n      20 分钟\n      圈层 POI2101一级类别9\n      餐饮服务343购物服务299医疗保健服务284交通设施服务281住宿服务261科教文化服务229\n      \n      传统地图小窗 · 等待选择 POI\n    ",
+      "svg": {
+        "bottom": 973,
+        "height": 800,
+        "right": 1629,
+        "width": 1446,
+        "x": 183,
+        "y": 173
+      },
+      "viewport": {
+        "height": 1080,
+        "width": 1920
+      },
+      "screenshot": "09-responsive-1920.png",
+      "geometryStable": true,
+      "fingerprintSha256": "bd68e14584b8b58613858008ac1f9cfe1370b9c38b65912436dbeca838de5b2c"
+    }
+  ],
+  "interactions": [
+    {
+      "action": "ring-10",
+      "buildMs": 9.099999964237211,
+      "categoryCount": 9,
+      "labelCount": 63,
+      "providerRequestDelta": 0,
+      "renderMs": 2.399999976158142,
+      "ringId": "ring-0-10",
+      "selectedCategory": null,
+      "geometryStable": true,
+      "summary": "\n      圈层聚焦\n      10 分钟\n      圈层 POI548一级类别9\n      风景名胜124购物服务81住宿服务76餐饮服务71交通设施服务58体育休闲服务42\n      \n      传统地图小窗 · 等待选择 POI\n    "
+    },
+    {
+      "action": "ring-20",
+      "buildMs": 9.099999964237211,
+      "categoryCount": 9,
+      "labelCount": 63,
+      "providerRequestDelta": 0,
+      "renderMs": 2.700000047683716,
+      "ringId": "ring-10-20",
+      "selectedCategory": null,
+      "geometryStable": true,
+      "summary": "\n      圈层聚焦\n      20 分钟\n      圈层 POI2101一级类别9\n      餐饮服务343购物服务299医疗保健服务284交通设施服务281住宿服务261科教文化服务229\n      \n      传统地图小窗 · 等待选择 POI\n    "
+    },
+    {
+      "action": "ring-30",
+      "buildMs": 9.099999964237211,
+      "categoryCount": 9,
+      "labelCount": 63,
+      "providerRequestDelta": 0,
+      "renderMs": 2.400000035762787,
+      "ringId": "ring-20-30",
+      "selectedCategory": null,
+      "geometryStable": true,
+      "summary": "\n      圈层聚焦\n      30 分钟\n      圈层 POI1891一级类别9\n      交通设施服务330购物服务321餐饮服务289科教文化服务220住宿服务210风景名胜175\n      \n      传统地图小窗 · 等待选择 POI\n    "
+    },
+    {
+      "action": "ring-20",
+      "buildMs": 9.099999964237211,
+      "categoryCount": 9,
+      "labelCount": 63,
+      "providerRequestDelta": 0,
+      "renderMs": 2.299999952316284,
+      "ringId": "ring-10-20",
+      "selectedCategory": null,
+      "geometryStable": true,
+      "summary": "\n      圈层聚焦\n      20 分钟\n      圈层 POI2101一级类别9\n      餐饮服务343购物服务299医疗保健服务284交通设施服务281住宿服务261科教文化服务229\n      \n      传统地图小窗 · 等待选择 POI\n    "
+    },
+    {
+      "action": "hover-food",
+      "buildMs": 9.099999964237211,
+      "categoryCount": 9,
+      "labelCount": 63,
+      "providerRequestDelta": 0,
+      "renderMs": 2.299999952316284,
+      "ringId": "ring-10-20",
+      "selectedCategory": null,
+      "geometryStable": true,
+      "summary": "\n      类别展开\n      20 分钟\n      圈层 POI2101一级类别9当前类别餐饮服务 · 343\n      餐饮服务343购物服务299医疗保健服务284交通设施服务281住宿服务261科教文化服务229\n      \n      传统地图小窗 · 等待选择 POI\n    "
+    },
+    {
+      "action": "select-food",
+      "buildMs": 9.099999964237211,
+      "categoryCount": 9,
+      "labelCount": 63,
+      "providerRequestDelta": 0,
+      "renderMs": 2.399999976158142,
+      "ringId": "ring-10-20",
+      "selectedCategory": "050000",
+      "geometryStable": true,
+      "summary": "\n      类别展开\n      20 分钟\n      圈层 POI2101一级类别9当前类别餐饮服务 · 343\n      餐饮服务343购物服务299医疗保健服务284交通设施服务281住宿服务261科教文化服务229\n      \n      传统地图小窗 · 等待选择 POI\n    "
+    },
+    {
+      "action": "blank-clear",
+      "buildMs": 9.099999964237211,
+      "categoryCount": 9,
+      "labelCount": 63,
+      "providerRequestDelta": 0,
+      "renderMs": 2.399999976158142,
+      "ringId": "ring-10-20",
+      "selectedCategory": null,
+      "geometryStable": true,
+      "summary": "\n      圈层聚焦\n      20 分钟\n      圈层 POI2101一级类别9\n      餐饮服务343购物服务299医疗保健服务284交通设施服务281住宿服务261科教文化服务229\n      \n      传统地图小窗 · 等待选择 POI\n    "
+    },
+    {
+      "action": "selected-then-switch",
+      "buildMs": 9.099999964237211,
+      "categoryCount": 9,
+      "labelCount": 63,
+      "providerRequestDelta": 0,
+      "renderMs": 2.699999988079071,
+      "ringId": "ring-20-30",
+      "selectedCategory": null,
+      "geometryStable": true
+    }
+  ],
+  "baseline": {
+    "audit": {
+      "buildMs": 9.099999964237211,
+      "categoryCount": 9,
+      "labelCount": 63,
+      "providerRequestDelta": 0,
+      "renderMs": 1.0999999642372131,
+      "ringId": "ring-10-20",
+      "selectedCategory": null
+    },
+    "canvas": {
+      "bottom": 841,
+      "height": 738,
+      "right": 1429,
+      "width": 1345.953125,
+      "x": 83.046875,
+      "y": 103
+    },
+    "clipped": 0,
+    "collisions": 0,
+    "coveredByOverlay": [],
+    "labelCount": 63,
+    "meta": "当前分析快照 · Provider API 0武汉·黄鹤楼 · 步行 · 10 / 20 / 30 分钟9 类 · 4540 POI",
+    "overlays": [
+      {
+        "bottom": 539,
+        "height": 416,
+        "right": 1409,
+        "width": 280,
+        "x": 1129,
+        "y": 123
+      },
+      {
+        "bottom": 777,
+        "height": 170,
+        "right": 343.046875,
+        "width": 240,
+        "x": 103.046875,
+        "y": 607
+      }
+    ],
+    "summary": "\n      圈层聚焦\n      20 分钟\n      圈层 POI2101一级类别9\n      餐饮服务343购物服务299医疗保健服务284交通设施服务281住宿服务261科教文化服务229\n      \n      传统地图小窗 · 等待选择 POI\n    ",
+    "svg": {
+      "bottom": 793,
+      "height": 620,
+      "right": 1149,
+      "width": 965.953125,
+      "x": 183.046875,
+      "y": 173
+    },
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    },
+    "fingerprintSha256": "bd68e14584b8b58613858008ac1f9cfe1370b9c38b65912436dbeca838de5b2c"
+  },
+  "inspectorCollapse": true,
+  "miniMapCollapse": true,
+  "scope": {
+    "center": "武汉·黄鹤楼",
+    "profile": "foot-walking",
+    "ranges": [
+      10,
+      20,
+      30
+    ],
+    "poiCount": 4540,
+    "excludedCategory": "070000 生活服务",
+    "reason": "existing minute endpoint caps POI at 5000",
+    "browser": "Codex In-app Browser",
+    "frameMetrics": "not measured",
+    "apiCounter": "resource timing /api/ entries since preview entry"
+  }
+}

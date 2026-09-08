@@ -11,7 +11,7 @@ test('developer toolbar retains both baselines and Annular Elastic v1 when later
   assert.match(view, /Rectangular Elastic v0/);
   assert.match(view, /Annular Elastic v1/);
   assert.match(view, /data-layout-mode="annular"/);
-  assert.match(view, /\['elastic', 'annular', 'natural'\]\.includes\(nextMode\)/);
+  assert.match(view, /\['elastic', 'annular', 'natural', 'preview'\]\.includes\(nextMode\)/);
 });
 
 test('annular modules load before the view and use the existing single workspace', () => {

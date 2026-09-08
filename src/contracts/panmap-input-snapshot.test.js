@@ -46,3 +46,13 @@ test('exclusive ring boundary assigns every eligible POI exactly once', () => {
   assert.equal(api.ringForMinute(30, rings).ringId, 'ring-20-30');
   assert.equal(api.ringForMinute(31, rings), null);
 });
+
+test('snapshot preserves provider subtype provenance without inventing missing values', () => {
+  const api = load();
+  const source = { ...poiResult, pois: poiResult.pois.map((poi, i) => i ? poi : { ...poi, providerCategory: { ...poi.providerCategory, typeLabel: '餐饮服务;中餐厅;火锅店', typecode: '050117' } }) };
+  const snapshot = api.buildPanmapInputSnapshot(reachability, source, minuteResult);
+  assert.equal(snapshot.pois[0].providerCategory.typeLabel, '餐饮服务;中餐厅;火锅店');
+  assert.equal(snapshot.pois[0].providerCategory.typecode, '050117');
+  assert.equal(snapshot.pois[1].providerCategory.typeLabel, null);
+  assert.equal(poiResult.pois[0].providerCategory.typeLabel, undefined);
+});

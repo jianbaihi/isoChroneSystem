@@ -2723,20 +2723,21 @@ document.querySelectorAll('.toolbar-menu-option').forEach((option) => {
 
 const poiMenuChecks = [...document.querySelectorAll('[data-poi-menu]')];
 function updatePoiToolbarLabel() {
-  const selectedCount = poiMenuChecks.filter((input) => input.checked).length;
-  const label = selectedCount === poiMenuChecks.length ? `全部 ${poiMenuChecks.length} 项` : `${selectedCount} 项`;
-  poiToolbarButton.innerHTML = `<span class="toolbar-select-copy"><small>POI 类别</small><strong>${label}</strong></span><span class="toolbar-chevron">⌄</span>`;
-  toolbarMenuSelectAll.textContent = selectedCount === poiMenuChecks.length ? '取消全选' : '全选';
-  document.querySelectorAll('.poi-chip').forEach((chip) => {
-    const matchingInput = poiMenuChecks.find((input) => input.dataset.poiMenu === chip.dataset.poi);
-    chip.classList.toggle('is-checked', Boolean(matchingInput?.checked));
-  });
+  // The live AMap category chips own selection; the old menu may no longer exist.
+  const chips = [...document.querySelectorAll('#amapCategoryGrid .poi-chip')];
+  const selectedCount = chips.filter((chip) => chip.classList.contains('is-checked')).length;
+  const label = selectedCount === chips.length ? `全部 ${chips.length} 项` : `${selectedCount} 项`;
+  if (poiToolbarButton) poiToolbarButton.innerHTML = `<span class="toolbar-select-copy"><small>POI 类别</small><strong>${label}</strong></span><span class="toolbar-chevron">⌄</span>`;
+  if (toolbarMenuSelectAll) toolbarMenuSelectAll.textContent = selectedCount === chips.length ? '取消全选' : '全选';
 }
 poiMenuChecks.forEach((input) => input.addEventListener('change', () => {
+  document.querySelectorAll('#amapCategoryGrid .poi-chip').forEach((chip) => {
+    if (chip.dataset.poi === input.dataset.poiMenu) chip.classList.toggle('is-checked', input.checked);
+  });
   updatePoiToolbarLabel();
   syncParameterDraftFromUI();
 }));
-toolbarMenuSelectAll.addEventListener('click', () => {
+toolbarMenuSelectAll?.addEventListener('click', () => {
   const allChecked = poiMenuChecks.every((input) => input.checked);
   poiMenuChecks.forEach((input) => { input.checked = !allChecked; });
   updatePoiToolbarLabel();

@@ -1489,3 +1489,25 @@ html[data-panmap-mode="research"] body > .hidden-research-panel[data-mode-capabi
   .panmap-mini-map-toggle { left: 16px; bottom: 220px; }
   .panmap-breadcrumb { left: 16px; bottom: 14px; }
 }
+
+/* Stage 13.1B: label-first semantic preview, with a stable safe area. */
+.workspace:has(.is-label-preview) > .panmap-control-panel { display: none !important; }
+.is-label-preview .panmap-canvas-stage { position: absolute; top: 70px; left: 100px; right: auto; bottom: auto; width: calc(100% - 380px); height: calc(100% - 118px); min-width: 0; min-height: 0; display: block; justify-self: start; align-self: start; transform: translate(var(--panmap-pan-x, 0px), var(--panmap-pan-y, 0px)); }
+.is-label-preview .label-preview-svg { display: block; width: 100%; height: 100%; min-width: 0; min-height: 0; max-width: 100%; max-height: 100%; overflow: hidden; }
+.is-label-preview .panmap-inspector { width: 280px; }
+.is-label-preview .panmap-dev-toolbar { top: auto; bottom: 12px; left: 260px; right: 300px; max-width: none; padding: 4px; justify-content: center; flex-wrap: wrap; }
+.is-label-preview .panmap-dev-toolbar button { font-size: 9px; padding: 5px 6px; }
+.is-label-preview .panmap-mvp-header { top: 12px; left: 12px; max-width: 450px; }
+.preview-cluster { cursor: pointer; outline: none; }
+.preview-cluster > path { fill: color-mix(in srgb, var(--preview-color) 13%, white); stroke: white; stroke-width: 3; transition: fill 120ms ease, stroke 120ms ease; }
+.preview-cluster text { fill: color-mix(in srgb, var(--preview-color) 80%, #344054); pointer-events: none; }
+.preview-cluster .preview-title { font-size: 17px; font-weight: 700; }
+.preview-cluster .preview-name { font-size: 10px; opacity: .78; }
+.preview-cluster:hover > path, .preview-cluster:focus-visible > path, .preview-cluster.is-selected > path { fill: color-mix(in srgb, var(--preview-color) 26%, white); stroke: var(--preview-color); stroke-width: 2; }
+.preview-cluster.is-empty { opacity: .4; }
+@media (max-width: 1360px) {
+  .is-label-preview .panmap-inspector { width: 240px; padding: 12px; }
+  .is-label-preview .panmap-canvas-stage { top: 60px; left: 90px; width: calc(100% - 330px); height: calc(100% - 108px); }
+  .is-label-preview .panmap-dev-toolbar { left: 240px; right: 260px; bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .preview-cluster > path { transition: none; } }

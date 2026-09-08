@@ -1,0 +1,69 @@
+{
+  "completedAt": "2026-09-08T22:01:25.765005+08:00",
+  "status": "STAGE 13.1B VISUAL ITERATION REQUIRED",
+  "tests": {
+    "pass": 204,
+    "fail": 0,
+    "skip": 0
+  },
+  "finalPoiCount": 4540,
+  "finalCategoryCount": 9,
+  "apiRequestDelta": 0,
+  "geometryStable": true,
+  "responsive": [
+    {
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      },
+      "textOverlap": 0,
+      "clipped": 0,
+      "overlayCovered": 0
+    },
+    {
+      "viewport": {
+        "height": 720,
+        "width": 1280
+      },
+      "textOverlap": 0,
+      "clipped": 0,
+      "overlayCovered": 0
+    },
+    {
+      "viewport": {
+        "height": 1080,
+        "width": 1920
+      },
+      "textOverlap": 0,
+      "clipped": 0,
+      "overlayCovered": 0
+    }
+  ],
+  "gitCommit": "resolve with git log -1: completion record is included in the final local commit",
+  "remotePush": "not performed",
+  "screenshots": [
+    "00-before-stage13-1b.png",
+    "01-preview-overview.png",
+    "02-ring-focus-20min.png",
+    "03-envelope-detail.png",
+    "04-category-hover.png",
+    "05-category-selected.png",
+    "06-mini-map-coexist.png",
+    "07-full-workspace-final.png",
+    "08-responsive-1280.png",
+    "09-responsive-1920.png"
+  ],
+  "browserConsoleErrors": 0,
+  "screenshotSha256": {
+    "00-before-stage13-1b.png": "ca57b4058e8ee165a6d1fb414fe70a11f995f3e19656d24ffb3db0a6973fd140",
+    "01-preview-overview.png": "7675090ec5fa41f1c242991d9f20b0d8d96375dcf69ae9cd958823d7aca1e29a",
+    "02-ring-focus-20min.png": "17a945560998efbb6bc503d07f140effeacc53d9a1ea76709e7de08997b652f8",
+    "03-envelope-detail.png": "2d2ffa83e2758dcf34737601688bc57c5e868137bc88281e3d5a0ec7562b3504",
+    "04-category-hover.png": "51bfd18a8f87fdb2c6049a7da29143c8a9d04901da50c4d3b82ce810cf7d96f7",
+    "05-category-selected.png": "90fa0f798e3875a8839ccb69cccee1997cb7098d547e8e8044eab60aa5b3b9b0",
+    "06-mini-map-coexist.png": "59ec8bbc8e083d21c5e50ea2dc74362c46db9b83a6f6009883d9f26bdf9f75a3",
+    "07-full-workspace-final.png": "a8d4dbb07cef366b64c4ec211769a808d2049a1f77b6fdcba8d427490900af88",
+    "08-responsive-1280.png": "8824af49bc089468f085d235840d23d2b056a3acc5774590f50d4804ee35130e",
+    "09-responsive-1920.png": "1837b3ff6957335ce3f08ade37bdc2dca1fa778f15d63f89d66fe78a45f3ad13"
+  }
+}

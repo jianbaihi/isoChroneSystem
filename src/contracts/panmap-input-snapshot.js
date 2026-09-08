@@ -66,6 +66,8 @@
         source: typeof poi.source === 'string' ? poi.source : poi.source?.provider || 'unknown',
         providerCategory: {
           level1Code,
+          typeLabel: poi.providerCategory?.typeLabel || null,
+          typecode: poi.providerCategory?.typecode || null,
           level1Label: poi.providerCategory?.level1Label || style?.label || level1Code,
         },
         semanticCategory: poi.semanticCategory || null,
