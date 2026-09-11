@@ -8,6 +8,8 @@
   },
   "final": {
     "branch": "backup/stage88-hhl10min-final-20260911",
-    "status": "PENDING PUSH"
+    "status": "PUSH VERIFIED",
+    "experimentCommit": "049e87077eb9081197eab0f74fbfdefa48cd6e0d",
+    "ownerVerification": "SSH authenticated as jianbaihi; matches origin repository owner"
   }
 }
