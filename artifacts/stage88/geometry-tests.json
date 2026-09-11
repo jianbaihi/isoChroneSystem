@@ -3,39 +3,39 @@
   "results": [
     {
       "state": "initial",
-      "threshold": 2.093972168942856,
+      "threshold": 1.8853762353108294,
       "bandwidth": 27,
       "padding": 24,
-      "sampleCount": 1543,
+      "sampleCount": 1651,
       "bridgeCount": 39,
       "neckCount": 0,
       "minNeckWidth": null,
       "rejectedNecks": 0,
-      "durationMs": 62.44316600000002
+      "durationMs": 89.38612499999999
     },
     {
       "state": "expanded",
-      "threshold": 1.9228739078066992,
+      "threshold": 1.8939679450049107,
       "bandwidth": 27,
       "padding": 24,
-      "sampleCount": 2118,
+      "sampleCount": 2229,
       "bridgeCount": 62,
       "neckCount": 0,
       "minNeckWidth": null,
       "rejectedNecks": 0,
-      "durationMs": 122.721792
+      "durationMs": 113.85516700000005
     },
     {
       "state": "collapsed",
-      "threshold": 2.093972168942856,
+      "threshold": 1.8853762353108294,
       "bandwidth": 27,
       "padding": 24,
-      "sampleCount": 1543,
+      "sampleCount": 1651,
       "bridgeCount": 39,
       "neckCount": 0,
       "minNeckWidth": null,
       "rejectedNecks": 0,
-      "durationMs": 62.44316600000002
+      "durationMs": 89.38612499999999
     }
   ]
 }

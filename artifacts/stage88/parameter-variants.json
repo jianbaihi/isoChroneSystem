@@ -1,0 +1,56 @@
+[
+  {
+    "preset": "tight",
+    "scale": "small",
+    "covered": true,
+    "neckCount": 0
+  },
+  {
+    "preset": "tight",
+    "scale": "medium",
+    "covered": true,
+    "neckCount": 0
+  },
+  {
+    "preset": "tight",
+    "scale": "large",
+    "covered": true,
+    "neckCount": 0
+  },
+  {
+    "preset": "balanced",
+    "scale": "small",
+    "covered": true,
+    "neckCount": 0
+  },
+  {
+    "preset": "balanced",
+    "scale": "medium",
+    "covered": true,
+    "neckCount": 0
+  },
+  {
+    "preset": "balanced",
+    "scale": "large",
+    "covered": true,
+    "neckCount": 0
+  },
+  {
+    "preset": "soft",
+    "scale": "small",
+    "covered": true,
+    "neckCount": 0
+  },
+  {
+    "preset": "soft",
+    "scale": "medium",
+    "covered": true,
+    "neckCount": 0
+  },
+  {
+    "preset": "soft",
+    "scale": "large",
+    "covered": true,
+    "neckCount": 0
+  }
+]

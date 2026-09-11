@@ -16,7 +16,7 @@
   },
   "worldCenterFixed": true,
   "l1AnchorFixed": true,
-  "maxNeighborMove": 18,
-  "meanNeighborMove": 2.25,
+  "maxNeighborMove": 18.000000000000007,
+  "meanNeighborMove": 3.375,
   "farNodeMove": 0
 }

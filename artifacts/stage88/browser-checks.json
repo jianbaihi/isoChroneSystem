@@ -1,0 +1,14 @@
+{
+  "providerRequestDelta": 0,
+  "centerPixelDrift1440": 0.0,
+  "centerPixelDrift1134": 0.0,
+  "initialL1": 16,
+  "initialL2": 0,
+  "expandedL2": 9,
+  "collapsedL2": 0,
+  "restoredBoundingArea": true,
+  "maxObservedLayoutMs": 10.900000095367432,
+  "maxObservedEnvelopeMs": 82.80000007152557,
+  "animationDurationMs": 320,
+  "screenshots": 13
+}

@@ -1,0 +1,610 @@
+[
+  {
+    "name": "01-before-layout",
+    "audit": {
+      "aspectRatio": 1.0898267011628446,
+      "bboxUnionArea": 59737,
+      "boundingArea": 258541.7242330821,
+      "centerFixed": true,
+      "focusPath": [
+        "黄鹤楼"
+      ],
+      "labelCount": 16,
+      "layoutMs": 3.700000047683716,
+      "maxLabelAspectRatio": 6.806451612903226,
+      "maxRadialExtent": 420.8412749545856,
+      "meanLabelAspectRatio": 3.8850806451612896,
+      "meanNearestGap": 42.52969752394817,
+      "medianNearestGap": 41.389544602429474,
+      "mode": "before-layout",
+      "occupiedRatio": 0.2310536149520901,
+      "overlapCount": 0,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        5,
+        4,
+        4,
+        3
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 0,
+      "wrappedLabelCount": 0
+    },
+    "center": {
+      "height": 103.58380126953124,
+      "width": 108.296875,
+      "x": 665.8515625,
+      "y": 565.1243286132812
+    }
+  },
+  {
+    "name": "02-compact-l1-layout",
+    "audit": {
+      "aspectRatio": 1.1573905556340247,
+      "bboxUnionArea": 47154,
+      "boundingArea": 194750.274309529,
+      "centerFixed": true,
+      "farNodeMove": 0,
+      "focusPath": [
+        "黄鹤楼"
+      ],
+      "labelCount": 16,
+      "layoutMs": 9.5,
+      "maxLabelAspectRatio": 2.888888888888889,
+      "maxNeighborMove": 0,
+      "maxRadialExtent": 385.6905136192105,
+      "meanLabelAspectRatio": 2.3299999999999996,
+      "meanNearestGap": 29.426736139780807,
+      "meanNeighborMove": 0,
+      "medianNearestGap": 29.00212490340442,
+      "mode": "layout",
+      "occupiedRatio": 0.242125461271778,
+      "overlapCount": 0,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        3,
+        4,
+        4,
+        5
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 0,
+      "wrappedLabelCount": 7
+    },
+    "center": {
+      "height": 103.58380126953124,
+      "width": 108.296875,
+      "x": 665.8515625,
+      "y": 565.1243286132812
+    }
+  },
+  {
+    "name": "03-before-envelope",
+    "audit": {
+      "aspectRatio": 1.0898267011628446,
+      "bandwidth": 19.200000000000003,
+      "bboxUnionArea": 59737,
+      "boundingArea": 258541.7242330821,
+      "centerFixed": true,
+      "focusPath": [
+        "黄鹤楼"
+      ],
+      "labelCount": 16,
+      "layoutMs": 1.100000023841858,
+      "maxLabelAspectRatio": 6.806451612903226,
+      "maxRadialExtent": 420.8412749545856,
+      "meanLabelAspectRatio": 3.8850806451612896,
+      "meanNearestGap": 42.52969752394817,
+      "medianNearestGap": 41.389544602429474,
+      "mode": "before-envelope",
+      "occupiedRatio": 0.2310536149520901,
+      "overlapCount": 0,
+      "padding": 18,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        5,
+        4,
+        4,
+        3
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 0,
+      "wrappedLabelCount": 0
+    },
+    "center": {
+      "height": 103.58380126953124,
+      "width": 108.296875,
+      "x": 665.8515625,
+      "y": 565.1243286132812
+    }
+  },
+  {
+    "name": "04-balanced-envelope",
+    "audit": {
+      "aspectRatio": 1.1573905556340247,
+      "bandwidth": 27,
+      "bboxUnionArea": 47154,
+      "boundingArea": 194750.274309529,
+      "centerFixed": true,
+      "envelopeMs": 0,
+      "farNodeMove": 0,
+      "focusPath": [
+        "黄鹤楼"
+      ],
+      "labelCount": 16,
+      "layoutMs": 10,
+      "maxLabelAspectRatio": 2.888888888888889,
+      "maxNeighborMove": 0,
+      "maxRadialExtent": 385.6905136192105,
+      "meanLabelAspectRatio": 2.3299999999999996,
+      "meanNearestGap": 29.426736139780807,
+      "meanNeighborMove": 0,
+      "medianNearestGap": 29.00212490340442,
+      "minNeckWidth": null,
+      "mode": "final",
+      "neckCount": 0,
+      "occupiedRatio": 0.242125461271778,
+      "overlapCount": 0,
+      "padding": 24,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        3,
+        4,
+        4,
+        5
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 0,
+      "wrappedLabelCount": 7
+    },
+    "center": {
+      "height": 103.58380126953124,
+      "width": 108.296875,
+      "x": 665.8515625,
+      "y": 565.1243286132812
+    }
+  },
+  {
+    "name": "05-soft-envelope",
+    "audit": {
+      "aspectRatio": 1.1573905556340247,
+      "bandwidth": 27,
+      "bboxUnionArea": 47154,
+      "boundingArea": 194750.274309529,
+      "centerFixed": true,
+      "envelopeMs": 76.69999992847443,
+      "farNodeMove": 0,
+      "focusPath": [
+        "黄鹤楼"
+      ],
+      "labelCount": 16,
+      "layoutMs": 8.700000047683716,
+      "maxLabelAspectRatio": 2.888888888888889,
+      "maxNeighborMove": 0,
+      "maxRadialExtent": 385.6905136192105,
+      "meanLabelAspectRatio": 2.3299999999999996,
+      "meanNearestGap": 29.426736139780807,
+      "meanNeighborMove": 0,
+      "medianNearestGap": 29.00212490340442,
+      "minNeckWidth": null,
+      "mode": "final",
+      "neckCount": 0,
+      "occupiedRatio": 0.242125461271778,
+      "overlapCount": 0,
+      "padding": 26,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        3,
+        4,
+        4,
+        5
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 0,
+      "wrappedLabelCount": 7
+    },
+    "center": {
+      "height": 103.58380126953124,
+      "width": 108.296875,
+      "x": 665.8515625,
+      "y": 565.1243286132812
+    }
+  },
+  {
+    "name": "06-center-emphasis",
+    "audit": {
+      "aspectRatio": 1.1573905556340247,
+      "bandwidth": 27,
+      "bboxUnionArea": 47154,
+      "boundingArea": 194750.274309529,
+      "centerFixed": true,
+      "envelopeMs": 0,
+      "farNodeMove": 0,
+      "focusPath": [
+        "黄鹤楼"
+      ],
+      "labelCount": 16,
+      "layoutMs": 8.100000023841858,
+      "maxLabelAspectRatio": 2.888888888888889,
+      "maxNeighborMove": 0,
+      "maxRadialExtent": 385.6905136192105,
+      "meanLabelAspectRatio": 2.3299999999999996,
+      "meanNearestGap": 29.426736139780807,
+      "meanNeighborMove": 0,
+      "medianNearestGap": 29.00212490340442,
+      "minNeckWidth": null,
+      "mode": "final",
+      "neckCount": 0,
+      "occupiedRatio": 0.242125461271778,
+      "overlapCount": 0,
+      "padding": 24,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        3,
+        4,
+        4,
+        5
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 0,
+      "wrappedLabelCount": 7
+    },
+    "center": {
+      "height": 103.58380126953124,
+      "width": 108.296875,
+      "x": 665.8515625,
+      "y": 565.1243286132812
+    }
+  },
+  {
+    "name": "07-l1-focus",
+    "audit": {
+      "aspectRatio": 1.162833138298035,
+      "bandwidth": 27,
+      "bboxUnionArea": 62104,
+      "boundingArea": 281953.4291141121,
+      "centerFixed": true,
+      "envelopeMs": 82.80000007152557,
+      "farNodeMove": 0,
+      "focusPath": [
+        "黄鹤楼",
+        "餐饮服务"
+      ],
+      "labelCount": 25,
+      "layoutMs": 10.299999952316284,
+      "maxLabelAspectRatio": 4.08,
+      "maxNeighborMove": 18.000000000000007,
+      "maxRadialExtent": 451.5935887919859,
+      "meanLabelAspectRatio": 2.447999999999999,
+      "meanNearestGap": 31.828294919385193,
+      "meanNeighborMove": 3.375,
+      "medianNearestGap": 29.206041578803863,
+      "minNeckWidth": null,
+      "mode": "final",
+      "neckCount": 0,
+      "occupiedRatio": 0.22026332573832713,
+      "overlapCount": 0,
+      "padding": 24,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        3,
+        4,
+        8,
+        10
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 9,
+      "wrappedLabelCount": 7
+    },
+    "center": {
+      "height": 103.58380126953124,
+      "width": 108.296875,
+      "x": 665.8515625,
+      "y": 565.1243286132812
+    }
+  },
+  {
+    "name": "08-l2-expanded-in-place",
+    "audit": {
+      "aspectRatio": 1.162833138298035,
+      "bandwidth": 27,
+      "bboxUnionArea": 62104,
+      "boundingArea": 281953.4291141121,
+      "centerFixed": true,
+      "envelopeMs": 82.80000007152557,
+      "farNodeMove": 0,
+      "focusPath": [
+        "黄鹤楼",
+        "餐饮服务"
+      ],
+      "labelCount": 25,
+      "layoutMs": 10.299999952316284,
+      "maxLabelAspectRatio": 4.08,
+      "maxNeighborMove": 18.000000000000007,
+      "maxRadialExtent": 451.5935887919859,
+      "meanLabelAspectRatio": 2.447999999999999,
+      "meanNearestGap": 31.828294919385193,
+      "meanNeighborMove": 3.375,
+      "medianNearestGap": 29.206041578803863,
+      "minNeckWidth": null,
+      "mode": "final",
+      "neckCount": 0,
+      "occupiedRatio": 0.22026332573832713,
+      "overlapCount": 0,
+      "padding": 24,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        3,
+        4,
+        8,
+        10
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 9,
+      "wrappedLabelCount": 7
+    },
+    "center": {
+      "height": 103.58380126953124,
+      "width": 108.296875,
+      "x": 665.8515625,
+      "y": 565.1243286132812
+    }
+  },
+  {
+    "name": "09-l2-collapse-return",
+    "audit": {
+      "aspectRatio": 1.1573905556340247,
+      "bandwidth": 27,
+      "bboxUnionArea": 47154,
+      "boundingArea": 194750.274309529,
+      "centerFixed": true,
+      "envelopeMs": 0.10000002384185792,
+      "farNodeMove": 0,
+      "focusPath": [
+        "黄鹤楼"
+      ],
+      "labelCount": 16,
+      "layoutMs": 10.5,
+      "maxLabelAspectRatio": 2.888888888888889,
+      "maxNeighborMove": 0,
+      "maxRadialExtent": 385.6905136192105,
+      "meanLabelAspectRatio": 2.3299999999999996,
+      "meanNearestGap": 29.426736139780807,
+      "meanNeighborMove": 0,
+      "medianNearestGap": 29.00212490340442,
+      "minNeckWidth": null,
+      "mode": "final",
+      "neckCount": 0,
+      "occupiedRatio": 0.242125461271778,
+      "overlapCount": 0,
+      "padding": 24,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        3,
+        4,
+        4,
+        5
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 0,
+      "wrappedLabelCount": 7
+    },
+    "center": {
+      "height": 103.58380126953124,
+      "width": 108.296875,
+      "x": 665.8515625,
+      "y": 565.1243286132812
+    }
+  },
+  {
+    "name": "10-final-10min-overview",
+    "audit": {
+      "aspectRatio": 1.1573905556340247,
+      "bandwidth": 27,
+      "bboxUnionArea": 47154,
+      "boundingArea": 194750.274309529,
+      "centerFixed": true,
+      "envelopeMs": 0.10000002384185792,
+      "farNodeMove": 0,
+      "focusPath": [
+        "黄鹤楼"
+      ],
+      "labelCount": 16,
+      "layoutMs": 10.5,
+      "maxLabelAspectRatio": 2.888888888888889,
+      "maxNeighborMove": 0,
+      "maxRadialExtent": 385.6905136192105,
+      "meanLabelAspectRatio": 2.3299999999999996,
+      "meanNearestGap": 29.426736139780807,
+      "meanNeighborMove": 0,
+      "medianNearestGap": 29.00212490340442,
+      "minNeckWidth": null,
+      "mode": "final",
+      "neckCount": 0,
+      "occupiedRatio": 0.242125461271778,
+      "overlapCount": 0,
+      "padding": 24,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        3,
+        4,
+        4,
+        5
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 0,
+      "wrappedLabelCount": 7
+    },
+    "center": {
+      "height": 103.58380126953124,
+      "width": 108.296875,
+      "x": 665.8515625,
+      "y": 565.1243286132812
+    }
+  },
+  {
+    "name": "11-1134-initial",
+    "audit": {
+      "aspectRatio": 1.1573905556340247,
+      "bandwidth": 27,
+      "bboxUnionArea": 47154,
+      "boundingArea": 194750.274309529,
+      "centerFixed": true,
+      "envelopeMs": 0.10000002384185792,
+      "farNodeMove": 0,
+      "focusPath": [
+        "黄鹤楼"
+      ],
+      "labelCount": 16,
+      "layoutMs": 10.5,
+      "maxLabelAspectRatio": 2.888888888888889,
+      "maxNeighborMove": 0,
+      "maxRadialExtent": 385.6905136192105,
+      "meanLabelAspectRatio": 2.3299999999999996,
+      "meanNearestGap": 29.426736139780807,
+      "meanNeighborMove": 0,
+      "medianNearestGap": 29.00212490340442,
+      "minNeckWidth": null,
+      "mode": "final",
+      "neckCount": 0,
+      "occupiedRatio": 0.242125461271778,
+      "overlapCount": 0,
+      "padding": 24,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        3,
+        4,
+        4,
+        5
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 0,
+      "wrappedLabelCount": 7
+    },
+    "center": {
+      "height": 90.47430419921876,
+      "width": 94.03125,
+      "x": 519.984375,
+      "y": 508.66351318359375
+    }
+  },
+  {
+    "name": "12-1134-expanded",
+    "audit": {
+      "aspectRatio": 1.162833138298035,
+      "bandwidth": 27,
+      "bboxUnionArea": 62104,
+      "boundingArea": 281953.4291141121,
+      "centerFixed": true,
+      "envelopeMs": 0,
+      "farNodeMove": 0,
+      "focusPath": [
+        "黄鹤楼",
+        "餐饮服务"
+      ],
+      "labelCount": 25,
+      "layoutMs": 10.700000047683716,
+      "maxLabelAspectRatio": 4.08,
+      "maxNeighborMove": 18.000000000000007,
+      "maxRadialExtent": 451.5935887919859,
+      "meanLabelAspectRatio": 2.447999999999999,
+      "meanNearestGap": 31.828294919385193,
+      "meanNeighborMove": 3.375,
+      "medianNearestGap": 29.206041578803863,
+      "minNeckWidth": null,
+      "mode": "final",
+      "neckCount": 0,
+      "occupiedRatio": 0.22026332573832713,
+      "overlapCount": 0,
+      "padding": 24,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        3,
+        4,
+        8,
+        10
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 9,
+      "wrappedLabelCount": 7
+    },
+    "center": {
+      "height": 90.47430419921876,
+      "width": 94.03125,
+      "x": 519.984375,
+      "y": 508.66351318359375
+    }
+  },
+  {
+    "name": "13-1134-collapse",
+    "audit": {
+      "aspectRatio": 1.1573905556340247,
+      "bandwidth": 27,
+      "bboxUnionArea": 47154,
+      "boundingArea": 194750.274309529,
+      "centerFixed": true,
+      "envelopeMs": 0,
+      "farNodeMove": 0,
+      "focusPath": [
+        "黄鹤楼"
+      ],
+      "labelCount": 16,
+      "layoutMs": 10.900000095367432,
+      "maxLabelAspectRatio": 2.888888888888889,
+      "maxNeighborMove": 0,
+      "maxRadialExtent": 385.6905136192105,
+      "meanLabelAspectRatio": 2.3299999999999996,
+      "meanNearestGap": 29.426736139780807,
+      "meanNeighborMove": 0,
+      "medianNearestGap": 29.00212490340442,
+      "minNeckWidth": null,
+      "mode": "final",
+      "neckCount": 0,
+      "occupiedRatio": 0.242125461271778,
+      "overlapCount": 0,
+      "padding": 24,
+      "providerRequestDelta": 0,
+      "quadrantBalance": [
+        3,
+        4,
+        4,
+        5
+      ],
+      "snapshotId": "panmap-173da623",
+      "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+      "visibleL1": 16,
+      "visibleL2": 0,
+      "wrappedLabelCount": 7
+    },
+    "center": {
+      "height": 90.47430419921876,
+      "width": 94.03125,
+      "x": 519.984375,
+      "y": 508.66351318359375
+    }
+  }
+]

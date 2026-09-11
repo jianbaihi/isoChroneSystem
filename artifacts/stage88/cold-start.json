@@ -1,0 +1,48 @@
+{
+  "name": "cold-start",
+  "audit": {
+    "aspectRatio": 1.1573905556340247,
+    "bandwidth": 27,
+    "bboxUnionArea": 47154,
+    "boundingArea": 194750.274309529,
+    "centerFixed": true,
+    "envelopeMs": 82.60000002384186,
+    "farNodeMove": 0,
+    "focusPath": [
+      "黄鹤楼"
+    ],
+    "labelCount": 16,
+    "layoutMs": 9.600000023841858,
+    "maxLabelAspectRatio": 2.888888888888889,
+    "maxNeighborMove": 0,
+    "maxRadialExtent": 385.6905136192105,
+    "meanLabelAspectRatio": 2.3299999999999996,
+    "meanNearestGap": 29.426736139780807,
+    "meanNeighborMove": 0,
+    "medianNearestGap": 29.00212490340442,
+    "minNeckWidth": null,
+    "mode": "final",
+    "neckCount": 0,
+    "occupiedRatio": 0.242125461271778,
+    "overlapCount": 0,
+    "padding": 24,
+    "providerRequestDelta": 0,
+    "quadrantBalance": [
+      3,
+      4,
+      4,
+      5
+    ],
+    "snapshotId": "panmap-173da623",
+    "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+    "visibleL1": 16,
+    "visibleL2": 0,
+    "wrappedLabelCount": 7
+  },
+  "center": {
+    "height": 103.58380126953124,
+    "width": 108.296875,
+    "x": 665.8515625,
+    "y": 565.1243286132812
+  }
+}
