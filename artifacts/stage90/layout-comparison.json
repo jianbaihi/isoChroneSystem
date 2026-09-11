@@ -1,0 +1,46 @@
+{
+  "before": {
+    "labelCount": 16,
+    "overlapCount": 0,
+    "meanNearestGap": 29.426736139780804,
+    "medianNearestGap": 29.00212490340442,
+    "bboxUnionArea": 47154,
+    "boundingArea": 194750.274309529,
+    "occupiedRatio": 0.24212546127177798,
+    "aspectRatio": 1.1573905556340247,
+    "maxRadialExtent": 385.6905136192105,
+    "quadrantBalance": [
+      3,
+      4,
+      4,
+      5
+    ],
+    "maxLabelAspectRatio": 2.888888888888889,
+    "meanLabelAspectRatio": 2.3299999999999996,
+    "wrappedLabelCount": 7,
+    "layoutAspectRatio": 1.1573905556340247,
+    "exactMaxRadialExtent": 294.89047248984406
+  },
+  "after": {
+    "labelCount": 16,
+    "overlapCount": 0,
+    "meanNearestGap": 12.42771888728418,
+    "medianNearestGap": 12.237752828053459,
+    "bboxUnionArea": 47154,
+    "boundingArea": 143016.36502148517,
+    "occupiedRatio": 0.32971051944241564,
+    "aspectRatio": 1.0692843091932394,
+    "maxRadialExtent": 336.47800627624025,
+    "quadrantBalance": [
+      4,
+      3,
+      4,
+      5
+    ],
+    "maxLabelAspectRatio": 2.888888888888889,
+    "meanLabelAspectRatio": 2.3299999999999996,
+    "wrappedLabelCount": 7,
+    "layoutAspectRatio": 1.0692843091932394,
+    "exactMaxRadialExtent": 255.65908480958979
+  }
+}

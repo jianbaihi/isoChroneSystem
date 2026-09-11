@@ -1,0 +1,29 @@
+{
+  "labelCount": 16,
+  "overlapCount": 0,
+  "meanNearestGap": 29.426736139780804,
+  "medianNearestGap": 29.00212490340442,
+  "bboxUnionArea": 47154,
+  "boundingArea": 194750.274309529,
+  "occupiedRatio": 0.24212546127177798,
+  "aspectRatio": 1.1573905556340247,
+  "maxRadialExtent": 385.6905136192105,
+  "quadrantBalance": [
+    3,
+    4,
+    4,
+    5
+  ],
+  "maxLabelAspectRatio": 2.888888888888889,
+  "meanLabelAspectRatio": 2.3299999999999996,
+  "wrappedLabelCount": 7,
+  "layoutAspectRatio": 1.1573905556340247,
+  "exactMaxRadialExtent": 294.89047248984406,
+  "l1Count": 16,
+  "timeEnvelopeArea": 214936.39591396475,
+  "timeEnvelopePerimeter": 1783.8033671240344,
+  "timeEnvelopeCompactness": 0.8488400603578414,
+  "l1IndependentRegionCount": 16,
+  "sharedBoundaryLength": 0,
+  "emptyGapArea": 99951.56103636257
+}

@@ -1,0 +1,11 @@
+{
+  "gridResolution": 5,
+  "kernelBandwidth": 54,
+  "visualWeightTransform": "normalized log1p, clamped [0.9,1.25]",
+  "centerExclusionRadius": "derived from center text safe bbox",
+  "centerExclusionStrength": 7,
+  "areaPressureWeight": 0.18,
+  "sharedBoundarySmoothing": 14,
+  "minimumRegionArea": 80,
+  "continuityWeight": 0.035
+}

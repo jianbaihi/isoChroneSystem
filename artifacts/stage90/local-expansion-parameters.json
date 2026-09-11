@@ -1,0 +1,14 @@
+{
+  "growthWeight": 0.004,
+  "neighborWeight": 0.55,
+  "longLabelTangentialBias": 9,
+  "labelGap": 12,
+  "iterations": 65,
+  "neighborRadius": 32,
+  "focusedParentAnchorWeight": null,
+  "contextSpringWeight": 1,
+  "expansionAreaScale": 1.25,
+  "animationDuration": 380,
+  "childGap": 9,
+  "contextScale": 0.92
+}

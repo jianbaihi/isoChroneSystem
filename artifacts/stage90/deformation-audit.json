@@ -1,0 +1,36 @@
+[
+  {
+    "units": "SVG user units; browser audit converts to CSS pixels",
+    "timeEnvelopeCentroidShiftPx": 43.449508953632055,
+    "category": "政府机构及社会团体",
+    "focusedParentMovePx": 0,
+    "directNeighborMeanMovePx": 56.4,
+    "directNeighborMaxMovePx": 113.99999999999999,
+    "farContextMeanMovePx": 0,
+    "farContextMaxMovePx": 0,
+    "directNeighborCount": 5,
+    "farContextCount": 10,
+    "centerMovePx": 0,
+    "timeEnvelopeAreaChangeRatio": 0.22312579204406835,
+    "localMaxChildDistance": 113.99999999999999,
+    "localLayoutDurationMs": 24.902082999999948,
+    "neighborSolveMs": 14.521292000000017
+  },
+  {
+    "units": "SVG user units; browser audit converts to CSS pixels",
+    "timeEnvelopeCentroidShiftPx": 38.36020822695254,
+    "category": "餐饮服务",
+    "focusedParentMovePx": 0,
+    "directNeighborMeanMovePx": 81,
+    "directNeighborMaxMovePx": 132,
+    "farContextMeanMovePx": 0,
+    "farContextMaxMovePx": 0,
+    "directNeighborCount": 8,
+    "farContextCount": 7,
+    "centerMovePx": 0,
+    "timeEnvelopeAreaChangeRatio": 0.34425195981023027,
+    "localMaxChildDistance": 113.99999999999999,
+    "localLayoutDurationMs": 33.09791599999994,
+    "neighborSolveMs": 32.62424999999996
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "tests": [
+    "No L1/L2 text overlap",
+    "Center fixed",
+    "Shared owner grid no gap/overlap",
+    "Shared regions masked by exact time polygon",
+    "No small island",
+    "No region self intersection",
+    "Deterministic field",
+    "Focused anchor stable",
+    "Local child budget",
+    "Far context fixed",
+    "Collapse returns stored baseline",
+    "Snapshot reused with zero Provider code"
+  ],
+  "snapshotSha256": "c5faaf58617d85fd273e18036e0c1c894847dd421456f0e36cd91cdd29dd0543"
+}

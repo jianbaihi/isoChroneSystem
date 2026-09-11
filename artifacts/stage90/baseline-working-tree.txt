@@ -1,0 +1,49 @@
+ M app.js
+ M index.html
+ M server/app/models.py
+ M server/app/providers/poi/amap.py
+ M server/app/providers/poi/amap_query_planner.py
+ M server/app/providers/poi/normalize.py
+ M server/app/services/poi_query.py
+ M server/tests/test_amap_completeness.py
+ M src/api/analysis-client.js
+ M src/config/app-config.test.js
+ M src/contracts/panmap-input-snapshot.js
+ M src/contracts/panmap-input-snapshot.test.js
+ M src/state/analysis-store.js
+ M src/state/analysis-store.test.js
+ M src/state/stage12-4-minute-accessibility.test.js
+ M src/view/panmap-mvp-view.js
+ M styles.css
+?? artifacts/stage90/
+?? data/taxonomy/
+?? docs/ors-migration/89-panmap-v2-ten-minute-gates.md
+?? exports/panmap-v2-gates/1134-collapsed.jpg
+?? exports/panmap-v2-gates/1134-expanded-l2.jpg
+?? exports/panmap-v2-gates/1134-initial.jpg
+?? exports/panmap-v2-gates/1440-collapsed.jpg
+?? exports/panmap-v2-gates/1440-expanded-l2.jpg
+?? exports/panmap-v2-gates/1440-initial.jpg
+?? exports/panmap-v2-gates/README.md
+?? exports/panmap-v2-gates/analyses.json
+?? exports/panmap-v2-gates/baseline-20-query/
+?? exports/panmap-v2-gates/browser-checks.json
+?? exports/panmap-v2-gates/browser-evidence.json
+?? exports/panmap-v2-gates/classification-diff.json
+?? exports/panmap-v2-gates/comparison.html
+?? exports/panmap-v2-gates/fixture.html
+?? exports/panmap-v2-gates/fixture.js
+?? exports/panmap-v2-gates/gate-a-b-c.json
+?? exports/panmap-v2-gates/minute-accessibility.json
+?? exports/panmap-v2-gates/poi-query.json
+?? exports/reference-map-redesign/
+?? scripts/audit_panmap_v2.cjs
+?? scripts/capture_panmap_v2_dataset.py
+?? scripts/import_amap_taxonomy.py
+?? server/app/providers/poi/amap_taxonomy.py
+?? server/tests/test_amap_taxonomy.py
+?? src/adapters/reference-panmap.js
+?? src/adapters/reference-panmap.test.js
+?? src/api/minute-retention.test.js
+?? src/panmap-v2/panmap-v2.test.js
+?? src/panmap-v2/renderer/

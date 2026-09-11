@@ -1,0 +1,11 @@
+{
+  "snapshotId": "panmap-173da623",
+  "sha256": "c5faaf58617d85fd273e18036e0c1c894847dd421456f0e36cd91cdd29dd0543",
+  "poiTotal": 1170,
+  "l1Count": 16,
+  "profile": "foot-walking",
+  "rangesMinutes": [
+    10
+  ],
+  "providerCallsDelta": 0
+}
