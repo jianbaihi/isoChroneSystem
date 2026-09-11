@@ -1,0 +1,22 @@
+{
+  "center": {
+    "lon": 114.296944,
+    "lat": 30.546944,
+    "crs": "EPSG:4326",
+    "label": "武汉·黄鹤楼",
+    "id": null,
+    "source": "preset",
+    "accuracyMeters": null
+  },
+  "safeZone": {
+    "x": -71,
+    "y": -43,
+    "w": 142,
+    "h": 100
+  },
+  "worldCenterFixed": true,
+  "l1AnchorFixed": true,
+  "maxNeighborMove": 18,
+  "meanNeighborMove": 2.25,
+  "farNodeMove": 0
+}

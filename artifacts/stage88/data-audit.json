@@ -1,0 +1,25 @@
+{
+  "poiTotal": 1170,
+  "l1Count": 16,
+  "l2Count": 86,
+  "l3Count": 169,
+  "unknownTypecodeCount": 0,
+  "missingNameCount": 0,
+  "duplicatePoiCount": 0,
+  "travelMinuteRange": [
+    1,
+    10
+  ],
+  "snapshotId": "panmap-173da623",
+  "center": {
+    "lon": 114.296944,
+    "lat": 30.546944,
+    "crs": "EPSG:4326",
+    "label": "武汉·黄鹤楼",
+    "id": null,
+    "source": "preset",
+    "accuracyMeters": null
+  },
+  "taxonomyVersion": "amap-official-1.06-20230208-tree-v2",
+  "providerRequestDelta": 0
+}

@@ -1,0 +1,17 @@
+{
+  "bboxSampleDensity": 9,
+  "bridgeThreshold": 78,
+  "bandwidth": {
+    "small": 14,
+    "medium": 20,
+    "large": 26
+  },
+  "envelopePadding": {
+    "tight": 4,
+    "balanced": 6,
+    "soft": 8
+  },
+  "smoothingIterations": 2,
+  "neckMinWidth": 18,
+  "contourThreshold": "highest valid descending candidate"
+}

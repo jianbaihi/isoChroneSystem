@@ -1,0 +1,14 @@
+[
+  {
+    "state": "initial",
+    "siblingOverlapCount": 0,
+    "pairs": [],
+    "timeCoversRegions": true
+  },
+  {
+    "state": "expanded",
+    "siblingOverlapCount": 0,
+    "pairs": [],
+    "timeCoversRegions": true
+  }
+]

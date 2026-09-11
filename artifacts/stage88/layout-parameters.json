@@ -1,0 +1,22 @@
+{
+  "candidateRings": [
+    100,
+    150,
+    200,
+    250
+  ],
+  "angularSamples": [
+    8,
+    12,
+    16,
+    20
+  ],
+  "parentAttraction": 1,
+  "centerAttraction": 0.32,
+  "compactnessWeight": 0.5,
+  "holePenalty": 0.8,
+  "elongationPenalty": 60,
+  "wrapThreshold": 100,
+  "gap": 28,
+  "relaxationIterations": 18
+}
